@@ -23,13 +23,21 @@ export type AnswerFeedback = {
   isCorrect: boolean;
 };
 
-export function createLessonSession(lesson: Lesson): LessonSession {
+export function createLessonSession(lesson: Lesson, initialActivityIndex = 0): LessonSession {
+  const currentActivityIndex = Math.min(
+    Math.max(Math.trunc(initialActivityIndex), 0),
+    lesson.activities.length,
+  );
+
   return {
     lesson,
-    currentActivityIndex: 0,
+    currentActivityIndex,
     responses: {},
     feedback: null,
-    status: lesson.activities.length === 0 ? 'completed' : 'in-progress',
+    status:
+      lesson.activities.length === 0 || currentActivityIndex >= lesson.activities.length
+        ? 'completed'
+        : 'in-progress',
   };
 }
 

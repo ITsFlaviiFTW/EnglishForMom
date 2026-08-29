@@ -5,5 +5,5 @@ export interface StorageAdapter {
 }
 
 export const storageKeys = {
-  learnerProgress: 'english-for-mom:learner-progress:v1',
+  learnerProgress: 'english-for-mom:learner-progress',
 } as const;

@@ -267,5 +267,6 @@ function createQuestion(question: QuestionInput): MultipleChoiceActivity {
     type: 'multiple-choice',
     instructionRomanian: 'Alege răspunsul corect.',
     promptLanguage: 'romanian',
+    focusItemIds: question.focusItemIds ?? [question.correctOptionId],
   };
 }

@@ -29,6 +29,16 @@ test('advances through instructional activities in order', () => {
   assert.equal(getCurrentActivity(session)?.type, 'example-sentence');
 });
 
+test('starts at a saved activity and recognizes a previously completed lesson', () => {
+  const resumed = createLessonSession(developmentLesson, 2);
+  const completed = createLessonSession(developmentLesson, developmentLesson.activities.length);
+
+  assert.equal(resumed.currentActivityIndex, 2);
+  assert.equal(getCurrentActivity(resumed)?.type, 'multiple-choice');
+  assert.equal(resumed.status, 'in-progress');
+  assert.equal(completed.status, 'completed');
+});
+
 test('does not advance a multiple-choice activity before an answer', () => {
   const session = reachQuestion();
   const unchangedSession = advanceLessonSession(session);

@@ -2,16 +2,24 @@ import type { LearnerProgress } from '@/types';
 
 export type ProgressSummary = {
   completedLessons: number;
-  learningVocabulary: number;
-  familiarVocabulary: number;
+  practicedVocabulary: number;
+  correctAnswers: number;
+  incorrectAnswers: number;
+  studyDays: number;
 };
 
 export function summarizeProgress(progress: LearnerProgress): ProgressSummary {
-  const vocabulary = Object.values(progress.vocabulary);
+  const studyDates = new Set(
+    Object.values(progress.lessons).flatMap((lesson) =>
+      lesson.activityResults.map((result) => result.completedAt.slice(0, 10)),
+    ),
+  );
 
   return {
     completedLessons: progress.completedLessonIds.length,
-    learningVocabulary: vocabulary.filter((item) => item.familiarity === 'learning').length,
-    familiarVocabulary: vocabulary.filter((item) => item.familiarity === 'familiar').length,
+    practicedVocabulary: Object.keys(progress.vocabulary).length,
+    correctAnswers: progress.correctAnswers,
+    incorrectAnswers: progress.incorrectAnswers,
+    studyDays: studyDates.size,
   };
 }

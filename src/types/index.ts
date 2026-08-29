@@ -18,6 +18,7 @@ export type {
   ActivityResult,
   LearnerProgress,
   LessonProgress,
+  QuestionMistakeProgress,
   VocabularyFamiliarity,
   VocabularyProgress,
 } from './progress';

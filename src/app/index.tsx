@@ -3,9 +3,27 @@ import { StyleSheet, Text, View } from 'react-native';
 import { AppButton } from '@/components/app-button';
 import { ScreenContainer } from '@/components/screen-container';
 import { colors } from '@/constants/theme';
-import { kitchenBasicsLesson } from '@/data/lessons/kitchen-basics';
+import { getCourseLessonIds } from '@/data/courses/course-catalog';
+import { getLessonById } from '@/data/lessons/lesson-catalog';
+import { selectContinueLessonId } from '@/features/progress/progress-state';
+import { useLearningProgress } from '@/hooks/use-learning-progress';
 
 export default function HomeScreen() {
+  const { progress, isLoading } = useLearningProgress();
+  const continueLessonId = selectContinueLessonId(getCourseLessonIds(), progress);
+  const continueLesson = continueLessonId ? getLessonById(continueLessonId) : undefined;
+  const lessonProgress = continueLesson ? progress.lessons[continueLesson.id] : undefined;
+  const continueSubtitle = isLoading
+    ? 'Se încarcă progresul…'
+    : lessonProgress?.completed
+      ? `Ultima lecție: ${continueLesson?.title.romanian ?? ''}`
+      : lessonProgress
+        ? `Continuă de la pasul ${lessonProgress.nextActivityIndex + 1}`
+        : 'Începe prima lecție';
+  const continueHref = continueLessonId
+    ? ({ pathname: '/lessons/[lessonId]', params: { lessonId: continueLessonId } } as const)
+    : ('/lessons' as const);
+
   return (
     <ScreenContainer style={styles.screen}>
       <View style={styles.intro}>
@@ -16,9 +34,9 @@ export default function HomeScreen() {
 
       <View style={styles.actions}>
         <AppButton
-          href={{ pathname: '/lessons/[lessonId]', params: { lessonId: kitchenBasicsLesson.id } }}
+          href={continueHref}
           title="Continue Learning"
-          subtitle="Continuă lecția"
+          subtitle={continueSubtitle}
           variant="primary"
         />
         <AppButton href="/lessons" title="Lessons" subtitle="Vezi toate lecțiile" />

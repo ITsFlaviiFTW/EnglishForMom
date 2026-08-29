@@ -31,3 +31,7 @@ export function getCourses(): readonly Course[] {
 export function getCourseById(courseId: CourseId): Course | undefined {
   return courses.find((course) => course.id === courseId);
 }
+
+export function getCourseLessonIds() {
+  return courses.flatMap((course) => course.units.flatMap((unit) => unit.lessonIds));
+}

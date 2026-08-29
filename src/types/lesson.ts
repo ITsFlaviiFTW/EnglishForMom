@@ -56,6 +56,7 @@ export type MultipleChoiceActivity = ActivityBase & {
   promptLanguage: 'english' | 'romanian';
   options: readonly ChoiceOption[];
   correctOptionId: string;
+  focusItemIds?: readonly string[];
   explanationRomanian?: string;
 };
 

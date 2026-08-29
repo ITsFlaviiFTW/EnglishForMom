@@ -20,6 +20,7 @@ import { getCorrectOption } from '@/features/lessons/lesson-session';
 import { useLessonSession } from '@/hooks/use-lesson-session';
 import type { AudioPlaybackState, AudioService } from '@/services/audio-service';
 import type {
+  ActivityResponse,
   AudioSource,
   ExampleSentenceActivity,
   Lesson,
@@ -36,11 +37,24 @@ type SupportedActivity =
 type LessonPlayerProps = {
   lesson: Lesson;
   audioService: AudioService;
+  initialActivityIndex?: number;
+  saveError?: string | null;
+  onActivityCompleted?: (completion: {
+    activity: SupportedActivity;
+    response: ActivityResponse;
+    correct: boolean | null;
+  }) => void;
 };
 
-export function LessonPlayer({ lesson, audioService }: LessonPlayerProps) {
+export function LessonPlayer({
+  lesson,
+  audioService,
+  initialActivityIndex = 0,
+  saveError,
+  onActivityCompleted,
+}: LessonPlayerProps) {
   const { session, currentActivity, canContinue, answerMultipleChoice, advance } =
-    useLessonSession(lesson);
+    useLessonSession(lesson, initialActivityIndex);
   const audioPlayback = useAudioPlayback(audioService, currentActivity?.id);
 
   if (session.status === 'completed') {
@@ -52,6 +66,13 @@ export function LessonPlayer({ lesson, audioService }: LessonPlayerProps) {
   }
 
   const progress = ((session.currentActivityIndex + 1) / lesson.activities.length) * 100;
+  const handleAdvance = () => {
+    const response = session.responses[currentActivity.id] ?? { type: 'acknowledged' };
+    const correct =
+      currentActivity.type === 'multiple-choice' ? session.feedback?.isCorrect ?? null : null;
+    onActivityCompleted?.({ activity: currentActivity, response, correct });
+    advance();
+  };
 
   return (
     <ScreenContainer style={styles.screen}>
@@ -98,10 +119,11 @@ export function LessonPlayer({ lesson, audioService }: LessonPlayerProps) {
               ? 'Finish · Termină lecția'
               : 'Next · Continuă'
           }
-          onPress={advance}
+          onPress={handleAdvance}
           disabled={!canContinue}
         />
       ) : null}
+      {saveError ? <Text style={styles.saveError}>{saveError}</Text> : null}
     </ScreenContainer>
   );
 }
@@ -491,5 +513,12 @@ const styles = StyleSheet.create({
   },
   completeActions: {
     gap: 12,
+  },
+  saveError: {
+    color: colors.error,
+    fontSize: 15,
+    lineHeight: 22,
+    marginTop: 10,
+    textAlign: 'center',
   },
 });

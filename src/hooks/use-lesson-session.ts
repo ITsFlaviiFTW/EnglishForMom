@@ -10,8 +10,8 @@ import {
 } from '@/features/lessons/lesson-session';
 import type { Lesson } from '@/types';
 
-export function useLessonSession(lesson: Lesson) {
-  const [session, setSession] = useState(() => createLessonSession(lesson));
+export function useLessonSession(lesson: Lesson, initialActivityIndex = 0) {
+  const [session, setSession] = useState(() => createLessonSession(lesson, initialActivityIndex));
 
   const answerMultipleChoice = useCallback((optionId: string) => {
     setSession((current) => submitMultipleChoiceAnswer(current, optionId));

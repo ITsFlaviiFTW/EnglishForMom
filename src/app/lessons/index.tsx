@@ -7,8 +7,19 @@ import { ScreenHeader } from '@/components/screen-header';
 import { colors } from '@/constants/theme';
 import { courseOutline } from '@/data/courses/course-outline';
 import { kitchenBasicsLesson } from '@/data/lessons/kitchen-basics';
+import { useLearningProgress } from '@/hooks/use-learning-progress';
 
 export default function LessonsScreen() {
+  const { progress, isLoading } = useLearningProgress();
+  const kitchenProgress = progress.lessons[kitchenBasicsLesson.id];
+  const lessonStatus = isLoading
+    ? 'Se încarcă progresul…'
+    : kitchenProgress?.completed
+      ? '✓ Lecție finalizată'
+      : kitchenProgress
+        ? `În progres · pasul ${kitchenProgress.nextActivityIndex + 1} din ${kitchenBasicsLesson.activities.length}`
+        : 'Lecție nouă';
+
   return (
     <ScreenContainer style={styles.screen}>
       <ScreenHeader
@@ -26,15 +37,30 @@ export default function LessonsScreen() {
             <View style={styles.cardContent}>
               <Text style={styles.topics}>{courseLevel.topics.join('  •  ')}</Text>
               {courseLevel.available ? (
-                <AppButton
-                  href={{
-                    pathname: '/lessons/[lessonId]',
-                    params: { lessonId: kitchenBasicsLesson.id },
-                  }}
-                  title="Lesson 1 · Kitchen Basics"
-                  subtitle="Începe lecția"
-                  variant="primary"
-                />
+                <>
+                  <Text
+                    style={[
+                      styles.lessonStatus,
+                      kitchenProgress?.completed && styles.completedStatus,
+                    ]}>
+                    {lessonStatus}
+                  </Text>
+                  <AppButton
+                    href={{
+                      pathname: '/lessons/[lessonId]',
+                      params: { lessonId: kitchenBasicsLesson.id },
+                    }}
+                    title="Lesson 1 · Kitchen Basics"
+                    subtitle={
+                      kitchenProgress?.completed
+                        ? 'Vezi lecția finalizată'
+                        : kitchenProgress
+                          ? 'Continuă lecția'
+                          : 'Începe lecția'
+                    }
+                    variant="primary"
+                  />
+                </>
               ) : null}
             </View>
           </AppCard>
@@ -58,5 +84,14 @@ const styles = StyleSheet.create({
   },
   cardContent: {
     gap: 18,
+  },
+  lessonStatus: {
+    color: colors.textMuted,
+    fontSize: 17,
+    lineHeight: 24,
+    fontWeight: '600',
+  },
+  completedStatus: {
+    color: colors.success,
   },
 });
