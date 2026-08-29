@@ -1,9 +1,10 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+
+import { ScreenContainer } from '@/components/screen-container';
 
 export default function HomeScreen() {
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <ScreenContainer>
       <View style={styles.container}>
         <Text style={styles.eyebrow}>ENGLISH FOR MOM</Text>
         <Text style={styles.title}>Învață engleza pas cu pas.</Text>
@@ -11,19 +12,14 @@ export default function HomeScreen() {
           Lecții practice pentru situații de zi cu zi vor fi disponibile în curând.
         </Text>
       </View>
-    </SafeAreaView>
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#F7F4EE',
-  },
   container: {
     flex: 1,
     justifyContent: 'center',
-    paddingHorizontal: 28,
   },
   eyebrow: {
     color: '#426B5A',
