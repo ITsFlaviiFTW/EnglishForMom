@@ -1,6 +1,28 @@
 import type { Course, CourseId } from '@/types';
 
-const courses: readonly Course[] = [];
+import { kitchenBasicsLesson } from '@/data/lessons/kitchen-basics';
+
+const courses: readonly Course[] = [
+  {
+    id: 'my-home',
+    schemaVersion: 1,
+    title: {
+      english: 'My Home',
+      romanian: 'Casa mea',
+    },
+    descriptionRomanian: 'Engleză practică pentru camerele și activitățile din casă.',
+    units: [
+      {
+        id: 'kitchen',
+        title: {
+          english: 'Kitchen',
+          romanian: 'Bucătărie',
+        },
+        lessonIds: [kitchenBasicsLesson.id],
+      },
+    ],
+  },
+];
 
 export function getCourses(): readonly Course[] {
   return courses;

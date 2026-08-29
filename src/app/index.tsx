@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { AppButton } from '@/components/app-button';
 import { ScreenContainer } from '@/components/screen-container';
 import { colors } from '@/constants/theme';
-import { developmentLesson } from '@/data/lessons/development-lesson';
+import { kitchenBasicsLesson } from '@/data/lessons/kitchen-basics';
 
 export default function HomeScreen() {
   return (
@@ -16,7 +16,7 @@ export default function HomeScreen() {
 
       <View style={styles.actions}>
         <AppButton
-          href={{ pathname: '/lessons/[lessonId]', params: { lessonId: developmentLesson.id } }}
+          href={{ pathname: '/lessons/[lessonId]', params: { lessonId: kitchenBasicsLesson.id } }}
           title="Continue Learning"
           subtitle="Continuă lecția"
           variant="primary"

@@ -6,7 +6,7 @@ import { ScreenContainer } from '@/components/screen-container';
 import { ScreenHeader } from '@/components/screen-header';
 import { colors } from '@/constants/theme';
 import { courseOutline } from '@/data/courses/course-outline';
-import { developmentLesson } from '@/data/lessons/development-lesson';
+import { kitchenBasicsLesson } from '@/data/lessons/kitchen-basics';
 
 export default function LessonsScreen() {
   return (
@@ -20,7 +20,7 @@ export default function LessonsScreen() {
         {courseOutline.map((courseLevel) => (
           <AppCard
             key={courseLevel.id}
-            eyebrow={`${courseLevel.level}${courseLevel.available ? ' · Disponibil în curând' : ' · Planificat'}`}
+            eyebrow={`${courseLevel.level}${courseLevel.available ? ' · Disponibil' : ' · Planificat'}`}
             title={courseLevel.title}
             description={courseLevel.description}>
             <View style={styles.cardContent}>
@@ -29,9 +29,10 @@ export default function LessonsScreen() {
                 <AppButton
                   href={{
                     pathname: '/lessons/[lessonId]',
-                    params: { lessonId: developmentLesson.id },
+                    params: { lessonId: kitchenBasicsLesson.id },
                   }}
-                  title="Încearcă lecția demonstrativă"
+                  title="Lesson 1 · Kitchen Basics"
+                  subtitle="Începe lecția"
                   variant="primary"
                 />
               ) : null}

@@ -5,6 +5,7 @@ import { AppCard } from '@/components/app-card';
 import { ScreenContainer } from '@/components/screen-container';
 import { getLessonById } from '@/data/lessons/lesson-catalog';
 import { LessonPlayer } from '@/features/lessons/lesson-player';
+import { lessonAudioService } from '@/services/lesson-audio-service';
 
 export default function LessonScreen() {
   const { lessonId } = useLocalSearchParams<{ lessonId: string }>();
@@ -22,5 +23,5 @@ export default function LessonScreen() {
     );
   }
 
-  return <LessonPlayer lesson={lesson} />;
+  return <LessonPlayer lesson={lesson} audioService={lessonAudioService} />;
 }

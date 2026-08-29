@@ -11,6 +11,7 @@ export type AudioSource = {
   key: string;
   text: string;
   locale?: 'en-US' | 'en-GB';
+  rate?: number;
 };
 
 export type ExampleSentence = LearningText & {

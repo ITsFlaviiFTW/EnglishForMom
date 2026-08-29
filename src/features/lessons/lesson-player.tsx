@@ -14,9 +14,13 @@ import { AppCard } from '@/components/app-card';
 import { ScreenContainer } from '@/components/screen-container';
 import { ScreenHeader } from '@/components/screen-header';
 import { colors } from '@/constants/theme';
+import { ListenButton } from '@/features/audio/listen-button';
+import { useAudioPlayback } from '@/features/audio/use-audio-playback';
 import { getCorrectOption } from '@/features/lessons/lesson-session';
 import { useLessonSession } from '@/hooks/use-lesson-session';
+import type { AudioPlaybackState, AudioService } from '@/services/audio-service';
 import type {
+  AudioSource,
   ExampleSentenceActivity,
   Lesson,
   LessonActivity,
@@ -31,11 +35,13 @@ type SupportedActivity =
 
 type LessonPlayerProps = {
   lesson: Lesson;
+  audioService: AudioService;
 };
 
-export function LessonPlayer({ lesson }: LessonPlayerProps) {
+export function LessonPlayer({ lesson, audioService }: LessonPlayerProps) {
   const { session, currentActivity, canContinue, answerMultipleChoice, advance } =
     useLessonSession(lesson);
+  const audioPlayback = useAudioPlayback(audioService, currentActivity?.id);
 
   if (session.status === 'completed') {
     return <LessonComplete lesson={lesson} />;
@@ -79,6 +85,9 @@ export function LessonPlayer({ lesson }: LessonPlayerProps) {
           activity={currentActivity}
           feedback={session.feedback}
           onAnswer={answerMultipleChoice}
+          audioState={audioPlayback.state}
+          audioError={audioPlayback.errorMessage}
+          onPlayAudio={audioPlayback.play}
         />
       </View>
 
@@ -101,35 +110,103 @@ type ActivityRendererProps = {
   activity: SupportedActivity;
   feedback: ReturnType<typeof useLessonSession>['session']['feedback'];
   onAnswer: (optionId: string) => void;
+  audioState: AudioPlaybackState;
+  audioError: string | null;
+  onPlayAudio: (source: AudioSource) => void;
 };
 
-function ActivityRenderer({ activity, feedback, onAnswer }: ActivityRendererProps) {
+function ActivityRenderer({
+  activity,
+  feedback,
+  onAnswer,
+  audioState,
+  audioError,
+  onPlayAudio,
+}: ActivityRendererProps) {
   switch (activity.type) {
     case 'vocabulary-introduction':
-      return <VocabularyActivity activity={activity} />;
+      return (
+        <VocabularyActivity
+          activity={activity}
+          audioState={audioState}
+          audioError={audioError}
+          onPlayAudio={onPlayAudio}
+        />
+      );
     case 'example-sentence':
-      return <ExampleActivity activity={activity} />;
+      return (
+        <ExampleActivity
+          activity={activity}
+          audioState={audioState}
+          audioError={audioError}
+          onPlayAudio={onPlayAudio}
+        />
+      );
     case 'multiple-choice':
       return <MultipleChoice activity={activity} feedback={feedback} onAnswer={onAnswer} />;
   }
 }
 
-function VocabularyActivity({ activity }: { activity: VocabularyIntroductionActivity }) {
+type AudioActivityProps = {
+  audioState: AudioPlaybackState;
+  audioError: string | null;
+  onPlayAudio: (source: AudioSource) => void;
+};
+
+function VocabularyActivity({
+  activity,
+  audioState,
+  audioError,
+  onPlayAudio,
+}: { activity: VocabularyIntroductionActivity } & AudioActivityProps) {
   return (
     <AppCard eyebrow="Cuvânt nou" title={activity.instructionRomanian ?? 'Citește cuvântul.'}>
       <Text style={styles.englishWord}>{activity.content.english}</Text>
       <Text style={styles.romanianMeaning}>{activity.content.romanian}</Text>
+      {activity.audio ? (
+        <View style={styles.listenControl}>
+          <ListenButton
+            label={activity.content.english}
+            state={audioState}
+            errorMessage={audioError}
+            onPress={() => {
+              if (activity.audio) {
+                onPlayAudio(activity.audio);
+              }
+            }}
+          />
+        </View>
+      ) : null}
     </AppCard>
   );
 }
 
-function ExampleActivity({ activity }: { activity: ExampleSentenceActivity }) {
+function ExampleActivity({
+  activity,
+  audioState,
+  audioError,
+  onPlayAudio,
+}: { activity: ExampleSentenceActivity } & AudioActivityProps) {
   return (
     <AppCard
       eyebrow="Exemplu"
       title={activity.instructionRomanian ?? 'Citește propoziția.'}>
       <Text style={styles.englishSentence}>{activity.sentence.english}</Text>
       <Text style={styles.romanianSentence}>{activity.sentence.romanian}</Text>
+      {activity.sentence.audio ? (
+        <View style={styles.listenControl}>
+          <ListenButton
+            label={activity.sentence.english}
+            state={audioState}
+            errorMessage={audioError}
+            onPress={() => {
+              if (activity.sentence.audio) {
+                onPlayAudio(activity.sentence.audio);
+              }
+            }}
+          />
+        </View>
+      ) : null}
     </AppCard>
   );
 }
@@ -317,6 +394,9 @@ const styles = StyleSheet.create({
     fontSize: 24,
     lineHeight: 32,
     marginTop: 8,
+  },
+  listenControl: {
+    marginTop: 20,
   },
   englishSentence: {
     color: colors.text,
