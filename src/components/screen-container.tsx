@@ -1,15 +1,22 @@
 import type { PropsWithChildren } from 'react';
-import { StyleSheet, View, type ViewProps } from 'react-native';
+import { ScrollView, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { layout } from '@/constants/layout';
+import { colors } from '@/constants/theme';
 
-type ScreenContainerProps = PropsWithChildren<Pick<ViewProps, 'style'>>;
+type ScreenContainerProps = PropsWithChildren<{
+  style?: StyleProp<ViewStyle>;
+}>;
 
 export function ScreenContainer({ children, style }: ScreenContainerProps) {
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={[styles.content, style]}>{children}</View>
+      <ScrollView
+        contentContainerStyle={[styles.content, style]}
+        showsVerticalScrollIndicator={false}>
+        {children}
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -17,10 +24,10 @@ export function ScreenContainer({ children, style }: ScreenContainerProps) {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#F7F4EE',
+    backgroundColor: colors.background,
   },
   content: {
-    flex: 1,
+    flexGrow: 1,
     width: '100%',
     maxWidth: layout.contentMaxWidth,
     alignSelf: 'center',

@@ -1,44 +1,61 @@
 import { StyleSheet, Text, View } from 'react-native';
 
+import { AppButton } from '@/components/app-button';
 import { ScreenContainer } from '@/components/screen-container';
+import { colors } from '@/constants/theme';
 
 export default function HomeScreen() {
   return (
-    <ScreenContainer>
-      <View style={styles.container}>
-        <Text style={styles.eyebrow}>ENGLISH FOR MOM</Text>
-        <Text style={styles.title}>Învață engleza pas cu pas.</Text>
-        <Text style={styles.description}>
-          Lecții practice pentru situații de zi cu zi vor fi disponibile în curând.
-        </Text>
+    <ScreenContainer style={styles.screen}>
+      <View style={styles.intro}>
+        <Text style={styles.eyebrow}>ENGLEZĂ PRACTICĂ, ZI DE ZI</Text>
+        <Text style={styles.title}>EnglishForMom</Text>
+        <Text style={styles.description}>Învață engleza pas cu pas, în ritmul tău.</Text>
+      </View>
+
+      <View style={styles.actions}>
+        <AppButton
+          href="/lessons"
+          title="Continue Learning"
+          subtitle="Continuă lecția"
+          variant="primary"
+        />
+        <AppButton href="/lessons" title="Lessons" subtitle="Vezi toate lecțiile" />
+        <AppButton href="/review" title="Review" subtitle="Repetă ce ai învățat" />
+        <AppButton href="/progress" title="Progress" subtitle="Urmărește progresul" />
       </View>
     </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  screen: {
     justifyContent: 'center',
+    paddingVertical: 36,
+  },
+  intro: {
+    marginBottom: 36,
+  },
+  actions: {
+    gap: 14,
   },
   eyebrow: {
-    color: '#426B5A',
-    fontSize: 14,
+    color: colors.primary,
+    fontSize: 13,
     fontWeight: '700',
-    letterSpacing: 1.4,
-    marginBottom: 16,
+    letterSpacing: 1.2,
+    marginBottom: 12,
   },
   title: {
-    color: '#1D2A25',
-    fontSize: 38,
+    color: colors.text,
+    fontSize: 42,
     fontWeight: '700',
-    lineHeight: 46,
-    marginBottom: 20,
+    lineHeight: 49,
   },
   description: {
-    color: '#53615B',
+    color: colors.textMuted,
     fontSize: 20,
     lineHeight: 30,
-    maxWidth: 520,
+    marginTop: 12,
   },
 });
