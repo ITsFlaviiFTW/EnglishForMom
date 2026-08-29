@@ -6,6 +6,7 @@ import { colors } from '@/constants/theme';
 import { getCourseLessonIds } from '@/data/courses/course-catalog';
 import { getLessonById } from '@/data/lessons/lesson-catalog';
 import { selectContinueLessonId } from '@/features/progress/progress-state';
+import { getDueReviewCount } from '@/features/review/review-queue';
 import { useLearningProgress } from '@/hooks/use-learning-progress';
 
 export default function HomeScreen() {
@@ -13,6 +14,7 @@ export default function HomeScreen() {
   const continueLessonId = selectContinueLessonId(getCourseLessonIds(), progress);
   const continueLesson = continueLessonId ? getLessonById(continueLessonId) : undefined;
   const lessonProgress = continueLesson ? progress.lessons[continueLesson.id] : undefined;
+  const dueReviewCount = getDueReviewCount(progress.reviewItems);
   const continueSubtitle = isLoading
     ? 'Se încarcă progresul…'
     : lessonProgress?.completed
@@ -40,7 +42,15 @@ export default function HomeScreen() {
           variant="primary"
         />
         <AppButton href="/lessons" title="Lessons" subtitle="Vezi toate lecțiile" />
-        <AppButton href="/review" title="Review" subtitle="Repetă ce ai învățat" />
+        <AppButton
+          href="/review"
+          title="Review"
+          subtitle={
+            dueReviewCount > 0
+              ? `${dueReviewCount} ${dueReviewCount === 1 ? 'element de repetat' : 'elemente de repetat'}`
+              : 'Repetă ce ai învățat'
+          }
+        />
         <AppButton href="/progress" title="Progress" subtitle="Urmărește progresul" />
       </View>
     </ScreenContainer>

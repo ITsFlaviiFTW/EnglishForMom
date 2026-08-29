@@ -5,6 +5,7 @@ import type {
   LearnerProgress,
   LessonProgress,
   QuestionMistakeProgress,
+  ReviewItemProgress,
   VocabularyProgress,
 } from '@/types';
 
@@ -25,15 +26,16 @@ export function deserializeProgress(raw: string | null): LearnerProgress {
 }
 
 export function migrateStoredProgress(value: unknown): LearnerProgress {
-  if (!isRecord(value) || value.schemaVersion !== 1) {
+  if (!isRecord(value) || (value.schemaVersion !== 1 && value.schemaVersion !== 2)) {
     return createDefaultProgress();
   }
 
-  // Add older-version migration steps here before normalizing the current schema.
-  return normalizeVersionOne(value);
+  // Version 1 had no reviewItems. Normalization supplies the safe version 2 default,
+  // and the provider reconstructs review records from persisted question mistakes.
+  return normalizeCurrentVersion(value);
 }
 
-function normalizeVersionOne(value: Record<string, unknown>): LearnerProgress {
+function normalizeCurrentVersion(value: Record<string, unknown>): LearnerProgress {
   const lessons = normalizeLessons(value.lessons);
   const derivedCorrectAnswers = Object.values(lessons).reduce(
     (total, lesson) => total + lesson.correctAnswers,
@@ -45,7 +47,7 @@ function normalizeVersionOne(value: Record<string, unknown>): LearnerProgress {
   );
 
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
     currentLessonId: nullableString(value.currentLessonId),
     recentLessonId: nullableString(value.recentLessonId),
     completedLessonIds: stringArray(value.completedLessonIds),
@@ -55,6 +57,7 @@ function normalizeVersionOne(value: Record<string, unknown>): LearnerProgress {
     lessons,
     vocabulary: normalizeVocabulary(value.vocabulary),
     questionMistakes: normalizeQuestionMistakes(value.questionMistakes),
+    reviewItems: normalizeReviewItems(value.reviewItems),
   };
 }
 
@@ -231,6 +234,67 @@ function normalizeQuestionMistakes(value: unknown): LearnerProgress['questionMis
   }
 
   return mistakes;
+}
+
+function normalizeReviewItems(value: unknown): LearnerProgress['reviewItems'] {
+  if (!isRecord(value)) {
+    return {};
+  }
+
+  const items: Record<string, ReviewItemProgress> = {};
+  for (const [key, candidate] of Object.entries(value)) {
+    if (!isRecord(candidate)) {
+      continue;
+    }
+
+    const id = stringValue(candidate.id) ?? key;
+    const kind = candidate.kind;
+    const lessonId = stringValue(candidate.lessonId);
+    const sourceActivityId = stringValue(candidate.sourceActivityId);
+    const learningItemId = stringValue(candidate.learningItemId);
+    const content = normalizeLearningText(candidate.content);
+    const example = normalizeLearningText(candidate.example);
+    const lastMissedAt = timestamp(candidate.lastMissedAt);
+    const lastReviewedAt = nullableTimestamp(candidate.lastReviewedAt);
+    if (
+      (kind !== 'vocabulary' && kind !== 'comprehension') ||
+      !lessonId ||
+      !sourceActivityId ||
+      !learningItemId ||
+      !content ||
+      !lastMissedAt
+    ) {
+      continue;
+    }
+
+    items[id] = {
+      id,
+      kind,
+      lessonId,
+      sourceActivityId,
+      learningItemId,
+      content,
+      ...(example ? { example } : {}),
+      priority: Math.min(10, nonNegativeInteger(candidate.priority) ?? 0),
+      correctAttempts: nonNegativeInteger(candidate.correctAttempts) ?? 0,
+      incorrectAttempts: nonNegativeInteger(candidate.incorrectAttempts) ?? 0,
+      correctStreak: nonNegativeInteger(candidate.correctStreak) ?? 0,
+      lastMissedAt,
+      lastReviewedAt,
+    };
+  }
+
+  return items;
+}
+
+function normalizeLearningText(value: unknown) {
+  if (!isRecord(value)) {
+    return null;
+  }
+
+  const english = stringValue(value.english);
+  const romanian = stringValue(value.romanian);
+  return english !== null && romanian !== null ? { english, romanian } : null;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

@@ -31,7 +31,7 @@ test('starts with safe empty progress and records the recent lesson', () => {
   const empty = createDefaultProgress();
   const started = recordLessonStarted(empty, kitchenBasicsLesson.id);
 
-  assert.equal(empty.schemaVersion, 1);
+  assert.equal(empty.schemaVersion, 2);
   assert.deepEqual(empty.completedLessonIds, []);
   assert.equal(started.currentLessonId, kitchenBasicsLesson.id);
   assert.equal(started.recentLessonId, kitchenBasicsLesson.id);
@@ -62,6 +62,12 @@ test('tracks an incorrect question and its related vocabulary separately', () =>
   assert.equal(progress.vocabulary.stove.incorrectAttempts, 1);
   assert.equal(mistake.incorrectAttempts, 1);
   assert.equal(mistake.lastSelectedOptionId, 'fridge');
+  assert.equal(progress.reviewItems['vocabulary:stove'].priority, 3);
+  assert.deepEqual(progress.reviewItems['vocabulary:stove'].content, {
+    english: 'stove',
+    romanian: 'aragaz',
+  });
+  assert.equal(progress.reviewItems['vocabulary:stove'].example?.english, 'The stove is next to the fridge.');
 });
 
 test('finishes a lesson, preserves totals, and does not count duplicate saves', () => {

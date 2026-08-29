@@ -16,30 +16,36 @@ export function AppButton({ href, title, subtitle, variant = 'secondary' }: AppB
 
   return (
     <Link href={href} asChild>
-      <Pressable
-        accessibilityRole="button"
-        style={({ pressed }) => [
-          styles.button,
-          isPrimary ? styles.primary : styles.secondary,
-          pressed && (isPrimary ? styles.primaryPressed : styles.secondaryPressed),
-        ]}>
-        <View style={styles.labelContainer}>
-          <Text style={[styles.title, isPrimary ? styles.primaryText : styles.secondaryText]}>
-            {title}
-          </Text>
-          {subtitle ? (
+      <Pressable accessibilityRole="link" style={styles.button}>
+        {({ pressed }) => (
+          <View
+            style={[
+              styles.buttonContent,
+              isPrimary ? styles.primary : styles.secondary,
+              pressed && (isPrimary ? styles.primaryPressed : styles.secondaryPressed),
+            ]}>
+            <View style={styles.labelContainer}>
+              <Text style={[styles.title, isPrimary ? styles.primaryText : styles.secondaryText]}>
+                {title}
+              </Text>
+              {subtitle ? (
+                <Text
+                  style={[
+                    styles.subtitle,
+                    isPrimary ? styles.primarySubtitle : styles.secondaryText,
+                  ]}>
+                  {subtitle}
+                </Text>
+              ) : null}
+            </View>
             <Text
-              style={[styles.subtitle, isPrimary ? styles.primarySubtitle : styles.secondaryText]}>
-              {subtitle}
+              accessibilityElementsHidden
+              importantForAccessibility="no-hide-descendants"
+              style={[styles.arrow, isPrimary ? styles.primaryText : styles.secondaryText]}>
+              →
             </Text>
-          ) : null}
-        </View>
-        <Text
-          accessibilityElementsHidden
-          importantForAccessibility="no-hide-descendants"
-          style={[styles.arrow, isPrimary ? styles.primaryText : styles.secondaryText]}>
-          →
-        </Text>
+          </View>
+        )}
       </Pressable>
     </Link>
   );
@@ -49,9 +55,14 @@ const styles = StyleSheet.create({
   button: {
     minHeight: 72,
     borderRadius: 16,
+    overflow: 'hidden',
+  },
+  buttonContent: {
+    minHeight: 72,
     borderWidth: 1,
     paddingHorizontal: 20,
     paddingVertical: 14,
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 16,

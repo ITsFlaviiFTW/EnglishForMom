@@ -19,6 +19,8 @@ export type {
   LearnerProgress,
   LessonProgress,
   QuestionMistakeProgress,
+  ReviewItemKind,
+  ReviewItemProgress,
   VocabularyFamiliarity,
   VocabularyProgress,
 } from './progress';

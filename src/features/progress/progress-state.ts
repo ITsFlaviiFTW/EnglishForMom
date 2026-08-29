@@ -7,8 +7,9 @@ import type {
   LessonProgress,
   VocabularyProgress,
 } from '@/types';
+import { addReviewMistakes, createReviewSeeds } from '../review/review-queue.ts';
 
-export const CURRENT_PROGRESS_SCHEMA_VERSION = 1 as const;
+export const CURRENT_PROGRESS_SCHEMA_VERSION = 2 as const;
 
 export type ActivityCompletion = {
   lesson: Lesson;
@@ -30,6 +31,7 @@ export function createDefaultProgress(): LearnerProgress {
     lessons: {},
     vocabulary: {},
     questionMistakes: {},
+    reviewItems: {},
   };
 }
 
@@ -104,6 +106,14 @@ export function recordActivityCompletion(
           },
         }
       : progress.questionMistakes;
+  const reviewItems =
+    activity.type === 'multiple-choice' && correct === false
+      ? addReviewMistakes(
+          progress.reviewItems,
+          createReviewSeeds(lesson, activity),
+          completedAt,
+        )
+      : progress.reviewItems;
 
   return {
     ...progress,
@@ -118,6 +128,7 @@ export function recordActivityCompletion(
     lessons: { ...progress.lessons, [lesson.id]: lessonProgress },
     vocabulary,
     questionMistakes,
+    reviewItems,
   };
 }
 

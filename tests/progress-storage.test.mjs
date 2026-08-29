@@ -1,7 +1,12 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { createDefaultProgress, recordLessonStarted } from '../src/features/progress/progress-state.ts';
+import { kitchenBasicsLesson } from '../src/data/lessons/kitchen-basics.ts';
+import {
+  createDefaultProgress,
+  recordActivityCompletion,
+  recordLessonStarted,
+} from '../src/features/progress/progress-state.ts';
 import {
   deserializeProgress,
   serializeProgress,
@@ -50,6 +55,22 @@ test('normalizes damaged fields without discarding valid versioned data', () => 
   assert.deepEqual(progress.lessons, {});
 });
 
+test('migrates a version 1 save to version 2 with an empty review collection', () => {
+  const migrated = deserializeProgress(
+    JSON.stringify({
+      schemaVersion: 1,
+      currentLessonId: 'kitchen',
+      completedLessonIds: [],
+      correctAnswers: 2,
+      incorrectAnswers: 1,
+    }),
+  );
+
+  assert.equal(migrated.schemaVersion, 2);
+  assert.equal(migrated.currentLessonId, 'kitchen');
+  assert.deepEqual(migrated.reviewItems, {});
+});
+
 test('a new repository instance restores saved progress after a simulated restart', async () => {
   const storage = new MemoryStorage();
   const beforeRestart = recordLessonStarted(createDefaultProgress(), 'level-1-kitchen-basics');
@@ -59,6 +80,30 @@ test('a new repository instance restores saved progress after a simulated restar
 
   assert.deepEqual(afterRestart, beforeRestart);
   assert.equal(serializeProgress(afterRestart), serializeProgress(beforeRestart));
+});
+
+test('review priority and context survive a simulated restart', async () => {
+  const storage = new MemoryStorage();
+  const question = kitchenBasicsLesson.activities.find(
+    (activity) => activity.id === 'recall-stove-ro',
+  );
+  assert.equal(question?.type, 'multiple-choice');
+  const beforeRestart = recordActivityCompletion(createDefaultProgress(), {
+    lesson: kitchenBasicsLesson,
+    activity: question,
+    response: { type: 'choice', optionId: 'fridge' },
+    correct: false,
+    completedAt: '2026-08-29T12:00:00.000Z',
+  });
+
+  await new ProgressRepository(storage).save(beforeRestart);
+  const afterRestart = await new ProgressRepository(storage).load();
+
+  assert.equal(afterRestart.reviewItems['vocabulary:stove'].priority, 3);
+  assert.deepEqual(afterRestart.reviewItems['vocabulary:stove'].content, {
+    english: 'stove',
+    romanian: 'aragaz',
+  });
 });
 
 test('storage read failures also return safe defaults', async () => {

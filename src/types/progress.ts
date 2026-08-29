@@ -1,4 +1,4 @@
-import type { ActivityId, ActivityResponse, LessonId } from './lesson';
+import type { ActivityId, ActivityResponse, LearningText, LessonId } from './lesson';
 
 export type ActivityResult = {
   activityId: ActivityId;
@@ -37,8 +37,26 @@ export type QuestionMistakeProgress = {
   lastMissedAt: string;
 };
 
+export type ReviewItemKind = 'vocabulary' | 'comprehension';
+
+export type ReviewItemProgress = {
+  id: string;
+  kind: ReviewItemKind;
+  lessonId: LessonId;
+  sourceActivityId: ActivityId;
+  learningItemId: string;
+  content: LearningText;
+  example?: LearningText;
+  priority: number;
+  correctAttempts: number;
+  incorrectAttempts: number;
+  correctStreak: number;
+  lastMissedAt: string;
+  lastReviewedAt: string | null;
+};
+
 export type LearnerProgress = {
-  schemaVersion: 1;
+  schemaVersion: 2;
   currentLessonId: LessonId | null;
   recentLessonId: LessonId | null;
   completedLessonIds: readonly LessonId[];
@@ -48,4 +66,5 @@ export type LearnerProgress = {
   lessons: Readonly<Record<LessonId, LessonProgress>>;
   vocabulary: Readonly<Record<string, VocabularyProgress>>;
   questionMistakes: Readonly<Record<string, QuestionMistakeProgress>>;
+  reviewItems: Readonly<Record<string, ReviewItemProgress>>;
 };
