@@ -13,7 +13,7 @@ export const courseOutline: readonly CourseLevelPreview[] = [
     level: 'Nivelul 1',
     title: 'Casa mea',
     description: 'Cuvinte și expresii utile pentru fiecare cameră din casă.',
-    topics: ['Bucătărie', 'Baie', 'Dormitor', 'Sufragerie'],
+    topics: ['Bucătărie', 'Baie', 'Dormitor', 'Sufragerie', 'Rufe', 'Curățenie'],
     available: true,
   },
   {

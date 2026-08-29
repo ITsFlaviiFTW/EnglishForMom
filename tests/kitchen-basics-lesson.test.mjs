@@ -53,8 +53,12 @@ test('provides one translated example for every vocabulary item', () => {
 });
 
 test('provides one unique generated recording source for every word and example', () => {
-  assert.equal(generatedEnglishAudioSources.length, 24);
-  assert.equal(new Set(generatedEnglishAudioSources.map((source) => source.key)).size, 24);
+  const kitchenAudioSources = generatedEnglishAudioSources.filter((source) =>
+    source.key.startsWith('kitchen-'),
+  );
+
+  assert.equal(kitchenAudioSources.length, 24);
+  assert.equal(new Set(kitchenAudioSources.map((source) => source.key)).size, 24);
 });
 
 test('places two valid recall questions after every group of three words', () => {

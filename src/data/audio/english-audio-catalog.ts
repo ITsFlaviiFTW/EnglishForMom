@@ -1,3 +1,9 @@
+import { bathroomBasicsAudioSources } from '../lessons/bathroom-basics.ts';
+import { bedroomBasicsAudioSources } from '../lessons/bedroom-basics.ts';
+import { cleaningBasicsAudioSources } from '../lessons/cleaning-basics.ts';
+import { laundryBasicsAudioSources } from '../lessons/laundry-basics.ts';
+import { livingRoomBasicsAudioSources } from '../lessons/living-room-basics.ts';
+
 export const kitchenBasicsAudio = {
   fridge: createPair('fridge', 'The milk is in the fridge.'),
   stove: createPair('stove', 'The stove is next to the fridge.'),
@@ -13,9 +19,14 @@ export const kitchenBasicsAudio = {
   fork: createPair('fork', 'The fork is next to the plate.'),
 } as const;
 
-export const generatedEnglishAudioSources = Object.values(kitchenBasicsAudio).flatMap(
-  ({ word, example }) => [word, example],
-);
+export const generatedEnglishAudioSources = [
+  ...Object.values(kitchenBasicsAudio).flatMap(({ word, example }) => [word, example]),
+  ...bathroomBasicsAudioSources,
+  ...bedroomBasicsAudioSources,
+  ...livingRoomBasicsAudioSources,
+  ...laundryBasicsAudioSources,
+  ...cleaningBasicsAudioSources,
+];
 
 function createPair(word: string, example: string) {
   const id = word.toLowerCase().replaceAll(/[^a-z0-9]+/g, '-');
