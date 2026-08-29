@@ -1,4 +1,4 @@
-import { Link } from 'expo-router';
+import { Link, type Href } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { layout } from '@/constants/layout';
@@ -8,15 +8,23 @@ type ScreenHeaderProps = {
   title: string;
   description?: string;
   showHomeLink?: boolean;
+  backHref?: Href;
+  backLabel?: string;
 };
 
-export function ScreenHeader({ title, description, showHomeLink = true }: ScreenHeaderProps) {
+export function ScreenHeader({
+  title,
+  description,
+  showHomeLink = true,
+  backHref = '/',
+  backLabel = '← Acasă',
+}: ScreenHeaderProps) {
   return (
     <View style={styles.container}>
       {showHomeLink ? (
-        <Link href="/" asChild>
+        <Link href={backHref} asChild>
           <Pressable accessibilityRole="button" style={styles.homeLink}>
-            <Text style={styles.homeLinkText}>← Acasă</Text>
+            <Text style={styles.homeLinkText}>{backLabel}</Text>
           </Pressable>
         </Link>
       ) : null}

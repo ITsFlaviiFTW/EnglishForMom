@@ -1,6 +1,8 @@
 import type { Lesson, LessonId } from '@/types';
 
-const lessons: readonly Lesson[] = [];
+import { developmentLesson } from './development-lesson';
+
+const lessons: readonly Lesson[] = [developmentLesson];
 
 export function getLessons(): readonly Lesson[] {
   return lessons;

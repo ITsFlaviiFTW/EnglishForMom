@@ -1,10 +1,12 @@
 import { StyleSheet, Text, View } from 'react-native';
 
+import { AppButton } from '@/components/app-button';
 import { AppCard } from '@/components/app-card';
 import { ScreenContainer } from '@/components/screen-container';
 import { ScreenHeader } from '@/components/screen-header';
 import { colors } from '@/constants/theme';
 import { courseOutline } from '@/data/courses/course-outline';
+import { developmentLesson } from '@/data/lessons/development-lesson';
 
 export default function LessonsScreen() {
   return (
@@ -21,7 +23,19 @@ export default function LessonsScreen() {
             eyebrow={`${courseLevel.level}${courseLevel.available ? ' · Disponibil în curând' : ' · Planificat'}`}
             title={courseLevel.title}
             description={courseLevel.description}>
-            <Text style={styles.topics}>{courseLevel.topics.join('  •  ')}</Text>
+            <View style={styles.cardContent}>
+              <Text style={styles.topics}>{courseLevel.topics.join('  •  ')}</Text>
+              {courseLevel.available ? (
+                <AppButton
+                  href={{
+                    pathname: '/lessons/[lessonId]',
+                    params: { lessonId: developmentLesson.id },
+                  }}
+                  title="Încearcă lecția demonstrativă"
+                  variant="primary"
+                />
+              ) : null}
+            </View>
           </AppCard>
         ))}
       </View>
@@ -40,5 +54,8 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontSize: 16,
     lineHeight: 25,
+  },
+  cardContent: {
+    gap: 18,
   },
 });

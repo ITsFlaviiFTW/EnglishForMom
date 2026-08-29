@@ -5,11 +5,14 @@ export type {
   AudioSource,
   ChoiceOption,
   ExampleSentence,
+  ExampleSentenceActivity,
   Lesson,
   LessonActivity,
   LessonId,
   LearningText,
   MatchingPair,
+  MultipleChoiceActivity,
+  VocabularyIntroductionActivity,
 } from './lesson';
 export type {
   ActivityResult,

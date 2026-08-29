@@ -8,4 +8,8 @@ export const colors = {
   primarySoft: '#E3ECE7',
   border: '#D9DED9',
   disabled: '#A5ADA9',
+  success: '#276749',
+  successSoft: '#E6F3EC',
+  error: '#9B3A32',
+  errorSoft: '#F8E9E7',
 } as const;

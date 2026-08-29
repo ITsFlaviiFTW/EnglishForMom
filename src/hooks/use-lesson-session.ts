@@ -2,17 +2,19 @@ import { useCallback, useState } from 'react';
 
 import {
   advanceLessonSession,
+  canAdvanceLessonSession,
   createLessonSession,
-  recordActivityResponse,
+  getCurrentActivity,
   retreatLessonSession,
+  submitMultipleChoiceAnswer,
 } from '@/features/lessons/lesson-session';
-import type { ActivityId, ActivityResponse, Lesson } from '@/types';
+import type { Lesson } from '@/types';
 
 export function useLessonSession(lesson: Lesson) {
   const [session, setSession] = useState(() => createLessonSession(lesson));
 
-  const recordResponse = useCallback((activityId: ActivityId, response: ActivityResponse) => {
-    setSession((current) => recordActivityResponse(current, activityId, response));
+  const answerMultipleChoice = useCallback((optionId: string) => {
+    setSession((current) => submitMultipleChoiceAnswer(current, optionId));
   }, []);
 
   const advance = useCallback(() => {
@@ -23,5 +25,12 @@ export function useLessonSession(lesson: Lesson) {
     setSession(retreatLessonSession);
   }, []);
 
-  return { session, recordResponse, advance, goBack };
+  return {
+    session,
+    currentActivity: getCurrentActivity(session),
+    canContinue: canAdvanceLessonSession(session),
+    answerMultipleChoice,
+    advance,
+    goBack,
+  };
 }
