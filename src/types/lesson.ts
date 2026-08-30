@@ -82,16 +82,22 @@ export type SentenceToken = {
 export type SentenceBuildingActivity = ActivityBase & {
   type: 'sentence-building';
   promptRomanian: string;
+  translationRomanian?: string;
   tokens: readonly SentenceToken[];
   correctTokenOrder: readonly string[];
   completedSentence: string;
+  focusItemIds?: readonly string[];
 };
 
 export type FillInTheBlankActivity = ActivityBase & {
   type: 'fill-in-the-blank';
+  /** English sentence containing one `___` marker. */
   sentence: string;
+  completedSentence: string;
   translationRomanian?: string;
+  options: readonly ChoiceOption[];
   acceptedAnswers: readonly string[];
+  focusItemIds?: readonly string[];
   audio?: AudioSource;
 };
 

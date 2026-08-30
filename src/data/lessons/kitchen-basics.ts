@@ -1,5 +1,6 @@
 import type {
   ExampleSentenceActivity,
+  FillInTheBlankActivity,
   LearningText,
   Lesson,
   MultipleChoiceActivity,
@@ -228,10 +229,27 @@ export const kitchenBasicsLesson = {
   },
   descriptionRomanian: 'Învață 12 cuvinte utile pentru obiectele din bucătărie.',
   estimatedMinutes: 15,
-  activities: kitchenGroups.flatMap((group, index) => [
-    ...group.flatMap(createWordActivities),
-    ...recallQuestions[index],
-  ]),
+  activities: [
+    ...kitchenGroups.flatMap((group, index) => [
+      ...group.flatMap(createWordActivities),
+      ...recallQuestions[index],
+    ]),
+    {
+      id: 'fill-fridge-sentence',
+      type: 'fill-in-the-blank',
+      instructionRomanian: 'Alege cuvântul care completează propoziția.',
+      sentence: 'The milk is in the ___.',
+      completedSentence: 'The milk is in the fridge.',
+      translationRomanian: 'Laptele este în frigider.',
+      options: [
+        { id: 'fridge', text: 'fridge' },
+        { id: 'oven', text: 'oven' },
+        { id: 'sink', text: 'sink' },
+      ],
+      acceptedAnswers: ['fridge'],
+      focusItemIds: ['fridge'],
+    } satisfies FillInTheBlankActivity,
+  ],
 } satisfies Lesson;
 
 function createWordActivities(

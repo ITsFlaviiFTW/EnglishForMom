@@ -1,6 +1,7 @@
 import type {
   AudioSource,
   ExampleSentenceActivity,
+  FillInTheBlankActivity,
   LearningText,
   Lesson,
   MultipleChoiceActivity,
@@ -33,6 +34,7 @@ type HomeVocabularyLessonDefinition = {
   prerequisiteLessonIds?: readonly string[];
   audioKeyPrefix: string;
   groups: readonly HomeVocabularyGroup[];
+  practiceActivities?: readonly FillInTheBlankActivity[];
 };
 
 type HomeVocabularyLessonBundle = {
@@ -68,10 +70,13 @@ export function createHomeVocabularyLesson(
     descriptionRomanian: definition.descriptionRomanian,
     estimatedMinutes: definition.estimatedMinutes,
     prerequisiteLessonIds: definition.prerequisiteLessonIds,
-    activities: definition.groups.flatMap((group) => [
-      ...group.items.flatMap((item) => createWordActivities(item, audioByItemId.get(item.id)!)),
-      ...group.recall.map((recall) => createRecallActivity(recall, itemsById)),
-    ]),
+    activities: [
+      ...definition.groups.flatMap((group) => [
+        ...group.items.flatMap((item) => createWordActivities(item, audioByItemId.get(item.id)!)),
+        ...group.recall.map((recall) => createRecallActivity(recall, itemsById)),
+      ]),
+      ...(definition.practiceActivities ?? []),
+    ],
   } satisfies Lesson;
 
   return {

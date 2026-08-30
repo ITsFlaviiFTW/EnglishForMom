@@ -193,6 +193,23 @@ const cleaningBasics = createHomeVocabularyLesson({
       ],
     },
   ],
+  practiceActivities: [
+    {
+      id: 'fill-cleaning-sponge',
+      type: 'fill-in-the-blank',
+      instructionRomanian: 'Alege cuvântul care completează propoziția.',
+      sentence: 'Clean the sink with the ___.',
+      completedSentence: 'Clean the sink with the sponge.',
+      translationRomanian: 'Curăță chiuveta cu buretele.',
+      options: [
+        { id: 'sponge', text: 'sponge' },
+        { id: 'broom', text: 'broom' },
+        { id: 'mop', text: 'mop' },
+      ],
+      acceptedAnswers: ['sponge'],
+      focusItemIds: ['sponge'],
+    },
+  ],
 });
 
 export const cleaningBasicsLesson = cleaningBasics.lesson;

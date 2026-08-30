@@ -83,7 +83,7 @@ test('finishes a lesson, preserves totals, and does not count duplicate saves', 
   assert.equal(progress.correctAnswers, 8);
   assert.equal(progress.incorrectAnswers, 0);
   assert.equal(progress.currentLessonId, null);
-  assert.equal(getLessonResumeIndex(progress, kitchenBasicsLesson), 32);
+  assert.equal(getLessonResumeIndex(progress, kitchenBasicsLesson), 33);
   assert.strictEqual(afterDuplicate, progress);
 });
 

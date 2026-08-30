@@ -6,12 +6,15 @@ export type {
   ChoiceOption,
   ExampleSentence,
   ExampleSentenceActivity,
+  FillInTheBlankActivity,
   Lesson,
   LessonActivity,
   LessonId,
   LearningText,
   MatchingPair,
   MultipleChoiceActivity,
+  SentenceBuildingActivity,
+  SentenceToken,
   VocabularyIntroductionActivity,
 } from './lesson';
 export type {

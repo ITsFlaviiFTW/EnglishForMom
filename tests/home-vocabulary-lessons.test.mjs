@@ -152,7 +152,7 @@ for (const { lesson, audioPrefix, words } of lessonExpectations) {
   test(`${lesson.title.english} places bilingual recall after each vocabulary group`, () => {
     const questions = lesson.activities.filter((activity) => activity.type === 'multiple-choice');
 
-    assert.equal(lesson.activities.length, 38);
+    assert.equal(lesson.activities.length, 39);
     assert.equal(questions.length, 10);
     assert.equal(questions.filter((question) => question.prompt.startsWith('Ce înseamnă')).length, 5);
     assert.equal(
@@ -164,6 +164,12 @@ for (const { lesson, audioPrefix, words } of lessonExpectations) {
       assert.ok(question.options.some((option) => option.id === question.correctOptionId));
       assert.deepEqual(question.focusItemIds, [question.correctOptionId]);
     }
+
+    const fillIn = lesson.activities.find((activity) => activity.type === 'fill-in-the-blank');
+    assert.ok(fillIn);
+    assert.match(fillIn.sentence, /___/);
+    assert.ok(fillIn.options.some((option) => fillIn.acceptedAnswers.includes(option.text)));
+    assert.equal(fillIn.focusItemIds?.length, 1);
   });
 }
 

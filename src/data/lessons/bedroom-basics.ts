@@ -178,6 +178,23 @@ const bedroomBasics = createHomeVocabularyLesson({
       ],
     },
   ],
+  practiceActivities: [
+    {
+      id: 'fill-bedroom-bed',
+      type: 'fill-in-the-blank',
+      instructionRomanian: 'Alege cuvântul care completează propoziția.',
+      sentence: 'The pillow is on the ___.',
+      completedSentence: 'The pillow is on the bed.',
+      translationRomanian: 'Perna este pe pat.',
+      options: [
+        { id: 'bed', text: 'bed' },
+        { id: 'closet', text: 'closet' },
+        { id: 'window', text: 'window' },
+      ],
+      acceptedAnswers: ['bed'],
+      focusItemIds: ['bed'],
+    },
+  ],
 });
 
 export const bedroomBasicsLesson = bedroomBasics.lesson;

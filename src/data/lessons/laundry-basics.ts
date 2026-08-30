@@ -205,6 +205,23 @@ const laundryBasics = createHomeVocabularyLesson({
       ],
     },
   ],
+  practiceActivities: [
+    {
+      id: 'fill-laundry-basket',
+      type: 'fill-in-the-blank',
+      instructionRomanian: 'Alege cuvântul care completează propoziția.',
+      sentence: 'Put the dirty clothes in the ___.',
+      completedSentence: 'Put the dirty clothes in the laundry basket.',
+      translationRomanian: 'Pune hainele murdare în coșul de rufe.',
+      options: [
+        { id: 'laundry-basket', text: 'laundry basket' },
+        { id: 'dryer', text: 'dryer' },
+        { id: 'closet', text: 'closet' },
+      ],
+      acceptedAnswers: ['laundry basket'],
+      focusItemIds: ['laundry-basket'],
+    },
+  ],
 });
 
 export const laundryBasicsLesson = laundryBasics.lesson;

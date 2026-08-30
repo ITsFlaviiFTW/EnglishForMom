@@ -1,9 +1,11 @@
 import type {
   AudioSource,
   ExampleSentenceActivity,
+  FillInTheBlankActivity,
   LearningText,
   Lesson,
   MultipleChoiceActivity,
+  SentenceBuildingActivity,
   VocabularyIntroductionActivity,
 } from '@/types';
 
@@ -17,6 +19,8 @@ type VerbItem = {
 type VerbGroup = {
   verbs: readonly VerbItem[];
   recall: readonly MultipleChoiceActivity[];
+  sentenceBuilding: readonly SentenceBuildingActivity[];
+  fillInTheBlank: readonly FillInTheBlankActivity[];
 };
 
 const verbGroups = [
@@ -85,6 +89,37 @@ const verbGroups = [
         explanationRomanian: '„Am un prosop curat” se spune „I have a clean towel”.',
       }),
     ],
+    sentenceBuilding: [
+      createSentenceBuilding({
+        id: 'build-have-clean-towel',
+        translationRomanian: 'Am un prosop curat.',
+        tokens: [
+          { id: 'towel-period', text: 'towel.' },
+          { id: 'have', text: 'have' },
+          { id: 'i', text: 'I' },
+          { id: 'clean', text: 'clean' },
+          { id: 'a', text: 'a' },
+        ],
+        correctTokenOrder: ['i', 'have', 'a', 'clean', 'towel-period'],
+        completedSentence: 'I have a clean towel.',
+        focusItemIds: ['verb-have'],
+      }),
+    ],
+    fillInTheBlank: [
+      createFillInTheBlank({
+        id: 'fill-be-towel',
+        sentence: 'The towel ___ in the bathroom.',
+        completedSentence: 'The towel is in the bathroom.',
+        translationRomanian: 'Prosopul este în baie.',
+        options: [
+          { id: 'is', text: 'is' },
+          { id: 'are', text: 'are' },
+          { id: 'have', text: 'have' },
+        ],
+        acceptedAnswers: ['is'],
+        focusItemIds: ['verb-be'],
+      }),
+    ],
   },
   {
     verbs: [
@@ -149,6 +184,36 @@ const verbGroups = [
         correctOptionId: 'need',
         focusItemIds: ['verb-need'],
         explanationRomanian: '„Am nevoie de un prosop” se spune „I need a towel”.',
+      }),
+    ],
+    sentenceBuilding: [
+      createSentenceBuilding({
+        id: 'build-need-towel',
+        translationRomanian: 'Am nevoie de un prosop.',
+        tokens: [
+          { id: 'towel-period', text: 'towel.' },
+          { id: 'i', text: 'I' },
+          { id: 'a', text: 'a' },
+          { id: 'need', text: 'need' },
+        ],
+        correctTokenOrder: ['i', 'need', 'a', 'towel-period'],
+        completedSentence: 'I need a towel.',
+        focusItemIds: ['verb-need'],
+      }),
+    ],
+    fillInTheBlank: [
+      createFillInTheBlank({
+        id: 'fill-need-socks',
+        sentence: 'He ___ clean socks.',
+        completedSentence: 'He needs clean socks.',
+        translationRomanian: 'El are nevoie de șosete curate.',
+        options: [
+          { id: 'needs', text: 'needs' },
+          { id: 'need', text: 'need' },
+          { id: 'want', text: 'want' },
+        ],
+        acceptedAnswers: ['needs'],
+        focusItemIds: ['verb-need'],
       }),
     ],
   },
@@ -218,6 +283,35 @@ const verbGroups = [
         correctOptionId: 'come',
         focusItemIds: ['verb-come'],
         explanationRomanian: '„Vino aici, te rog” se spune „Come here, please”.',
+      }),
+    ],
+    sentenceBuilding: [
+      createSentenceBuilding({
+        id: 'build-come-here',
+        translationRomanian: 'Vino aici, te rog.',
+        tokens: [
+          { id: 'please-period', text: 'please.' },
+          { id: 'come', text: 'Come' },
+          { id: 'here-comma', text: 'here,' },
+        ],
+        correctTokenOrder: ['come', 'here-comma', 'please-period'],
+        completedSentence: 'Come here, please.',
+        focusItemIds: ['verb-come'],
+      }),
+    ],
+    fillInTheBlank: [
+      createFillInTheBlank({
+        id: 'fill-go-bathroom',
+        sentence: 'She ___ to the bathroom.',
+        completedSentence: 'She goes to the bathroom.',
+        translationRomanian: 'Ea merge la baie.',
+        options: [
+          { id: 'goes', text: 'goes' },
+          { id: 'go', text: 'go' },
+          { id: 'come', text: 'come' },
+        ],
+        acceptedAnswers: ['goes'],
+        focusItemIds: ['verb-go'],
       }),
     ],
   },
@@ -292,6 +386,38 @@ const verbGroups = [
         explanationRomanian: '„Put the plate on the table” înseamnă „Pune farfuria pe masă”.',
       }),
     ],
+    sentenceBuilding: [
+      createSentenceBuilding({
+        id: 'build-put-plate',
+        translationRomanian: 'Pune farfuria pe masă.',
+        tokens: [
+          { id: 'table-period', text: 'table.' },
+          { id: 'the-1', text: 'the' },
+          { id: 'put', text: 'Put' },
+          { id: 'on', text: 'on' },
+          { id: 'plate', text: 'plate' },
+          { id: 'the-2', text: 'the' },
+        ],
+        correctTokenOrder: ['put', 'the-1', 'plate', 'on', 'the-2', 'table-period'],
+        completedSentence: 'Put the plate on the table.',
+        focusItemIds: ['verb-put'],
+      }),
+    ],
+    fillInTheBlank: [
+      createFillInTheBlank({
+        id: 'fill-put-towels',
+        sentence: 'She ___ the towels in the closet.',
+        completedSentence: 'She puts the towels in the closet.',
+        translationRomanian: 'Ea pune prosoapele în dulap.',
+        options: [
+          { id: 'puts', text: 'puts' },
+          { id: 'put', text: 'put' },
+          { id: 'takes', text: 'takes' },
+        ],
+        acceptedAnswers: ['puts'],
+        focusItemIds: ['verb-put'],
+      }),
+    ],
   },
 ] as const satisfies readonly VerbGroup[];
 
@@ -323,6 +449,8 @@ export const essentialVerbsOneLesson = {
   activities: verbGroups.flatMap((group) => [
     ...group.verbs.flatMap(createVerbActivities),
     ...group.recall,
+    ...group.sentenceBuilding,
+    ...group.fillInTheBlank,
   ]),
 } satisfies Lesson;
 
@@ -372,6 +500,32 @@ function createQuestion(question: QuestionInput): MultipleChoiceActivity {
     ...question,
     type: 'multiple-choice',
     instructionRomanian: 'Alege răspunsul corect.',
+  };
+}
+
+type SentenceBuildingInput = Omit<
+  SentenceBuildingActivity,
+  'type' | 'promptRomanian'
+>;
+
+function createSentenceBuilding(activity: SentenceBuildingInput): SentenceBuildingActivity {
+  return {
+    ...activity,
+    type: 'sentence-building',
+    promptRomanian: 'Construiește propoziția în engleză.',
+  };
+}
+
+type FillInTheBlankInput = Omit<
+  FillInTheBlankActivity,
+  'type' | 'instructionRomanian'
+>;
+
+function createFillInTheBlank(activity: FillInTheBlankInput): FillInTheBlankActivity {
+  return {
+    ...activity,
+    type: 'fill-in-the-blank',
+    instructionRomanian: 'Alege cuvântul care completează propoziția.',
   };
 }
 

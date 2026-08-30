@@ -15,6 +15,12 @@ const examples = essentialVerbsOneLesson.activities.filter(
 const questions = essentialVerbsOneLesson.activities.filter(
   (activity) => activity.type === 'multiple-choice',
 );
+const sentenceBuildingActivities = essentialVerbsOneLesson.activities.filter(
+  (activity) => activity.type === 'sentence-building',
+);
+const fillInTheBlankActivities = essentialVerbsOneLesson.activities.filter(
+  (activity) => activity.type === 'fill-in-the-blank',
+);
 
 test('teaches all eight requested infinitives with Romanian meanings', () => {
   assert.deepEqual(
@@ -73,17 +79,19 @@ test('gives every verb four translated household examples with audio', () => {
 });
 
 test('places two valid recall questions after each pair of verbs', () => {
-  assert.equal(essentialVerbsOneLesson.activities.length, 48);
+  assert.equal(essentialVerbsOneLesson.activities.length, 56);
   assert.equal(questions.length, 8);
 
   for (let groupIndex = 0; groupIndex < 4; groupIndex += 1) {
     const groupActivities = essentialVerbsOneLesson.activities.slice(
-      groupIndex * 12,
-      groupIndex * 12 + 12,
+      groupIndex * 14,
+      groupIndex * 14 + 14,
     );
-    assert.deepEqual(groupActivities.slice(-2).map((activity) => activity.type), [
+    assert.deepEqual(groupActivities.slice(-4).map((activity) => activity.type), [
       'multiple-choice',
       'multiple-choice',
+      'sentence-building',
+      'fill-in-the-blank',
     ]);
   }
 
@@ -91,6 +99,32 @@ test('places two valid recall questions after each pair of verbs', () => {
     assert.ok(question.options.some((option) => option.id === question.correctOptionId));
     assert.equal(question.options.length, 3);
     assert.equal(question.focusItemIds?.length, 1);
+  }
+});
+
+test('adds four reusable fill-in activities with valid choices and review context', () => {
+  assert.equal(fillInTheBlankActivities.length, 4);
+
+  for (const activity of fillInTheBlankActivities) {
+    assert.match(activity.sentence, /___/);
+    assert.match(activity.completedSentence, /[.!?]$/);
+    assert.ok(activity.options.some((option) => activity.acceptedAnswers.includes(option.text)));
+    assert.equal(activity.options.length, 3);
+    assert.equal(activity.focusItemIds?.length, 1);
+  }
+});
+
+test('adds four shuffled sentence-building activities with punctuation and review context', () => {
+  assert.equal(sentenceBuildingActivities.length, 4);
+
+  for (const activity of sentenceBuildingActivities) {
+    assert.notDeepEqual(
+      activity.tokens.map((token) => token.id),
+      activity.correctTokenOrder,
+    );
+    assert.match(activity.completedSentence, /[.!?]$/);
+    assert.ok(activity.translationRomanian);
+    assert.equal(activity.focusItemIds?.length, 1);
   }
 });
 

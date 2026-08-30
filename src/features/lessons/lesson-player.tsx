@@ -16,23 +16,33 @@ import { ScreenHeader } from '@/components/screen-header';
 import { colors } from '@/constants/theme';
 import { ListenButton } from '@/features/audio/listen-button';
 import { useAudioPlayback } from '@/features/audio/use-audio-playback';
-import { getCorrectOption } from '@/features/lessons/lesson-session';
+import { isFillInAnswerCorrect } from '@/features/lessons/fill-in-the-blank';
+import {
+  getCorrectOption,
+  type FillInTheBlankAnswerFeedback,
+  type MultipleChoiceAnswerFeedback,
+  type SentenceBuildingAnswerFeedback,
+} from '@/features/lessons/lesson-session';
 import { useLessonSession } from '@/hooks/use-lesson-session';
 import type { AudioPlaybackState, AudioService } from '@/services/audio-service';
 import type {
   ActivityResponse,
   AudioSource,
   ExampleSentenceActivity,
+  FillInTheBlankActivity,
   Lesson,
   LessonActivity,
   MultipleChoiceActivity,
+  SentenceBuildingActivity,
   VocabularyIntroductionActivity,
 } from '@/types';
 
 type SupportedActivity =
   | VocabularyIntroductionActivity
   | ExampleSentenceActivity
-  | MultipleChoiceActivity;
+  | MultipleChoiceActivity
+  | SentenceBuildingActivity
+  | FillInTheBlankActivity;
 
 type LessonPlayerProps = {
   lesson: Lesson;
@@ -53,8 +63,17 @@ export function LessonPlayer({
   saveError,
   onActivityCompleted,
 }: LessonPlayerProps) {
-  const { session, currentActivity, canContinue, answerMultipleChoice, advance } =
-    useLessonSession(lesson, initialActivityIndex);
+  const {
+    session,
+    currentActivity,
+    canContinue,
+    answerMultipleChoice,
+    toggleSentenceToken,
+    checkSentenceAnswer,
+    selectFillInAnswer,
+    checkFillInAnswer,
+    advance,
+  } = useLessonSession(lesson, initialActivityIndex);
   const audioPlayback = useAudioPlayback(audioService, currentActivity?.id);
 
   if (session.status === 'completed') {
@@ -69,7 +88,11 @@ export function LessonPlayer({
   const handleAdvance = () => {
     const response = session.responses[currentActivity.id] ?? { type: 'acknowledged' };
     const correct =
-      currentActivity.type === 'multiple-choice' ? session.feedback?.isCorrect ?? null : null;
+      currentActivity.type === 'multiple-choice' ||
+      currentActivity.type === 'sentence-building' ||
+      currentActivity.type === 'fill-in-the-blank'
+        ? session.feedback?.isCorrect ?? null
+        : null;
     onActivityCompleted?.({ activity: currentActivity, response, correct });
     advance();
   };
@@ -105,14 +128,22 @@ export function LessonPlayer({
         <ActivityRenderer
           activity={currentActivity}
           feedback={session.feedback}
+          response={session.responses[currentActivity.id]}
           onAnswer={answerMultipleChoice}
+          onToggleSentenceToken={toggleSentenceToken}
+          onCheckSentenceAnswer={checkSentenceAnswer}
+          onSelectFillInAnswer={selectFillInAnswer}
+          onCheckFillInAnswer={checkFillInAnswer}
           audioState={audioPlayback.state}
           audioError={audioPlayback.errorMessage}
           onPlayAudio={audioPlayback.play}
         />
       </View>
 
-      {currentActivity.type !== 'multiple-choice' || session.feedback ? (
+      {(currentActivity.type !== 'multiple-choice' &&
+        currentActivity.type !== 'sentence-building' &&
+        currentActivity.type !== 'fill-in-the-blank') ||
+      session.feedback ? (
         <ActionButton
           title={
             session.currentActivityIndex === lesson.activities.length - 1
@@ -131,7 +162,12 @@ export function LessonPlayer({
 type ActivityRendererProps = {
   activity: SupportedActivity;
   feedback: ReturnType<typeof useLessonSession>['session']['feedback'];
+  response: ActivityResponse | undefined;
   onAnswer: (optionId: string) => void;
+  onToggleSentenceToken: (tokenId: string) => void;
+  onCheckSentenceAnswer: () => void;
+  onSelectFillInAnswer: (answer: string) => void;
+  onCheckFillInAnswer: () => void;
   audioState: AudioPlaybackState;
   audioError: string | null;
   onPlayAudio: (source: AudioSource) => void;
@@ -140,7 +176,12 @@ type ActivityRendererProps = {
 function ActivityRenderer({
   activity,
   feedback,
+  response,
   onAnswer,
+  onToggleSentenceToken,
+  onCheckSentenceAnswer,
+  onSelectFillInAnswer,
+  onCheckFillInAnswer,
   audioState,
   audioError,
   onPlayAudio,
@@ -165,7 +206,33 @@ function ActivityRenderer({
         />
       );
     case 'multiple-choice':
-      return <MultipleChoice activity={activity} feedback={feedback} onAnswer={onAnswer} />;
+      return (
+        <MultipleChoice
+          activity={activity}
+          feedback={feedback?.type === 'multiple-choice' ? feedback : null}
+          onAnswer={onAnswer}
+        />
+      );
+    case 'sentence-building':
+      return (
+        <SentenceBuilding
+          activity={activity}
+          feedback={feedback?.type === 'sentence-building' ? feedback : null}
+          selectedTokenIds={response?.type === 'token-order' ? response.tokenIds : []}
+          onToggleToken={onToggleSentenceToken}
+          onCheckAnswer={onCheckSentenceAnswer}
+        />
+      );
+    case 'fill-in-the-blank':
+      return (
+        <FillInTheBlank
+          activity={activity}
+          feedback={feedback?.type === 'fill-in-the-blank' ? feedback : null}
+          selectedAnswer={response?.type === 'text' ? response.value : null}
+          onSelectAnswer={onSelectFillInAnswer}
+          onCheckAnswer={onCheckFillInAnswer}
+        />
+      );
   }
 }
 
@@ -250,7 +317,7 @@ function ExampleActivity({
 
 type MultipleChoiceProps = {
   activity: MultipleChoiceActivity;
-  feedback: ReturnType<typeof useLessonSession>['session']['feedback'];
+  feedback: MultipleChoiceAnswerFeedback | null;
   onAnswer: (optionId: string) => void;
 };
 
@@ -296,6 +363,172 @@ function MultipleChoice({ activity, feedback, onAnswer }: MultipleChoiceProps) {
         </View>
       ) : null}
     </View>
+  );
+}
+
+type SentenceBuildingProps = {
+  activity: SentenceBuildingActivity;
+  feedback: SentenceBuildingAnswerFeedback | null;
+  selectedTokenIds: readonly string[];
+  onToggleToken: (tokenId: string) => void;
+  onCheckAnswer: () => void;
+};
+
+function SentenceBuilding({
+  activity,
+  feedback,
+  selectedTokenIds,
+  onToggleToken,
+  onCheckAnswer,
+}: SentenceBuildingProps) {
+  const selectedTokens = selectedTokenIds.flatMap((tokenId) => {
+    const token = activity.tokens.find((candidate) => candidate.id === tokenId);
+    return token ? [token] : [];
+  });
+  const availableTokens = activity.tokens.filter((token) => !selectedTokenIds.includes(token.id));
+  const readyToCheck = selectedTokenIds.length === activity.correctTokenOrder.length;
+
+  return (
+    <AppCard eyebrow="Construiește propoziția" title={activity.promptRomanian}>
+      {activity.translationRomanian ? (
+        <Text style={styles.sentenceTranslation}>{activity.translationRomanian}</Text>
+      ) : null}
+
+      <Text style={styles.sentenceAreaLabel}>Propoziția ta</Text>
+      <View
+        accessibilityLabel="Propoziția construită"
+        style={styles.sentenceAnswerArea}>
+        {selectedTokens.length > 0 ? (
+          <View style={styles.tokenRow}>
+            {selectedTokens.map((token, index) => (
+              <ActionButtonShell
+                key={token.id}
+                accessibilityLabel={`Elimină „${token.text}”, poziția ${index + 1}`}
+                disabled={Boolean(feedback)}
+                onPress={() => onToggleToken(token.id)}
+                style={[styles.wordToken, styles.selectedWordToken]}>
+                <Text style={styles.wordTokenText}>{token.text}</Text>
+                <Text style={styles.removeTokenHint}>elimină</Text>
+              </ActionButtonShell>
+            ))}
+          </View>
+        ) : (
+          <Text style={styles.sentencePlaceholder}>Atinge cuvintele în ordinea corectă.</Text>
+        )}
+      </View>
+
+      {!feedback ? (
+        <Text style={styles.reorderHint}>
+          Pentru a schimba ordinea, atinge un cuvânt ales și adaugă-l din nou.
+        </Text>
+      ) : null}
+
+      <Text style={styles.sentenceAreaLabel}>Cuvinte disponibile</Text>
+      <View style={styles.tokenRow}>
+        {availableTokens.map((token) => (
+          <ActionButtonShell
+            key={token.id}
+            accessibilityLabel={`Adaugă „${token.text}”`}
+            disabled={Boolean(feedback)}
+            onPress={() => onToggleToken(token.id)}
+            style={styles.wordToken}>
+            <Text style={styles.wordTokenText}>{token.text}</Text>
+          </ActionButtonShell>
+        ))}
+      </View>
+
+      {feedback ? (
+        <View
+          accessibilityLiveRegion="polite"
+          style={[styles.feedback, feedback.isCorrect ? styles.correctFeedback : styles.wrongFeedback]}>
+          <Text style={[styles.feedbackTitle, feedback.isCorrect ? styles.correctText : styles.wrongText]}>
+            {feedback.isCorrect ? 'Corect!' : 'Nu este corect.'}
+          </Text>
+          <Text style={styles.feedbackMessage}>
+            {feedback.isCorrect
+              ? feedback.correctSentence
+              : `Răspunsul corect este „${feedback.correctSentence}”`}
+          </Text>
+        </View>
+      ) : (
+        <View style={styles.checkAnswerButton}>
+          <ActionButton
+            title="Check Answer · Verifică"
+            onPress={onCheckAnswer}
+            disabled={!readyToCheck}
+          />
+        </View>
+      )}
+    </AppCard>
+  );
+}
+
+type FillInTheBlankProps = {
+  activity: FillInTheBlankActivity;
+  feedback: FillInTheBlankAnswerFeedback | null;
+  selectedAnswer: string | null;
+  onSelectAnswer: (answer: string) => void;
+  onCheckAnswer: () => void;
+};
+
+function FillInTheBlank({
+  activity,
+  feedback,
+  selectedAnswer,
+  onSelectAnswer,
+  onCheckAnswer,
+}: FillInTheBlankProps) {
+  return (
+    <AppCard
+      eyebrow="Completează propoziția"
+      title={activity.instructionRomanian ?? 'Alege cuvântul care lipsește.'}>
+      <Text style={styles.fillSentence}>{activity.sentence}</Text>
+      {activity.translationRomanian ? (
+        <Text style={styles.fillTranslation}>{activity.translationRomanian}</Text>
+      ) : null}
+
+      <View style={styles.fillOptions}>
+        {activity.options.map((option) => {
+          const selected = selectedAnswer === option.text;
+          const correct = Boolean(feedback && isFillInAnswerCorrect(activity, option.text));
+
+          return (
+            <ActionOption
+              key={option.id}
+              label={option.text}
+              disabled={Boolean(feedback)}
+              selected={selected}
+              correct={correct}
+              incorrect={Boolean(selected && feedback && !feedback.isCorrect)}
+              onPress={() => onSelectAnswer(option.text)}
+            />
+          );
+        })}
+      </View>
+
+      {feedback ? (
+        <View
+          accessibilityLiveRegion="polite"
+          style={[styles.feedback, feedback.isCorrect ? styles.correctFeedback : styles.wrongFeedback]}>
+          <Text style={[styles.feedbackTitle, feedback.isCorrect ? styles.correctText : styles.wrongText]}>
+            {feedback.isCorrect ? 'Corect!' : 'Nu este corect.'}
+          </Text>
+          <Text style={styles.feedbackMessage}>
+            {feedback.isCorrect
+              ? feedback.correctSentence
+              : `Răspunsul corect este „${feedback.correctAnswer}”. ${feedback.correctSentence}`}
+          </Text>
+        </View>
+      ) : (
+        <View style={styles.checkAnswerButton}>
+          <ActionButton
+            title="Check Answer · Verifică"
+            onPress={onCheckAnswer}
+            disabled={!selectedAnswer}
+          />
+        </View>
+      )}
+    </AppCard>
   );
 }
 
@@ -363,17 +596,29 @@ function isSupportedActivity(activity: LessonActivity): activity is SupportedAct
   return (
     activity.type === 'vocabulary-introduction' ||
     activity.type === 'example-sentence' ||
-    activity.type === 'multiple-choice'
+    activity.type === 'multiple-choice' ||
+    activity.type === 'sentence-building' ||
+    activity.type === 'fill-in-the-blank'
   );
 }
 
-type ActionButtonShellProps = Pick<PressableProps, 'children' | 'disabled' | 'onPress'> & {
+type ActionButtonShellProps = Pick<
+  PressableProps,
+  'accessibilityLabel' | 'children' | 'disabled' | 'onPress'
+> & {
   style: StyleProp<ViewStyle>;
 };
 
-function ActionButtonShell({ children, disabled, onPress, style }: ActionButtonShellProps) {
+function ActionButtonShell({
+  accessibilityLabel,
+  children,
+  disabled,
+  onPress,
+  style,
+}: ActionButtonShellProps) {
   return (
     <Pressable
+      accessibilityLabel={accessibilityLabel}
       accessibilityRole="button"
       disabled={disabled}
       onPress={onPress}
@@ -479,6 +724,93 @@ const styles = StyleSheet.create({
     fontSize: 19,
     lineHeight: 29,
     marginTop: 12,
+  },
+  sentenceTranslation: {
+    color: colors.primary,
+    fontSize: 23,
+    lineHeight: 31,
+    fontWeight: '600',
+  },
+  fillSentence: {
+    color: colors.text,
+    fontSize: 30,
+    lineHeight: 40,
+    fontWeight: '700',
+  },
+  fillTranslation: {
+    color: colors.textMuted,
+    fontSize: 19,
+    lineHeight: 28,
+    marginTop: 12,
+  },
+  fillOptions: {
+    gap: 12,
+    marginTop: 24,
+  },
+  sentenceAreaLabel: {
+    color: colors.textMuted,
+    fontSize: 15,
+    lineHeight: 22,
+    fontWeight: '700',
+    marginTop: 18,
+  },
+  sentenceAnswerArea: {
+    minHeight: 86,
+    justifyContent: 'center',
+    backgroundColor: colors.background,
+    borderColor: colors.borderStrong,
+    borderWidth: 1,
+    borderRadius: 14,
+    padding: 12,
+    marginTop: 8,
+  },
+  sentencePlaceholder: {
+    color: colors.textMuted,
+    fontSize: 17,
+    lineHeight: 25,
+    textAlign: 'center',
+  },
+  reorderHint: {
+    color: colors.textMuted,
+    fontSize: 15,
+    lineHeight: 22,
+    marginTop: 10,
+  },
+  tokenRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+    marginTop: 8,
+  },
+  wordToken: {
+    minHeight: 52,
+    justifyContent: 'center',
+    backgroundColor: colors.surface,
+    borderColor: colors.borderStrong,
+    borderWidth: 2,
+    borderRadius: 13,
+    paddingHorizontal: 16,
+    paddingVertical: 9,
+  },
+  selectedWordToken: {
+    backgroundColor: colors.primarySoft,
+    borderColor: colors.primary,
+  },
+  wordTokenText: {
+    color: colors.text,
+    fontSize: 19,
+    lineHeight: 25,
+    fontWeight: '700',
+    textAlign: 'center',
+  },
+  removeTokenHint: {
+    color: colors.textMuted,
+    fontSize: 11,
+    lineHeight: 15,
+    textAlign: 'center',
+  },
+  checkAnswerButton: {
+    marginTop: 22,
   },
   questionContainer: {
     gap: 16,

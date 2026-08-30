@@ -1,8 +1,10 @@
 import type {
+  FillInTheBlankActivity,
   LearnerProgress,
   Lesson,
   MultipleChoiceActivity,
   ReviewItemProgress,
+  SentenceBuildingActivity,
   VocabularyIntroductionActivity,
 } from '@/types';
 
@@ -23,7 +25,7 @@ export type ReviewAnswer = {
 
 export function createReviewSeeds(
   lesson: Lesson,
-  activity: MultipleChoiceActivity,
+  activity: MultipleChoiceActivity | SentenceBuildingActivity | FillInTheBlankActivity,
 ): readonly ReviewItemSeed[] {
   const vocabularyActivities = lesson.activities.filter(
     (candidate): candidate is VocabularyIntroductionActivity =>
@@ -57,6 +59,26 @@ export function createReviewSeeds(
 
   if (vocabularySeeds.length > 0) {
     return vocabularySeeds;
+  }
+
+  if (activity.type === 'sentence-building' || activity.type === 'fill-in-the-blank') {
+    return [
+      {
+        id: `comprehension:${lesson.id}:${activity.id}`,
+        kind: 'comprehension',
+        lessonId: lesson.id,
+        sourceActivityId: activity.id,
+        learningItemId: activity.id,
+        content: {
+          english: activity.completedSentence,
+          romanian:
+            activity.translationRomanian ??
+            (activity.type === 'sentence-building'
+              ? activity.promptRomanian
+              : activity.sentence),
+        },
+      },
+    ];
   }
 
   const correctOption = activity.options.find((option) => option.id === activity.correctOptionId);

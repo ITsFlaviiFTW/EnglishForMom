@@ -196,6 +196,23 @@ const livingRoomBasics = createHomeVocabularyLesson({
       ],
     },
   ],
+  practiceActivities: [
+    {
+      id: 'fill-living-room-coffee-table',
+      type: 'fill-in-the-blank',
+      instructionRomanian: 'Alege cuvântul care completează propoziția.',
+      sentence: 'The remote control is on the ___.',
+      completedSentence: 'The remote control is on the coffee table.',
+      translationRomanian: 'Telecomanda este pe măsuța de cafea.',
+      options: [
+        { id: 'coffee-table', text: 'coffee table' },
+        { id: 'window', text: 'window' },
+        { id: 'shelf', text: 'shelf' },
+      ],
+      acceptedAnswers: ['coffee table'],
+      focusItemIds: ['coffee-table'],
+    },
+  ],
 });
 
 export const livingRoomBasicsLesson = livingRoomBasics.lesson;

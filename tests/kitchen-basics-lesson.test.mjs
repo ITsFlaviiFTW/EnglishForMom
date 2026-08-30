@@ -86,5 +86,11 @@ test('places two valid recall questions after every group of three words', () =>
     assert.ok(question.options.some((option) => option.id === question.correctOptionId));
   }
 
-  assert.equal(kitchenBasicsLesson.activities.length, 32);
+  const fillIn = kitchenBasicsLesson.activities.find(
+    (activity) => activity.type === 'fill-in-the-blank',
+  );
+  assert.ok(fillIn);
+  assert.equal(fillIn.completedSentence, 'The milk is in the fridge.');
+  assert.deepEqual(fillIn.focusItemIds, ['fridge']);
+  assert.equal(kitchenBasicsLesson.activities.length, 33);
 });

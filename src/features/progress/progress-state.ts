@@ -107,7 +107,10 @@ export function recordActivityCompletion(
         }
       : progress.questionMistakes;
   const reviewItems =
-    activity.type === 'multiple-choice' && correct === false
+    (activity.type === 'multiple-choice' ||
+      activity.type === 'sentence-building' ||
+      activity.type === 'fill-in-the-blank') &&
+    correct === false
       ? addReviewMistakes(
           progress.reviewItems,
           createReviewSeeds(lesson, activity),
@@ -182,7 +185,11 @@ function updateVocabulary(
       ? [activity.vocabularyId]
       : activity.type === 'multiple-choice'
         ? (activity.focusItemIds ?? [])
-        : [];
+        : activity.type === 'sentence-building'
+          ? (activity.focusItemIds ?? [])
+          : activity.type === 'fill-in-the-blank'
+            ? (activity.focusItemIds ?? [])
+            : [];
 
   if (vocabularyIds.length === 0) {
     return vocabulary;

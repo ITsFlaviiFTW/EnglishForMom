@@ -211,6 +211,23 @@ const bathroomBasics = createHomeVocabularyLesson({
       ],
     },
   ],
+  practiceActivities: [
+    {
+      id: 'fill-bathroom-sink',
+      type: 'fill-in-the-blank',
+      instructionRomanian: 'Alege cuvântul care completează propoziția.',
+      sentence: 'The mirror is above the ___.',
+      completedSentence: 'The mirror is above the sink.',
+      translationRomanian: 'Oglinda este deasupra chiuvetei.',
+      options: [
+        { id: 'sink', text: 'sink' },
+        { id: 'shower', text: 'shower' },
+        { id: 'toilet', text: 'toilet' },
+      ],
+      acceptedAnswers: ['sink'],
+      focusItemIds: ['sink'],
+    },
+  ],
 });
 
 export const bathroomBasicsLesson = bathroomBasics.lesson;
