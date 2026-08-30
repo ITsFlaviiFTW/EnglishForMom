@@ -27,6 +27,8 @@ export type VocabularyIntroductionActivity = ActivityBase & {
   type: 'vocabulary-introduction';
   vocabularyId: string;
   content: LearningText;
+  /** Short, useful forms shown beneath the main word without turning the activity into a grammar lecture. */
+  forms?: readonly LearningText[];
   audio?: AudioSource;
   examples?: readonly ExampleSentence[];
 };

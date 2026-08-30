@@ -182,9 +182,24 @@ function VocabularyActivity({
   onPlayAudio,
 }: { activity: VocabularyIntroductionActivity } & AudioActivityProps) {
   return (
-    <AppCard eyebrow="Cuvânt nou" title={activity.instructionRomanian ?? 'Citește cuvântul.'}>
+    <AppCard
+      eyebrow={activity.forms?.length ? 'Verb nou' : 'Cuvânt nou'}
+      title={activity.instructionRomanian ?? 'Citește cuvântul.'}>
       <Text style={styles.englishWord}>{activity.content.english}</Text>
       <Text style={styles.romanianMeaning}>{activity.content.romanian}</Text>
+      {activity.forms?.length ? (
+        <View style={styles.formsSection}>
+          <Text style={styles.formsHeading}>Forme utile</Text>
+          <View style={styles.formsList}>
+            {activity.forms.map((form) => (
+              <View key={`${form.english}-${form.romanian}`} style={styles.formRow}>
+                <Text style={styles.formEnglish}>{form.english}</Text>
+                <Text style={styles.formRomanian}>{form.romanian}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+      ) : null}
       {activity.audio ? (
         <View style={styles.listenControl}>
           <ListenButton
@@ -416,6 +431,39 @@ const styles = StyleSheet.create({
     fontSize: 24,
     lineHeight: 32,
     marginTop: 8,
+  },
+  formsSection: {
+    marginTop: 22,
+  },
+  formsHeading: {
+    color: colors.textMuted,
+    fontSize: 16,
+    lineHeight: 23,
+    fontWeight: '700',
+    marginBottom: 10,
+  },
+  formsList: {
+    gap: 8,
+  },
+  formRow: {
+    backgroundColor: colors.background,
+    borderColor: colors.border,
+    borderWidth: 1,
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+  },
+  formEnglish: {
+    color: colors.text,
+    fontSize: 18,
+    lineHeight: 25,
+    fontWeight: '700',
+  },
+  formRomanian: {
+    color: colors.textMuted,
+    fontSize: 16,
+    lineHeight: 23,
+    marginTop: 2,
   },
   listenControl: {
     marginTop: 20,

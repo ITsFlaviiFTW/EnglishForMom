@@ -3,6 +3,7 @@ import type { Course, CourseId } from '@/types';
 import { bathroomBasicsLesson } from '../lessons/bathroom-basics.ts';
 import { bedroomBasicsLesson } from '../lessons/bedroom-basics.ts';
 import { cleaningBasicsLesson } from '../lessons/cleaning-basics.ts';
+import { essentialVerbsOneLesson } from '../lessons/essential-verbs-1.ts';
 import { kitchenBasicsLesson } from '../lessons/kitchen-basics.ts';
 import { laundryBasicsLesson } from '../lessons/laundry-basics.ts';
 import { livingRoomBasicsLesson } from '../lessons/living-room-basics.ts';
@@ -64,6 +65,25 @@ const courses: readonly Course[] = [
           romanian: 'Curățenie',
         },
         lessonIds: [cleaningBasicsLesson.id],
+      },
+    ],
+  },
+  {
+    id: 'everyday-actions',
+    schemaVersion: 1,
+    title: {
+      english: 'Everyday Actions',
+      romanian: 'Acțiuni de zi cu zi',
+    },
+    descriptionRomanian: 'Verbe și propoziții practice pentru situații obișnuite.',
+    units: [
+      {
+        id: 'essential-verbs-1',
+        title: {
+          english: 'Essential Verbs I',
+          romanian: 'Verbe esențiale I',
+        },
+        lessonIds: [essentialVerbsOneLesson.id],
       },
     ],
   },

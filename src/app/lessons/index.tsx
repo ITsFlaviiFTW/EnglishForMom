@@ -5,18 +5,22 @@ import { AppCard } from '@/components/app-card';
 import { ScreenContainer } from '@/components/screen-container';
 import { ScreenHeader } from '@/components/screen-header';
 import { colors } from '@/constants/theme';
-import { getCourseById } from '@/data/courses/course-catalog';
+import { getCourses } from '@/data/courses/course-catalog';
 import { courseOutline } from '@/data/courses/course-outline';
 import { getLessonById } from '@/data/lessons/lesson-catalog';
 import { useLearningProgress } from '@/hooks/use-learning-progress';
 
-const homeLessonEntries =
-  getCourseById('my-home')?.units.flatMap((unit) =>
-    unit.lessonIds.flatMap((lessonId) => {
-      const lesson = getLessonById(lessonId);
-      return lesson ? [{ lesson, topicRomanian: unit.title.romanian }] : [];
-    }),
-  ) ?? [];
+const lessonEntriesByCourseId = new Map(
+  getCourses().map((course) => [
+    course.id,
+    course.units.flatMap((unit) =>
+      unit.lessonIds.flatMap((lessonId) => {
+        const lesson = getLessonById(lessonId);
+        return lesson ? [{ lesson, topicRomanian: unit.title.romanian }] : [];
+      }),
+    ),
+  ]),
+);
 
 export default function LessonsScreen() {
   const { progress, isLoading } = useLearningProgress();
@@ -29,60 +33,64 @@ export default function LessonsScreen() {
       />
 
       <View style={styles.list}>
-        {courseOutline.map((courseLevel) => (
-          <AppCard
-            key={courseLevel.id}
-            eyebrow={`${courseLevel.level}${courseLevel.available ? ' · Disponibil' : ' · Planificat'}`}
-            title={courseLevel.title}
-            description={courseLevel.description}>
-            <View style={styles.cardContent}>
-              <Text style={styles.topics}>{courseLevel.topics.join('  •  ')}</Text>
-              {courseLevel.available ? (
-                <View style={styles.lessonList}>
-                  {homeLessonEntries.map(({ lesson, topicRomanian }, index) => {
-                    const lessonProgress = progress.lessons[lesson.id];
-                    const lessonStatus = isLoading
-                      ? 'Se încarcă progresul…'
-                      : lessonProgress?.completed
-                        ? '✓ Lecție finalizată'
-                        : lessonProgress
-                          ? `În progres · pasul ${lessonProgress.nextActivityIndex + 1} din ${lesson.activities.length}`
-                          : 'Lecție nouă';
+        {courseOutline.map((courseLevel) => {
+          const lessonEntries = lessonEntriesByCourseId.get(courseLevel.id) ?? [];
 
-                    return (
-                      <View
-                        key={lesson.id}
-                        style={[styles.lessonEntry, index > 0 && styles.lessonEntrySeparated]}>
-                        <Text
-                          style={[
-                            styles.lessonStatus,
-                            lessonProgress?.completed && styles.completedStatus,
-                          ]}>
-                          {lessonStatus}
-                        </Text>
-                        <AppButton
-                          href={{
-                            pathname: '/lessons/[lessonId]',
-                            params: { lessonId: lesson.id },
-                          }}
-                          title={`Lecția ${index + 1} · ${topicRomanian}`}
-                          subtitle={
-                            lessonProgress?.completed
-                              ? 'Vezi lecția finalizată'
-                              : lessonProgress
-                                ? 'Continuă lecția'
-                                : 'Începe lecția'
-                          }
-                          variant="primary"
-                        />
-                      </View>
-                    );
-                  })}
-                </View>
-              ) : null}
-            </View>
-          </AppCard>
-        ))}
+          return (
+            <AppCard
+              key={courseLevel.id}
+              eyebrow={`${courseLevel.level}${courseLevel.available ? ' · Disponibil' : ' · Planificat'}`}
+              title={courseLevel.title}
+              description={courseLevel.description}>
+              <View style={styles.cardContent}>
+                <Text style={styles.topics}>{courseLevel.topics.join('  •  ')}</Text>
+                {courseLevel.available ? (
+                  <View style={styles.lessonList}>
+                    {lessonEntries.map(({ lesson, topicRomanian }, index) => {
+                      const lessonProgress = progress.lessons[lesson.id];
+                      const lessonStatus = isLoading
+                        ? 'Se încarcă progresul…'
+                        : lessonProgress?.completed
+                          ? '✓ Lecție finalizată'
+                          : lessonProgress
+                            ? `În progres · pasul ${lessonProgress.nextActivityIndex + 1} din ${lesson.activities.length}`
+                            : 'Lecție nouă';
+
+                      return (
+                        <View
+                          key={lesson.id}
+                          style={[styles.lessonEntry, index > 0 && styles.lessonEntrySeparated]}>
+                          <Text
+                            style={[
+                              styles.lessonStatus,
+                              lessonProgress?.completed && styles.completedStatus,
+                            ]}>
+                            {lessonStatus}
+                          </Text>
+                          <AppButton
+                            href={{
+                              pathname: '/lessons/[lessonId]',
+                              params: { lessonId: lesson.id },
+                            }}
+                            title={`Lecția ${index + 1} · ${topicRomanian}`}
+                            subtitle={
+                              lessonProgress?.completed
+                                ? 'Vezi lecția finalizată'
+                                : lessonProgress
+                                  ? 'Continuă lecția'
+                                  : 'Începe lecția'
+                            }
+                            variant="primary"
+                          />
+                        </View>
+                      );
+                    })}
+                  </View>
+                ) : null}
+              </View>
+            </AppCard>
+          );
+        })}
       </View>
     </ScreenContainer>
   );

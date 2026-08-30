@@ -177,6 +177,7 @@ test('registers all production lessons in course order', () => {
     'level-1-living-room-basics',
     'level-1-laundry-basics',
     'level-1-cleaning-basics',
+    'level-2-essential-verbs-1',
   ]);
   for (const lessonId of lessonIds) {
     assert.equal(getLessonById(lessonId)?.id, lessonId);

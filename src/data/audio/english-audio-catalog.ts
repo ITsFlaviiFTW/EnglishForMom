@@ -1,6 +1,7 @@
 import { bathroomBasicsAudioSources } from '../lessons/bathroom-basics.ts';
 import { bedroomBasicsAudioSources } from '../lessons/bedroom-basics.ts';
 import { cleaningBasicsAudioSources } from '../lessons/cleaning-basics.ts';
+import { essentialVerbsOneAudioSources } from '../lessons/essential-verbs-1.ts';
 import { laundryBasicsAudioSources } from '../lessons/laundry-basics.ts';
 import { livingRoomBasicsAudioSources } from '../lessons/living-room-basics.ts';
 
@@ -26,6 +27,7 @@ export const generatedEnglishAudioSources = [
   ...livingRoomBasicsAudioSources,
   ...laundryBasicsAudioSources,
   ...cleaningBasicsAudioSources,
+  ...essentialVerbsOneAudioSources,
 ];
 
 function createPair(word: string, example: string) {

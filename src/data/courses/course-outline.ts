@@ -21,8 +21,8 @@ export const courseOutline: readonly CourseLevelPreview[] = [
     level: 'Nivelul 2',
     title: 'Acțiuni de zi cu zi',
     description: 'Verbe frecvente și propoziții practice.',
-    topics: ['Gătit', 'Curățenie', 'Rutina zilnică'],
-    available: false,
+    topics: ['Verbe esențiale I'],
+    available: true,
   },
   {
     id: 'sentence-patterns',
