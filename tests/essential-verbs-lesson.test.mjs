@@ -140,7 +140,12 @@ test('provides one unique audio source for every infinitive and example', () => 
 test('registers Essential Verbs I as the first Level 2 lesson', () => {
   const everydayActions = getCourseById('everyday-actions');
 
-  assert.equal(everydayActions?.units[0]?.lessonIds[0], essentialVerbsOneLesson.id);
+  assert.equal(everydayActions?.units[0]?.lessonId, essentialVerbsOneLesson.id);
+  assert.deepEqual(everydayActions?.units[0]?.prerequisiteLessonIds, [
+    'level-1-cleaning-basics',
+  ]);
+  assert.equal(everydayActions?.units[1]?.title.english, 'Essential Verbs II');
+  assert.equal(everydayActions?.units[1]?.availability, 'planned');
   assert.equal(getLessonById(essentialVerbsOneLesson.id), essentialVerbsOneLesson);
   assert.equal(getCourseLessonIds().at(-1), essentialVerbsOneLesson.id);
 });

@@ -1,25 +1,19 @@
 import type { LearnerProgress } from '@/types';
 
 export type ProgressSummary = {
-  completedLessons: number;
-  practicedVocabulary: number;
-  correctAnswers: number;
-  incorrectAnswers: number;
-  studyDays: number;
+  wordsIntroduced: number;
+  wordsLearning: number;
+  wordsFamiliar: number;
+  wordsStrong: number;
 };
 
 export function summarizeProgress(progress: LearnerProgress): ProgressSummary {
-  const studyDates = new Set(
-    Object.values(progress.lessons).flatMap((lesson) =>
-      lesson.activityResults.map((result) => result.completedAt.slice(0, 10)),
-    ),
-  );
+  const vocabulary = Object.values(progress.vocabulary);
 
   return {
-    completedLessons: progress.completedLessonIds.length,
-    practicedVocabulary: Object.keys(progress.vocabulary).length,
-    correctAnswers: progress.correctAnswers,
-    incorrectAnswers: progress.incorrectAnswers,
-    studyDays: studyDates.size,
+    wordsIntroduced: vocabulary.length,
+    wordsLearning: vocabulary.filter((item) => item.masteryState === 'learning').length,
+    wordsFamiliar: vocabulary.filter((item) => item.masteryState === 'familiar').length,
+    wordsStrong: vocabulary.filter((item) => item.masteryState === 'strong').length,
   };
 }

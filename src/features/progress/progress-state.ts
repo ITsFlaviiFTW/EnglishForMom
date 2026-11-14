@@ -5,11 +5,11 @@ import type {
   LessonActivity,
   LessonId,
   LessonProgress,
-  VocabularyProgress,
 } from '@/types';
 import { addReviewMistakes, createReviewSeeds } from '../review/review-queue.ts';
+import { updateVocabularyMastery } from './vocabulary-mastery.ts';
 
-export const CURRENT_PROGRESS_SCHEMA_VERSION = 2 as const;
+export const CURRENT_PROGRESS_SCHEMA_VERSION = 3 as const;
 
 export type ActivityCompletion = {
   lesson: Lesson;
@@ -197,29 +197,15 @@ function updateVocabulary(
 
   const updated = { ...vocabulary };
   for (const vocabularyId of vocabularyIds) {
-    const existing = vocabulary[vocabularyId];
-    const correctAttempts = (existing?.correctAttempts ?? 0) + (correct === true ? 1 : 0);
-    const incorrectAttempts = (existing?.incorrectAttempts ?? 0) + (correct === false ? 1 : 0);
-    updated[vocabularyId] = {
+    updated[vocabularyId] = updateVocabularyMastery(
+      vocabulary[vocabularyId],
       vocabularyId,
-      familiarity: getFamiliarity(correctAttempts, incorrectAttempts),
-      correctAttempts,
-      incorrectAttempts,
-      lastPracticedAt: practicedAt,
-    } satisfies VocabularyProgress;
+      correct,
+      practicedAt,
+    );
   }
 
   return updated;
-}
-
-function getFamiliarity(
-  correctAttempts: number,
-  incorrectAttempts: number,
-): VocabularyProgress['familiarity'] {
-  if (correctAttempts >= 2 && correctAttempts > incorrectAttempts) {
-    return 'familiar';
-  }
-  return correctAttempts > 0 || incorrectAttempts > 0 ? 'learning' : 'new';
 }
 
 function questionMistakeKey(lessonId: LessonId, activityId: string) {

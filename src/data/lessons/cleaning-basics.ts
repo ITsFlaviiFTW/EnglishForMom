@@ -8,7 +8,6 @@ const cleaningBasics = createHomeVocabularyLesson({
   },
   descriptionRomanian: 'Învață 14 cuvinte și expresii utile pentru curățenia casei.',
   estimatedMinutes: 18,
-  prerequisiteLessonIds: ['level-1-laundry-basics'],
   audioKeyPrefix: 'cleaning',
   groups: [
     {

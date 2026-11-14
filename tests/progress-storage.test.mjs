@@ -55,7 +55,7 @@ test('normalizes damaged fields without discarding valid versioned data', () => 
   assert.deepEqual(progress.lessons, {});
 });
 
-test('migrates a version 1 save to version 2 with an empty review collection', () => {
+test('migrates a version 1 save to version 3 with an empty review collection', () => {
   const migrated = deserializeProgress(
     JSON.stringify({
       schemaVersion: 1,
@@ -66,9 +66,51 @@ test('migrates a version 1 save to version 2 with an empty review collection', (
     }),
   );
 
-  assert.equal(migrated.schemaVersion, 2);
+  assert.equal(migrated.schemaVersion, 3);
   assert.equal(migrated.currentLessonId, 'kitchen');
   assert.deepEqual(migrated.reviewItems, {});
+});
+
+test('migrates version 2 vocabulary history into deterministic mastery scores', () => {
+  const migrated = deserializeProgress(
+    JSON.stringify({
+      schemaVersion: 2,
+      vocabulary: {
+        towel: {
+          vocabularyId: 'towel',
+          familiarity: 'familiar',
+          correctAttempts: 2,
+          incorrectAttempts: 0,
+          lastPracticedAt: '2026-08-28T10:00:00.000Z',
+        },
+      },
+    }),
+  );
+
+  assert.equal(migrated.vocabulary.towel.masteryScore, 3);
+  assert.equal(migrated.vocabulary.towel.masteryState, 'familiar');
+  assert.equal(migrated.vocabulary.towel.correctAttempts, 2);
+});
+
+test('clamps oversized mastery and repairs contradictory stored states', () => {
+  const normalized = deserializeProgress(
+    JSON.stringify({
+      schemaVersion: 3,
+      vocabulary: {
+        fridge: {
+          vocabularyId: 'fridge',
+          masteryScore: 99,
+          masteryState: 'new',
+          correctAttempts: 6,
+          incorrectAttempts: 0,
+          lastPracticedAt: '2026-08-28T10:00:00.000Z',
+        },
+      },
+    }),
+  );
+
+  assert.equal(normalized.vocabulary.fridge.masteryScore, 8);
+  assert.equal(normalized.vocabulary.fridge.masteryState, 'strong');
 });
 
 test('a new repository instance restores saved progress after a simulated restart', async () => {

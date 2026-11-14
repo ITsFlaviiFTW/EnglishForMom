@@ -8,11 +8,12 @@ export type ActivityResult = {
   completedAt: string;
 };
 
-export type VocabularyFamiliarity = 'new' | 'learning' | 'familiar';
+export type VocabularyMasteryState = 'new' | 'learning' | 'familiar' | 'strong';
 
 export type VocabularyProgress = {
   vocabularyId: string;
-  familiarity: VocabularyFamiliarity;
+  masteryScore: number;
+  masteryState: VocabularyMasteryState;
   correctAttempts: number;
   incorrectAttempts: number;
   lastPracticedAt: string;
@@ -56,7 +57,7 @@ export type ReviewItemProgress = {
 };
 
 export type LearnerProgress = {
-  schemaVersion: 2;
+  schemaVersion: 3;
   currentLessonId: LessonId | null;
   recentLessonId: LessonId | null;
   completedLessonIds: readonly LessonId[];

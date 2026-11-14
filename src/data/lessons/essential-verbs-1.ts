@@ -445,7 +445,6 @@ export const essentialVerbsOneLesson = {
   },
   descriptionRomanian: 'Învață 8 verbe esențiale prin forme scurte și exemple de acasă.',
   estimatedMinutes: 25,
-  prerequisiteLessonIds: ['level-1-cleaning-basics'],
   activities: verbGroups.flatMap((group) => [
     ...group.verbs.flatMap(createVerbActivities),
     ...group.recall,

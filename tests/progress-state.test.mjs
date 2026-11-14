@@ -31,7 +31,7 @@ test('starts with safe empty progress and records the recent lesson', () => {
   const empty = createDefaultProgress();
   const started = recordLessonStarted(empty, kitchenBasicsLesson.id);
 
-  assert.equal(empty.schemaVersion, 2);
+  assert.equal(empty.schemaVersion, 3);
   assert.deepEqual(empty.completedLessonIds, []);
   assert.equal(started.currentLessonId, kitchenBasicsLesson.id);
   assert.equal(started.recentLessonId, kitchenBasicsLesson.id);
@@ -44,7 +44,8 @@ test('records a completed step and resumes at the following activity', () => {
   assert.equal(progress.lessons[kitchenBasicsLesson.id].lastCompletedActivityId, firstActivity.id);
   assert.equal(progress.lessons[kitchenBasicsLesson.id].nextActivityIndex, 1);
   assert.equal(getLessonResumeIndex(progress, kitchenBasicsLesson), 1);
-  assert.equal(progress.vocabulary.fridge.familiarity, 'new');
+  assert.equal(progress.vocabulary.fridge.masteryScore, 0);
+  assert.equal(progress.vocabulary.fridge.masteryState, 'new');
   assert.equal(progress.lastPracticedAt, practicedAt);
 });
 
@@ -60,6 +61,8 @@ test('tracks an incorrect question and its related vocabulary separately', () =>
   assert.equal(progress.incorrectAnswers, 1);
   assert.equal(progress.correctAnswers, 0);
   assert.equal(progress.vocabulary.stove.incorrectAttempts, 1);
+  assert.equal(progress.vocabulary.stove.masteryScore, 0);
+  assert.equal(progress.vocabulary.stove.masteryState, 'learning');
   assert.equal(mistake.incorrectAttempts, 1);
   assert.equal(mistake.lastSelectedOptionId, 'fridge');
   assert.equal(progress.reviewItems['vocabulary:stove'].priority, 3);

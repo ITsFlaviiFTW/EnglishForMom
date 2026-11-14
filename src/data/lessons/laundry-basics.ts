@@ -8,7 +8,6 @@ const laundryBasics = createHomeVocabularyLesson({
   },
   descriptionRomanian: 'Învață 14 cuvinte și expresii pentru spălatul și uscarea rufelor.',
   estimatedMinutes: 18,
-  prerequisiteLessonIds: ['level-1-living-room-basics'],
   audioKeyPrefix: 'laundry',
   groups: [
     {

@@ -4,49 +4,79 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { layout } from '@/constants/layout';
 import { colors } from '@/constants/theme';
 
-type AppButtonProps = {
-  href: Href;
+type AppButtonBaseProps = {
   title: string;
   subtitle?: string;
   variant?: 'primary' | 'secondary';
 };
 
-export function AppButton({ href, title, subtitle, variant = 'secondary' }: AppButtonProps) {
-  const isPrimary = variant === 'primary';
+type AppButtonProps = AppButtonBaseProps &
+  ({ href: Href; disabled?: false } | { href?: never; disabled: true });
 
-  return (
-    <Link href={href} asChild>
-      <Pressable accessibilityRole="link" style={styles.button}>
-        {({ pressed }) => (
-          <View
-            style={[
-              styles.buttonContent,
-              isPrimary ? styles.primary : styles.secondary,
-              pressed && (isPrimary ? styles.primaryPressed : styles.secondaryPressed),
-            ]}>
-            <View style={styles.labelContainer}>
-              <Text style={[styles.title, isPrimary ? styles.primaryText : styles.secondaryText]}>
-                {title}
+export function AppButton(props: AppButtonProps) {
+  const { title, subtitle, variant = 'secondary' } = props;
+  const isPrimary = variant === 'primary';
+  const disabled = props.disabled === true;
+
+  const button = (
+    <Pressable
+      accessibilityRole={disabled ? 'button' : 'link'}
+      accessibilityState={{ disabled }}
+      disabled={disabled}
+      style={styles.button}>
+      {({ pressed }) => (
+        <View
+          style={[
+            styles.buttonContent,
+            disabled ? styles.disabled : isPrimary ? styles.primary : styles.secondary,
+            pressed && !disabled && (isPrimary ? styles.primaryPressed : styles.secondaryPressed),
+          ]}>
+          <View style={styles.labelContainer}>
+            <Text
+              style={[
+                styles.title,
+                disabled
+                  ? styles.disabledText
+                  : isPrimary
+                    ? styles.primaryText
+                    : styles.secondaryText,
+              ]}>
+              {title}
+            </Text>
+            {subtitle ? (
+              <Text
+                style={[
+                  styles.subtitle,
+                  disabled
+                    ? styles.disabledText
+                    : isPrimary
+                      ? styles.primarySubtitle
+                      : styles.secondaryText,
+                ]}>
+                {subtitle}
               </Text>
-              {subtitle ? (
-                <Text
-                  style={[
-                    styles.subtitle,
-                    isPrimary ? styles.primarySubtitle : styles.secondaryText,
-                  ]}>
-                  {subtitle}
-                </Text>
-              ) : null}
-            </View>
+            ) : null}
+          </View>
+          {!disabled ? (
             <Text
               accessibilityElementsHidden
               importantForAccessibility="no-hide-descendants"
               style={[styles.arrow, isPrimary ? styles.primaryText : styles.secondaryText]}>
               →
             </Text>
-          </View>
-        )}
-      </Pressable>
+          ) : null}
+        </View>
+      )}
+    </Pressable>
+  );
+
+  if (props.disabled) {
+    return button;
+  }
+
+  return (
+    <Link href={props.href} asChild>
+      {button}
     </Link>
   );
 }
@@ -82,6 +112,10 @@ const styles = StyleSheet.create({
   secondaryPressed: {
     backgroundColor: colors.primarySoft,
   },
+  disabled: {
+    backgroundColor: colors.background,
+    borderColor: colors.border,
+  },
   labelContainer: {
     flex: 1,
   },
@@ -103,6 +137,9 @@ const styles = StyleSheet.create({
   },
   secondaryText: {
     color: colors.text,
+  },
+  disabledText: {
+    color: colors.textMuted,
   },
   arrow: {
     minWidth: layout.minimumTouchTarget / 2,

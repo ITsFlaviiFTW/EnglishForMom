@@ -8,7 +8,6 @@ const bathroomBasics = createHomeVocabularyLesson({
   },
   descriptionRomanian: 'Învață 14 cuvinte utile pentru rutina zilnică din baie.',
   estimatedMinutes: 18,
-  prerequisiteLessonIds: ['level-1-kitchen-basics'],
   audioKeyPrefix: 'bathroom',
   groups: [
     {

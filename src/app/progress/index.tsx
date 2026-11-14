@@ -11,11 +11,10 @@ export default function ProgressScreen() {
   const { progress, isLoading, saveError } = useLearningProgress();
   const summary = summarizeProgress(progress);
   const progressItems = [
-    { label: 'Lecții finalizate', value: summary.completedLessons },
-    { label: 'Cuvinte exersate', value: summary.practicedVocabulary },
-    { label: 'Răspunsuri corecte', value: summary.correctAnswers },
-    { label: 'Răspunsuri greșite', value: summary.incorrectAnswers },
-    { label: 'Zile de studiu', value: summary.studyDays },
+    { label: 'Cuvinte introduse', value: summary.wordsIntroduced },
+    { label: 'În curs de învățare', value: summary.wordsLearning },
+    { label: 'Cuvinte familiare', value: summary.wordsFamiliar },
+    { label: 'Cuvinte bine stăpânite', value: summary.wordsStrong },
   ];
   const lastPracticed = progress.lastPracticedAt
     ? new Intl.DateTimeFormat('ro-RO', { dateStyle: 'long', timeStyle: 'short' }).format(
@@ -27,11 +26,11 @@ export default function ProgressScreen() {
     <ScreenContainer style={styles.screen}>
       <ScreenHeader
         title="Progres"
-        description="Rezultatele tale vor fi salvate pe acest dispozitiv."
+        description="O privire simplă asupra cuvintelor pe care le înveți."
       />
 
       <AppCard
-        title={isLoading ? 'Se încarcă progresul…' : 'Rezumatul tău'}
+        title={isLoading ? 'Se încarcă progresul…' : 'Cuvintele tale'}
         description={
           lastPracticed
             ? `Ultima exersare: ${lastPracticed}`

@@ -134,7 +134,6 @@ export type Lesson = {
   title: LearningText;
   descriptionRomanian?: string;
   estimatedMinutes: number;
-  prerequisiteLessonIds?: readonly LessonId[];
   activities: readonly LessonActivity[];
 };
 

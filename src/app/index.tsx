@@ -3,15 +3,20 @@ import { StyleSheet, Text, View } from 'react-native';
 import { AppButton } from '@/components/app-button';
 import { ScreenContainer } from '@/components/screen-container';
 import { colors } from '@/constants/theme';
-import { getCourseLessonIds } from '@/data/courses/course-catalog';
+import { getCourses } from '@/data/courses/course-catalog';
 import { getLessonById } from '@/data/lessons/lesson-catalog';
+import { getUnlockedCourseLessonIds } from '@/features/lessons/course-progression';
 import { selectContinueLessonId } from '@/features/progress/progress-state';
 import { getDueReviewCount } from '@/features/review/review-queue';
 import { useLearningProgress } from '@/hooks/use-learning-progress';
 
 export default function HomeScreen() {
   const { progress, isLoading } = useLearningProgress();
-  const continueLessonId = selectContinueLessonId(getCourseLessonIds(), progress);
+  const unlockedLessonIds = getUnlockedCourseLessonIds(
+    getCourses(),
+    progress.completedLessonIds,
+  );
+  const continueLessonId = selectContinueLessonId(unlockedLessonIds, progress);
   const continueLesson = continueLessonId ? getLessonById(continueLessonId) : undefined;
   const lessonProgress = continueLesson ? progress.lessons[continueLesson.id] : undefined;
   const dueReviewCount = getDueReviewCount(progress.reviewItems);

@@ -7,6 +7,7 @@ import type {
   SentenceBuildingActivity,
   VocabularyIntroductionActivity,
 } from '@/types';
+import { updateVocabularyMastery } from '../progress/vocabulary-mastery.ts';
 
 export const REVIEW_SESSION_SIZE = 5;
 export const INITIAL_REVIEW_PRIORITY = 3;
@@ -164,12 +165,25 @@ export function recordReviewAnswer(
         lastMissedAt: answer.answeredAt,
         lastReviewedAt: answer.answeredAt,
       };
+  const vocabulary =
+    item.kind === 'vocabulary'
+      ? {
+          ...progress.vocabulary,
+          [item.learningItemId]: updateVocabularyMastery(
+            progress.vocabulary[item.learningItemId],
+            item.learningItemId,
+            answer.correct,
+            answer.answeredAt,
+          ),
+        }
+      : progress.vocabulary;
 
   return {
     ...progress,
     correctAnswers: progress.correctAnswers + (answer.correct ? 1 : 0),
     incorrectAnswers: progress.incorrectAnswers + (answer.correct ? 0 : 1),
     lastPracticedAt: answer.answeredAt,
+    vocabulary,
     reviewItems: { ...progress.reviewItems, [item.id]: reviewItem },
   };
 }

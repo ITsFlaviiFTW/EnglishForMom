@@ -68,6 +68,8 @@ test('repeated correct reviews reduce priority until the item is no longer due',
 
   assert.equal(progress.reviewItems['vocabulary:stove'].priority, 0);
   assert.equal(progress.reviewItems['vocabulary:stove'].correctStreak, 3);
+  assert.equal(progress.vocabulary.stove.masteryScore, 3);
+  assert.equal(progress.vocabulary.stove.masteryState, 'familiar');
   assert.equal(getDueReviewCount(progress.reviewItems), 0);
   assert.deepEqual(prioritizeReviewItems(progress.reviewItems), []);
 });
@@ -80,6 +82,8 @@ test('an incorrect review increases priority by two and stays due', () => {
 
   assert.equal(progress.reviewItems['vocabulary:stove'].priority, 5);
   assert.equal(progress.reviewItems['vocabulary:stove'].incorrectAttempts, 2);
+  assert.equal(progress.vocabulary.stove.masteryScore, 0);
+  assert.equal(progress.vocabulary.stove.masteryState, 'learning');
   assert.equal(getDueReviewCount(progress.reviewItems), 1);
 });
 

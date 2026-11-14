@@ -8,7 +8,6 @@ const livingRoomBasics = createHomeVocabularyLesson({
   },
   descriptionRomanian: 'Învață 14 cuvinte practice pentru obiectele din sufragerie.',
   estimatedMinutes: 18,
-  prerequisiteLessonIds: ['level-1-bedroom-basics'],
   audioKeyPrefix: 'living-room',
   groups: [
     {

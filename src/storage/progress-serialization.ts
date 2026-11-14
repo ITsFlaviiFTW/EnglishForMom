@@ -1,4 +1,9 @@
 import { createDefaultProgress } from '../features/progress/progress-state.ts';
+import {
+  clampMasteryScore,
+  deriveMasteryScoreFromAttempts,
+  getVocabularyMasteryState,
+} from '../features/progress/vocabulary-mastery.ts';
 import type {
   ActivityResponse,
   ActivityResult,
@@ -26,11 +31,15 @@ export function deserializeProgress(raw: string | null): LearnerProgress {
 }
 
 export function migrateStoredProgress(value: unknown): LearnerProgress {
-  if (!isRecord(value) || (value.schemaVersion !== 1 && value.schemaVersion !== 2)) {
+  if (
+    !isRecord(value) ||
+    (value.schemaVersion !== 1 && value.schemaVersion !== 2 && value.schemaVersion !== 3)
+  ) {
     return createDefaultProgress();
   }
 
-  // Version 1 had no reviewItems. Normalization supplies the safe version 2 default,
+  // Version 1 had no reviewItems and versions 1–2 had no mastery score.
+  // Normalization supplies current defaults, derives mastery from saved answer history,
   // and the provider reconstructs review records from persisted question mistakes.
   return normalizeCurrentVersion(value);
 }
@@ -47,7 +56,7 @@ function normalizeCurrentVersion(value: Record<string, unknown>): LearnerProgres
   );
 
   return {
-    schemaVersion: 2,
+    schemaVersion: 3,
     currentLessonId: nullableString(value.currentLessonId),
     recentLessonId: nullableString(value.recentLessonId),
     completedLessonIds: stringArray(value.completedLessonIds),
@@ -185,24 +194,45 @@ function normalizeVocabulary(value: unknown): LearnerProgress['vocabulary'] {
 
     const vocabularyId = stringValue(candidate.vocabularyId) ?? key;
     const lastPracticedAt = timestamp(candidate.lastPracticedAt);
-    const familiarity = candidate.familiarity;
-    if (
-      !lastPracticedAt ||
-      (familiarity !== 'new' && familiarity !== 'learning' && familiarity !== 'familiar')
-    ) {
+    if (!lastPracticedAt) {
       continue;
     }
 
+    const correctAttempts = nonNegativeInteger(candidate.correctAttempts) ?? 0;
+    const incorrectAttempts = nonNegativeInteger(candidate.incorrectAttempts) ?? 0;
+    const storedMasteryScore = nonNegativeInteger(candidate.masteryScore);
+    const masteryScore =
+      storedMasteryScore === null
+        ? deriveLegacyMasteryScore(candidate, correctAttempts, incorrectAttempts)
+        : clampMasteryScore(storedMasteryScore);
+
     vocabulary[vocabularyId] = {
       vocabularyId,
-      familiarity,
-      correctAttempts: nonNegativeInteger(candidate.correctAttempts) ?? 0,
-      incorrectAttempts: nonNegativeInteger(candidate.incorrectAttempts) ?? 0,
+      masteryScore,
+      masteryState: getVocabularyMasteryState(
+        masteryScore,
+        correctAttempts,
+        incorrectAttempts,
+      ),
+      correctAttempts,
+      incorrectAttempts,
       lastPracticedAt,
     };
   }
 
   return vocabulary;
+}
+
+function deriveLegacyMasteryScore(
+  candidate: Record<string, unknown>,
+  correctAttempts: number,
+  incorrectAttempts: number,
+): number {
+  const historyScore = deriveMasteryScoreFromAttempts(correctAttempts, incorrectAttempts);
+
+  return candidate.familiarity === 'familiar'
+    ? Math.max(3, historyScore)
+    : historyScore;
 }
 
 function normalizeQuestionMistakes(value: unknown): LearnerProgress['questionMistakes'] {

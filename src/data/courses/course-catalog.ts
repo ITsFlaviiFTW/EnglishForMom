@@ -12,6 +12,7 @@ const courses: readonly Course[] = [
   {
     id: 'my-home',
     schemaVersion: 1,
+    level: 1,
     title: {
       english: 'My Home',
       romanian: 'Casa mea',
@@ -20,57 +21,52 @@ const courses: readonly Course[] = [
     units: [
       {
         id: 'kitchen',
-        title: {
-          english: 'Kitchen',
-          romanian: 'Bucătărie',
-        },
-        lessonIds: [kitchenBasicsLesson.id],
+        title: kitchenBasicsLesson.title,
+        lessonId: kitchenBasicsLesson.id,
+        prerequisiteLessonIds: [],
+        availability: 'published',
       },
       {
         id: 'bathroom',
-        title: {
-          english: 'Bathroom',
-          romanian: 'Baie',
-        },
-        lessonIds: [bathroomBasicsLesson.id],
+        title: bathroomBasicsLesson.title,
+        lessonId: bathroomBasicsLesson.id,
+        prerequisiteLessonIds: [kitchenBasicsLesson.id],
+        availability: 'published',
       },
       {
         id: 'bedroom',
-        title: {
-          english: 'Bedroom',
-          romanian: 'Dormitor',
-        },
-        lessonIds: [bedroomBasicsLesson.id],
+        title: bedroomBasicsLesson.title,
+        lessonId: bedroomBasicsLesson.id,
+        prerequisiteLessonIds: [bathroomBasicsLesson.id],
+        availability: 'published',
       },
       {
         id: 'living-room',
-        title: {
-          english: 'Living Room',
-          romanian: 'Sufragerie',
-        },
-        lessonIds: [livingRoomBasicsLesson.id],
+        title: livingRoomBasicsLesson.title,
+        lessonId: livingRoomBasicsLesson.id,
+        prerequisiteLessonIds: [bedroomBasicsLesson.id],
+        availability: 'published',
       },
       {
         id: 'laundry',
-        title: {
-          english: 'Laundry',
-          romanian: 'Spălatul rufelor',
-        },
-        lessonIds: [laundryBasicsLesson.id],
+        title: laundryBasicsLesson.title,
+        lessonId: laundryBasicsLesson.id,
+        prerequisiteLessonIds: [livingRoomBasicsLesson.id],
+        availability: 'published',
       },
       {
         id: 'cleaning',
-        title: {
-          english: 'Cleaning',
-          romanian: 'Curățenie',
-        },
-        lessonIds: [cleaningBasicsLesson.id],
+        title: cleaningBasicsLesson.title,
+        lessonId: cleaningBasicsLesson.id,
+        prerequisiteLessonIds: [laundryBasicsLesson.id],
+        availability: 'published',
       },
     ],
   },
   {
     id: 'everyday-actions',
     schemaVersion: 1,
+    level: 2,
     title: {
       english: 'Everyday Actions',
       romanian: 'Acțiuni de zi cu zi',
@@ -79,11 +75,20 @@ const courses: readonly Course[] = [
     units: [
       {
         id: 'essential-verbs-1',
+        title: essentialVerbsOneLesson.title,
+        lessonId: essentialVerbsOneLesson.id,
+        prerequisiteLessonIds: [cleaningBasicsLesson.id],
+        availability: 'published',
+      },
+      {
+        id: 'essential-verbs-2',
         title: {
-          english: 'Essential Verbs I',
-          romanian: 'Verbe esențiale I',
+          english: 'Essential Verbs II',
+          romanian: 'Verbe esențiale II',
         },
-        lessonIds: [essentialVerbsOneLesson.id],
+        lessonId: null,
+        prerequisiteLessonIds: [essentialVerbsOneLesson.id],
+        availability: 'planned',
       },
     ],
   },
@@ -98,5 +103,18 @@ export function getCourseById(courseId: CourseId): Course | undefined {
 }
 
 export function getCourseLessonIds() {
-  return courses.flatMap((course) => course.units.flatMap((unit) => unit.lessonIds));
+  return courses.flatMap((course) =>
+    course.units.flatMap((unit) => (unit.lessonId ? [unit.lessonId] : [])),
+  );
+}
+
+export function getCourseUnitByLessonId(lessonId: string) {
+  for (const course of courses) {
+    const unit = course.units.find((candidate) => candidate.lessonId === lessonId);
+    if (unit) {
+      return unit;
+    }
+  }
+
+  return undefined;
 }

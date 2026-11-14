@@ -31,7 +31,6 @@ type HomeVocabularyLessonDefinition = {
   title: LearningText;
   descriptionRomanian: string;
   estimatedMinutes: number;
-  prerequisiteLessonIds?: readonly string[];
   audioKeyPrefix: string;
   groups: readonly HomeVocabularyGroup[];
   practiceActivities?: readonly FillInTheBlankActivity[];
@@ -69,7 +68,6 @@ export function createHomeVocabularyLesson(
     title: definition.title,
     descriptionRomanian: definition.descriptionRomanian,
     estimatedMinutes: definition.estimatedMinutes,
-    prerequisiteLessonIds: definition.prerequisiteLessonIds,
     activities: [
       ...definition.groups.flatMap((group) => [
         ...group.items.flatMap((item) => createWordActivities(item, audioByItemId.get(item.id)!)),

@@ -1,4 +1,10 @@
-export type { Course, CourseId, CourseUnit, CourseUnitId } from './course';
+export type {
+  Course,
+  CourseId,
+  CourseUnit,
+  CourseUnitAvailability,
+  CourseUnitId,
+} from './course';
 export type {
   ActivityId,
   ActivityResponse,
@@ -24,6 +30,6 @@ export type {
   QuestionMistakeProgress,
   ReviewItemKind,
   ReviewItemProgress,
-  VocabularyFamiliarity,
+  VocabularyMasteryState,
   VocabularyProgress,
 } from './progress';

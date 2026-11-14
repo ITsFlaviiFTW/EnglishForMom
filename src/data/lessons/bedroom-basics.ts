@@ -8,7 +8,6 @@ const bedroomBasics = createHomeVocabularyLesson({
   },
   descriptionRomanian: 'Învață 14 cuvinte practice pentru dormitor și haine.',
   estimatedMinutes: 18,
-  prerequisiteLessonIds: ['level-1-bathroom-basics'],
   audioKeyPrefix: 'bedroom',
   groups: [
     {
