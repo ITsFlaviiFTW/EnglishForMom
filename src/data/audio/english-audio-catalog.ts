@@ -4,6 +4,10 @@ import { cleaningBasicsAudioSources } from '../lessons/cleaning-basics.ts';
 import { essentialVerbsOneAudioSources } from '../lessons/essential-verbs-1.ts';
 import { laundryBasicsAudioSources } from '../lessons/laundry-basics.ts';
 import { livingRoomBasicsAudioSources } from '../lessons/living-room-basics.ts';
+import { atTheStoreAudioSources, atTheStoreDialogues } from '../lessons/out-at-the-store.ts';
+import { checkoutAudioSources, checkoutDialogues } from '../lessons/out-checkout.ts';
+import { helpPhrasesAudioSources, helpPhrasesDialogues } from '../lessons/out-help-phrases.ts';
+import { pricesAudioSources, pricesDialogues } from '../lessons/out-prices.ts';
 
 export const kitchenBasicsAudio = {
   fridge: createPair('fridge', 'The milk is in the fridge.'),
@@ -28,6 +32,18 @@ export const generatedEnglishAudioSources = [
   ...laundryBasicsAudioSources,
   ...cleaningBasicsAudioSources,
   ...essentialVerbsOneAudioSources,
+  ...helpPhrasesAudioSources,
+  ...pricesAudioSources,
+  ...atTheStoreAudioSources,
+  ...checkoutAudioSources,
+];
+
+/** Real-speed shop dialogues (several voices), recorded by `npm run generate-audio`. */
+export const dialogueAudioSources = [
+  ...helpPhrasesDialogues,
+  ...pricesDialogues,
+  ...atTheStoreDialogues,
+  ...checkoutDialogues,
 ];
 
 function createPair(word: string, example: string) {

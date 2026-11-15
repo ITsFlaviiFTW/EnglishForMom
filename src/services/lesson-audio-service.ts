@@ -1,11 +1,45 @@
+import { accentAudioAssets } from '@/data/audio/accent-audio-assets';
 import { generatedAudioAssets } from '@/data/audio/generated-audio-assets';
+import { spacedAudioAssets } from '@/data/audio/spaced-audio-assets';
 import { deviceSpeechService } from '@/services/expo-speech-service';
 import { FallbackAudioService } from '@/services/fallback-audio-service';
 import { PrerecordedAudioService } from '@/services/prerecorded-audio-service';
+import type { AccentAudio, AudioSource, SpacedAudio } from '@/types';
 
-const prerecordedAudioService = new PrerecordedAudioService(generatedAudioAssets);
+const SPACED_SUFFIX = '--spaced';
+const ACCENT_SUFFIX = '--accent';
+
+const prerecordedAudioService = new PrerecordedAudioService({
+  ...generatedAudioAssets,
+  ...Object.fromEntries(
+    Object.entries(spacedAudioAssets).map(([key, spaced]) => [`${key}${SPACED_SUFFIX}`, spaced.asset]),
+  ),
+  ...Object.fromEntries(
+    Object.entries(accentAudioAssets).map(([key, accent]) => [`${key}${ACCENT_SUFFIX}`, accent.asset]),
+  ),
+});
 
 export const lessonAudioService = new FallbackAudioService(
   prerecordedAudioService,
   deviceSpeechService,
 );
+
+/** The word-by-word recording for a phrase, if one was generated. */
+export function getSpacedAudio(source: AudioSource): SpacedAudio | undefined {
+  return spacedAudioAssets[source.key];
+}
+
+/** An audio source that plays the word-by-word recording of `source`. */
+export function toSpacedSource(source: AudioSource): AudioSource {
+  return { ...source, key: `${source.key}${SPACED_SUFFIX}` };
+}
+
+/** The Romanian-accent recording for a phrase, if one was generated. */
+export function getAccentAudio(source: AudioSource): AccentAudio | undefined {
+  return accentAudioAssets[source.key];
+}
+
+/** An audio source that plays the Romanian-accent recording of `source`, then the English. */
+export function toAccentSource(source: AudioSource): AudioSource {
+  return { ...source, key: `${source.key}${ACCENT_SUFFIX}` };
+}

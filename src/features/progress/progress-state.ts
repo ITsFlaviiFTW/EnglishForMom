@@ -108,6 +108,7 @@ export function recordActivityCompletion(
       : progress.questionMistakes;
   const reviewItems =
     (activity.type === 'multiple-choice' ||
+      activity.type === 'listening' ||
       activity.type === 'sentence-building' ||
       activity.type === 'fill-in-the-blank') &&
     correct === false
@@ -183,7 +184,7 @@ function updateVocabulary(
   const vocabularyIds =
     activity.type === 'vocabulary-introduction'
       ? [activity.vocabularyId]
-      : activity.type === 'multiple-choice'
+      : activity.type === 'multiple-choice' || activity.type === 'listening'
         ? (activity.focusItemIds ?? [])
         : activity.type === 'sentence-building'
           ? (activity.focusItemIds ?? [])

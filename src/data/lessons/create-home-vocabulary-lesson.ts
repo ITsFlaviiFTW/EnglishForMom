@@ -1,9 +1,9 @@
 import type {
   AudioSource,
   ExampleSentenceActivity,
-  FillInTheBlankActivity,
   LearningText,
   Lesson,
+  LessonActivity,
   MultipleChoiceActivity,
   VocabularyIntroductionActivity,
 } from '@/types';
@@ -12,6 +12,8 @@ export type HomeVocabularyItem = {
   id: string;
   word: LearningText;
   example: LearningText;
+  /** Optional Romanian tip shown with the word (when you hear it, how to answer). */
+  note?: string;
 };
 
 export type RecallPrompt = {
@@ -32,8 +34,11 @@ type HomeVocabularyLessonDefinition = {
   descriptionRomanian: string;
   estimatedMinutes: number;
   audioKeyPrefix: string;
+  /** The items are whole phrases ("Can you repeat that, please?"), not single words. */
+  phrases?: boolean;
   groups: readonly HomeVocabularyGroup[];
-  practiceActivities?: readonly FillInTheBlankActivity[];
+  /** Exercises after all the items: fill-in-the-blank, dialogue questions. */
+  practiceActivities?: readonly LessonActivity[];
 };
 
 type HomeVocabularyLessonBundle = {
@@ -70,8 +75,12 @@ export function createHomeVocabularyLesson(
     estimatedMinutes: definition.estimatedMinutes,
     activities: [
       ...definition.groups.flatMap((group) => [
-        ...group.items.flatMap((item) => createWordActivities(item, audioByItemId.get(item.id)!)),
-        ...group.recall.map((recall) => createRecallActivity(recall, itemsById)),
+        ...group.items.flatMap((item) =>
+          createWordActivities(item, audioByItemId.get(item.id)!, definition.phrases ?? false),
+        ),
+        ...group.recall.map((recall) =>
+          createRecallActivity(recall, itemsById, definition.phrases ?? false),
+        ),
       ]),
       ...(definition.practiceActivities ?? []),
     ],
@@ -86,14 +95,21 @@ export function createHomeVocabularyLesson(
 function createWordActivities(
   item: HomeVocabularyItem,
   audio: { word: AudioSource; example: AudioSource },
+  phrases: boolean,
 ): readonly [VocabularyIntroductionActivity, ExampleSentenceActivity] {
+  // In a phrase lesson, single words ("aisle", "cents") are still shown as words.
+  const isPhrase = phrases && /\s/.test(item.word.english.trim());
   return [
     {
       id: `introduce-${item.id}`,
       type: 'vocabulary-introduction',
-      instructionRomanian: 'Privește, ascultă și repetă cuvântul în engleză.',
+      instructionRomanian: isPhrase
+        ? 'Privește, ascultă și repetă expresia în engleză.'
+        : 'Privește, ascultă și repetă cuvântul în engleză.',
       vocabularyId: item.id,
       content: item.word,
+      ...(isPhrase ? { isPhrase: true } : {}),
+      ...(item.note ? { noteRomanian: item.note } : {}),
       audio: audio.word,
       examples: [{ ...item.example, audio: audio.example }],
     },
@@ -110,6 +126,7 @@ function createWordActivities(
 function createRecallActivity(
   recall: RecallPrompt,
   itemsById: ReadonlyMap<string, HomeVocabularyItem>,
+  phrases: boolean,
 ): MultipleChoiceActivity {
   const answer = getItem(recall.answerItemId, itemsById);
   const englishToRomanian = recall.direction === 'english-to-romanian';
@@ -120,7 +137,9 @@ function createRecallActivity(
     instructionRomanian: 'Alege răspunsul corect.',
     prompt: englishToRomanian
       ? `Ce înseamnă „${answer.word.english}”?`
-      : `Care este cuvântul în engleză pentru „${answer.word.romanian}”?`,
+      : phrases
+        ? `Cum se spune în engleză „${answer.word.romanian}”?`
+        : `Care este cuvântul în engleză pentru „${answer.word.romanian}”?`,
     promptLanguage: 'romanian',
     options: recall.optionItemIds.map((itemId) => {
       const item = getItem(itemId, itemsById);

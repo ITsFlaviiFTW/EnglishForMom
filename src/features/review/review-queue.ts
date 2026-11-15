@@ -2,6 +2,7 @@ import type {
   FillInTheBlankActivity,
   LearnerProgress,
   Lesson,
+  ListeningActivity,
   MultipleChoiceActivity,
   ReviewItemProgress,
   SentenceBuildingActivity,
@@ -26,7 +27,11 @@ export type ReviewAnswer = {
 
 export function createReviewSeeds(
   lesson: Lesson,
-  activity: MultipleChoiceActivity | SentenceBuildingActivity | FillInTheBlankActivity,
+  activity:
+    | MultipleChoiceActivity
+    | ListeningActivity
+    | SentenceBuildingActivity
+    | FillInTheBlankActivity,
 ): readonly ReviewItemSeed[] {
   const vocabularyActivities = lesson.activities.filter(
     (candidate): candidate is VocabularyIntroductionActivity =>
@@ -80,6 +85,11 @@ export function createReviewSeeds(
         },
       },
     ];
+  }
+
+  // A missed dialogue question is reviewed through the phrases it practises.
+  if (activity.type === 'listening') {
+    return [];
   }
 
   const correctOption = activity.options.find((option) => option.id === activity.correctOptionId);

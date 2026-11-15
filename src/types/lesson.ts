@@ -14,6 +14,27 @@ export type AudioSource = {
   rate?: number;
 };
 
+/** A word-by-word recording: each word spoken alone, with a pause after it. */
+export type SpacedAudio = {
+  /** Bundled recording (from `require`). */
+  asset: number;
+  /** The phrase split on spaces, punctuation kept, for display. */
+  words: readonly string[];
+  /** Second at which each word starts in the recording. */
+  starts: readonly number[];
+};
+
+/**
+ * A "Cu accent românesc" recording: a Romanian voice reads the phrase spelled
+ * the Romanian way, then the normal English recording plays.
+ */
+export type AccentAudio = {
+  /** Bundled recording (from `require`). */
+  asset: number;
+  /** The phrase written with Romanian letters, e.g. "Dă milc iz in dă frigi." */
+  respelling: string;
+};
+
 export type ExampleSentence = LearningText & {
   audio?: AudioSource;
 };
@@ -27,6 +48,10 @@ export type VocabularyIntroductionActivity = ActivityBase & {
   type: 'vocabulary-introduction';
   vocabularyId: string;
   content: LearningText;
+  /** A whole phrase ("Can you repeat that, please?") rather than a single word. */
+  isPhrase?: boolean;
+  /** A short Romanian tip: when you hear it, how to answer, a Canadian habit. */
+  noteRomanian?: string;
   /** Short, useful forms shown beneath the main word without turning the activity into a grammar lecture. */
   forms?: readonly LearningText[];
   audio?: AudioSource;
@@ -101,13 +126,23 @@ export type FillInTheBlankActivity = ActivityBase & {
   audio?: AudioSource;
 };
 
+/** One line of a recorded dialogue: who says it, and what it means. */
+export type DialogueLine = LearningText & {
+  /** Store staff (cashier, clerk) speak with a Canadian voice; the customer with the usual one. */
+  speaker: 'staff' | 'customer';
+};
+
+/** A short real-life dialogue at natural speed, then a question about it in Romanian. */
 export type ListeningActivity = ActivityBase & {
   type: 'listening';
   audio: AudioSource;
   promptRomanian: string;
   options: readonly ChoiceOption[];
   correctOptionId: string;
-  transcript?: string;
+  /** Shown after answering, so the learner can see what was said. */
+  transcript: readonly DialogueLine[];
+  focusItemIds?: readonly string[];
+  explanationRomanian?: string;
 };
 
 export type SpeakingActivity = ActivityBase & {

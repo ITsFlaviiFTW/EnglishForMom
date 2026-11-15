@@ -1,4 +1,8 @@
-import type { AudioPlaybackState, AudioService } from '@/services/audio-service';
+import type {
+  AudioPlaybackState,
+  AudioPlayOptions,
+  AudioService,
+} from '@/services/audio-service';
 import type { PrerecordedAudioService } from '@/services/prerecorded-audio-service';
 import type { AudioSource } from '@/types';
 
@@ -17,7 +21,7 @@ export class FallbackAudioService implements AudioService {
     return this.active?.getState() ?? 'idle';
   }
 
-  async play(source: AudioSource): Promise<void> {
+  async play(source: AudioSource, options?: AudioPlayOptions): Promise<void> {
     const operationId = ++this.operationId;
     await Promise.all([this.prerecorded.stop(), this.fallback.stop()]);
 
@@ -29,14 +33,14 @@ export class FallbackAudioService implements AudioService {
     this.active = preferredService;
 
     try {
-      await preferredService.play(source);
+      await preferredService.play(source, options);
     } catch (error) {
       if (preferredService !== this.prerecorded || operationId !== this.operationId) {
         throw error;
       }
 
       this.active = this.fallback;
-      await this.fallback.play(source);
+      await this.fallback.play(source, options);
     } finally {
       if (operationId === this.operationId) {
         this.active = null;

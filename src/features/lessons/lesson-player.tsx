@@ -1,3 +1,4 @@
+import { Link, useRouter } from 'expo-router';
 import {
   Pressable,
   StyleSheet,
@@ -9,22 +10,26 @@ import {
 } from 'react-native';
 
 import { ActionButton } from '@/components/action-button';
-import { AppButton } from '@/components/app-button';
 import { AppCard } from '@/components/app-card';
+import { ProgressBar } from '@/components/progress-bar';
 import { ScreenContainer } from '@/components/screen-container';
-import { ScreenHeader } from '@/components/screen-header';
-import { colors } from '@/constants/theme';
-import { ListenButton } from '@/features/audio/listen-button';
+import { colors, radii } from '@/constants/theme';
+import { AudioControls } from '@/features/audio/listen-button';
 import { useAudioPlayback } from '@/features/audio/use-audio-playback';
 import { isFillInAnswerCorrect } from '@/features/lessons/fill-in-the-blank';
 import {
   getCorrectOption,
+  isAnsweredActivity,
   type FillInTheBlankAnswerFeedback,
   type MultipleChoiceAnswerFeedback,
   type SentenceBuildingAnswerFeedback,
 } from '@/features/lessons/lesson-session';
 import { useLessonSession } from '@/hooks/use-lesson-session';
-import type { AudioPlaybackState, AudioService } from '@/services/audio-service';
+import type {
+  AudioPlaybackState,
+  AudioPlayOptions,
+  AudioService,
+} from '@/services/audio-service';
 import type {
   ActivityResponse,
   AudioSource,
@@ -32,6 +37,7 @@ import type {
   FillInTheBlankActivity,
   Lesson,
   LessonActivity,
+  ListeningActivity,
   MultipleChoiceActivity,
   SentenceBuildingActivity,
   VocabularyIntroductionActivity,
@@ -41,14 +47,23 @@ type SupportedActivity =
   | VocabularyIntroductionActivity
   | ExampleSentenceActivity
   | MultipleChoiceActivity
+  | ListeningActivity
   | SentenceBuildingActivity
   | FillInTheBlankActivity;
+
+export type NextLessonLink = {
+  id: string;
+  title: string;
+  icon?: string;
+};
 
 type LessonPlayerProps = {
   lesson: Lesson;
   audioService: AudioService;
   initialActivityIndex?: number;
   saveError?: string | null;
+  /** The lesson to suggest once this one is finished. */
+  nextLesson?: NextLessonLink | null;
   onActivityCompleted?: (completion: {
     activity: SupportedActivity;
     response: ActivityResponse;
@@ -56,11 +71,18 @@ type LessonPlayerProps = {
   }) => void;
 };
 
+type AudioProps = {
+  audioState: AudioPlaybackState;
+  audioError: string | null;
+  onPlayAudio: (source: AudioSource, options?: AudioPlayOptions) => void;
+};
+
 export function LessonPlayer({
   lesson,
   audioService,
   initialActivityIndex = 0,
   saveError,
+  nextLesson,
   onActivityCompleted,
 }: LessonPlayerProps) {
   const {
@@ -77,100 +99,124 @@ export function LessonPlayer({
   const audioPlayback = useAudioPlayback(audioService, currentActivity?.id);
 
   if (session.status === 'completed') {
-    return <LessonComplete lesson={lesson} />;
+    return <LessonComplete lesson={lesson} nextLesson={nextLesson ?? null} />;
   }
 
   if (!currentActivity || !isSupportedActivity(currentActivity)) {
     return <UnsupportedActivity lesson={lesson} />;
   }
 
-  const progress = ((session.currentActivityIndex + 1) / lesson.activities.length) * 100;
+  const total = lesson.activities.length;
+  const position = session.currentActivityIndex + 1;
+  const isLastActivity = session.currentActivityIndex === total - 1;
+  const response = session.responses[currentActivity.id];
+
   const handleAdvance = () => {
-    const response = session.responses[currentActivity.id] ?? { type: 'acknowledged' };
-    const correct =
-      currentActivity.type === 'multiple-choice' ||
-      currentActivity.type === 'sentence-building' ||
-      currentActivity.type === 'fill-in-the-blank'
-        ? session.feedback?.isCorrect ?? null
-        : null;
-    onActivityCompleted?.({ activity: currentActivity, response, correct });
+    const completedResponse = response ?? { type: 'acknowledged' as const };
+    const correct = isAnsweredActivity(currentActivity)
+      ? (session.feedback?.isCorrect ?? null)
+      : null;
+    onActivityCompleted?.({ activity: currentActivity, response: completedResponse, correct });
     advance();
   };
 
+  const continueAction = {
+    title: isLastActivity ? 'Termină lecția' : 'Continuă',
+    onPress: handleAdvance,
+    disabled: !canContinue,
+  };
+
+  let footerAction = continueAction;
+  if (!session.feedback) {
+    if (currentActivity.type === 'multiple-choice' || currentActivity.type === 'listening') {
+      footerAction = { title: 'Alege un răspuns', onPress: () => {}, disabled: true };
+    } else if (currentActivity.type === 'sentence-building') {
+      const selectedCount = response?.type === 'token-order' ? response.tokenIds.length : 0;
+      footerAction = {
+        title: 'Verifică',
+        onPress: checkSentenceAnswer,
+        disabled: selectedCount !== currentActivity.correctTokenOrder.length,
+      };
+    } else if (currentActivity.type === 'fill-in-the-blank') {
+      footerAction = {
+        title: 'Verifică',
+        onPress: checkFillInAnswer,
+        disabled: response?.type !== 'text',
+      };
+    }
+  }
+
+  const audioProps: AudioProps = {
+    audioState: audioPlayback.state,
+    audioError: audioPlayback.errorMessage,
+    onPlayAudio: (source, options) => {
+      void audioPlayback.play(source, options);
+    },
+  };
+
   return (
-    <ScreenContainer style={styles.screen}>
-      <ScreenHeader
-        backHref="/lessons"
-        backLabel="← Lecții"
-        title={lesson.title.romanian}
-        description={lesson.title.english}
-      />
-
-      <View style={styles.progressHeader}>
-        <Text style={styles.progressLabel}>Pasul curent</Text>
-        <Text style={styles.progressCount}>
-          {session.currentActivityIndex + 1} / {lesson.activities.length}
-        </Text>
-      </View>
-      <View
-        accessibilityLabel={`Progresul lecției: ${session.currentActivityIndex + 1} din ${lesson.activities.length}`}
-        accessibilityRole="progressbar"
-        accessibilityValue={{
-          min: 1,
-          max: lesson.activities.length,
-          now: session.currentActivityIndex + 1,
-        }}
-        style={styles.progressTrack}>
-        <View style={[styles.progressFill, { width: `${progress}%` }]} />
-      </View>
-
+    <ScreenContainer
+      header={
+        <View style={styles.topBar}>
+          <Link href="/lessons" asChild>
+            <Pressable
+              accessibilityLabel="Ieși din lecție. Progresul rămâne salvat."
+              accessibilityRole="button"
+              hitSlop={8}
+              style={styles.exitPressable}>
+              {({ pressed }) => (
+                <View style={[styles.exitButton, pressed && styles.exitButtonPressed]}>
+                  <Text style={styles.exitIcon}>✕</Text>
+                  <Text style={styles.exitText}>Ieși</Text>
+                </View>
+              )}
+            </Pressable>
+          </Link>
+          <ProgressBar
+            accessibilityLabel={`Pasul ${position} din ${total}`}
+            max={total}
+            style={styles.topProgress}
+            value={position}
+          />
+          <Text style={styles.stepCount}>
+            {position}/{total}
+          </Text>
+        </View>
+      }
+      footer={
+        <View style={styles.footerContent}>
+          {saveError ? <Text style={styles.saveError}>{saveError}</Text> : null}
+          <ActionButton
+            disabled={footerAction.disabled}
+            onPress={footerAction.onPress}
+            title={footerAction.title}
+          />
+        </View>
+      }>
+      <Text style={styles.lessonTitle}>{lesson.title.romanian}</Text>
       <View style={styles.activityArea}>
         <ActivityRenderer
+          key={currentActivity.id}
           activity={currentActivity}
           feedback={session.feedback}
-          response={session.responses[currentActivity.id]}
+          response={response}
           onAnswer={answerMultipleChoice}
           onToggleSentenceToken={toggleSentenceToken}
-          onCheckSentenceAnswer={checkSentenceAnswer}
           onSelectFillInAnswer={selectFillInAnswer}
-          onCheckFillInAnswer={checkFillInAnswer}
-          audioState={audioPlayback.state}
-          audioError={audioPlayback.errorMessage}
-          onPlayAudio={audioPlayback.play}
+          {...audioProps}
         />
       </View>
-
-      {(currentActivity.type !== 'multiple-choice' &&
-        currentActivity.type !== 'sentence-building' &&
-        currentActivity.type !== 'fill-in-the-blank') ||
-      session.feedback ? (
-        <ActionButton
-          title={
-            session.currentActivityIndex === lesson.activities.length - 1
-              ? 'Finish · Termină lecția'
-              : 'Next · Continuă'
-          }
-          onPress={handleAdvance}
-          disabled={!canContinue}
-        />
-      ) : null}
-      {saveError ? <Text style={styles.saveError}>{saveError}</Text> : null}
     </ScreenContainer>
   );
 }
 
-type ActivityRendererProps = {
+type ActivityRendererProps = AudioProps & {
   activity: SupportedActivity;
   feedback: ReturnType<typeof useLessonSession>['session']['feedback'];
   response: ActivityResponse | undefined;
   onAnswer: (optionId: string) => void;
   onToggleSentenceToken: (tokenId: string) => void;
-  onCheckSentenceAnswer: () => void;
   onSelectFillInAnswer: (answer: string) => void;
-  onCheckFillInAnswer: () => void;
-  audioState: AudioPlaybackState;
-  audioError: string | null;
-  onPlayAudio: (source: AudioSource) => void;
 };
 
 function ActivityRenderer({
@@ -179,38 +225,29 @@ function ActivityRenderer({
   response,
   onAnswer,
   onToggleSentenceToken,
-  onCheckSentenceAnswer,
   onSelectFillInAnswer,
-  onCheckFillInAnswer,
-  audioState,
-  audioError,
-  onPlayAudio,
+  ...audioProps
 }: ActivityRendererProps) {
   switch (activity.type) {
     case 'vocabulary-introduction':
-      return (
-        <VocabularyActivity
-          activity={activity}
-          audioState={audioState}
-          audioError={audioError}
-          onPlayAudio={onPlayAudio}
-        />
-      );
+      return <VocabularyActivity activity={activity} {...audioProps} />;
     case 'example-sentence':
-      return (
-        <ExampleActivity
-          activity={activity}
-          audioState={audioState}
-          audioError={audioError}
-          onPlayAudio={onPlayAudio}
-        />
-      );
+      return <ExampleActivity activity={activity} {...audioProps} />;
     case 'multiple-choice':
       return (
         <MultipleChoice
           activity={activity}
           feedback={feedback?.type === 'multiple-choice' ? feedback : null}
           onAnswer={onAnswer}
+        />
+      );
+    case 'listening':
+      return (
+        <Listening
+          activity={activity}
+          feedback={feedback?.type === 'multiple-choice' ? feedback : null}
+          onAnswer={onAnswer}
+          {...audioProps}
         />
       );
     case 'sentence-building':
@@ -220,7 +257,6 @@ function ActivityRenderer({
           feedback={feedback?.type === 'sentence-building' ? feedback : null}
           selectedTokenIds={response?.type === 'token-order' ? response.tokenIds : []}
           onToggleToken={onToggleSentenceToken}
-          onCheckAnswer={onCheckSentenceAnswer}
         />
       );
     case 'fill-in-the-blank':
@@ -230,55 +266,67 @@ function ActivityRenderer({
           feedback={feedback?.type === 'fill-in-the-blank' ? feedback : null}
           selectedAnswer={response?.type === 'text' ? response.value : null}
           onSelectAnswer={onSelectFillInAnswer}
-          onCheckAnswer={onCheckFillInAnswer}
+          {...audioProps}
         />
       );
   }
 }
-
-type AudioActivityProps = {
-  audioState: AudioPlaybackState;
-  audioError: string | null;
-  onPlayAudio: (source: AudioSource) => void;
-};
 
 function VocabularyActivity({
   activity,
   audioState,
   audioError,
   onPlayAudio,
-}: { activity: VocabularyIntroductionActivity } & AudioActivityProps) {
+}: { activity: VocabularyIntroductionActivity } & AudioProps) {
   return (
     <AppCard
-      eyebrow={activity.forms?.length ? 'Verb nou' : 'Cuvânt nou'}
-      title={activity.instructionRomanian ?? 'Citește cuvântul.'}>
-      <Text style={styles.englishWord}>{activity.content.english}</Text>
+      eyebrow={activity.forms?.length ? 'Verb nou' : activity.isPhrase ? 'Expresie nouă' : 'Cuvânt nou'}>
+      <Text style={styles.instruction}>
+        {activity.instructionRomanian ?? 'Ascultă și repetă cu voce tare.'}
+      </Text>
+      <Text style={activity.isPhrase ? styles.englishPhrase : styles.englishWord}>
+        {activity.content.english}
+      </Text>
       <Text style={styles.romanianMeaning}>{activity.content.romanian}</Text>
-      {activity.forms?.length ? (
-        <View style={styles.formsSection}>
-          <Text style={styles.formsHeading}>Forme utile</Text>
-          <View style={styles.formsList}>
-            {activity.forms.map((form) => (
-              <View key={`${form.english}-${form.romanian}`} style={styles.formRow}>
-                <Text style={styles.formEnglish}>{form.english}</Text>
-                <Text style={styles.formRomanian}>{form.romanian}</Text>
-              </View>
-            ))}
-          </View>
+      {activity.noteRomanian ? (
+        <View style={styles.note}>
+          <Text style={styles.noteText}>💡 {activity.noteRomanian}</Text>
         </View>
       ) : null}
+
       {activity.audio ? (
-        <View style={styles.listenControl}>
-          <ListenButton
-            label={activity.content.english}
-            state={audioState}
+        <View style={styles.audioArea}>
+          <AudioControls
             errorMessage={audioError}
-            onPress={() => {
-              if (activity.audio) {
-                onPlayAudio(activity.audio);
-              }
-            }}
+            label={activity.content.english}
+            onPlay={onPlayAudio}
+            source={activity.audio}
+            state={audioState}
           />
+        </View>
+      ) : null}
+
+      {activity.forms?.length ? (
+        <View style={styles.formsSection}>
+          <Text style={styles.sectionLabel}>Forme utile</Text>
+          {activity.forms.map((form) => (
+            <View key={`${form.english}-${form.romanian}`} style={styles.formRow}>
+              <Text style={styles.formEnglish}>{form.english}</Text>
+              <Text style={styles.formRomanian}>{form.romanian}</Text>
+            </View>
+          ))}
+        </View>
+      ) : null}
+
+      {activity.examples?.length ? (
+        <View style={styles.formsSection}>
+          <Text style={styles.sectionLabel}>Exemple</Text>
+          {activity.examples.map((example) => (
+            <View key={example.english} style={styles.exampleRow}>
+              <Text style={styles.formEnglish}>{example.english}</Text>
+              <Text style={styles.formRomanian}>{example.romanian}</Text>
+            </View>
+          ))}
         </View>
       ) : null}
     </AppCard>
@@ -290,24 +338,22 @@ function ExampleActivity({
   audioState,
   audioError,
   onPlayAudio,
-}: { activity: ExampleSentenceActivity } & AudioActivityProps) {
+}: { activity: ExampleSentenceActivity } & AudioProps) {
   return (
-    <AppCard
-      eyebrow="Exemplu"
-      title={activity.instructionRomanian ?? 'Citește propoziția.'}>
+    <AppCard eyebrow="Propoziție">
+      <Text style={styles.instruction}>
+        {activity.instructionRomanian ?? 'Ascultă propoziția și repet-o.'}
+      </Text>
       <Text style={styles.englishSentence}>{activity.sentence.english}</Text>
       <Text style={styles.romanianSentence}>{activity.sentence.romanian}</Text>
       {activity.sentence.audio ? (
-        <View style={styles.listenControl}>
-          <ListenButton
-            label={activity.sentence.english}
-            state={audioState}
+        <View style={styles.audioArea}>
+          <AudioControls
             errorMessage={audioError}
-            onPress={() => {
-              if (activity.sentence.audio) {
-                onPlayAudio(activity.sentence.audio);
-              }
-            }}
+            label={activity.sentence.english}
+            onPlay={onPlayAudio}
+            source={activity.sentence.audio}
+            state={audioState}
           />
         </View>
       ) : null}
@@ -315,242 +361,314 @@ function ExampleActivity({
   );
 }
 
-type MultipleChoiceProps = {
+function MultipleChoice({
+  activity,
+  feedback,
+  onAnswer,
+}: {
   activity: MultipleChoiceActivity;
   feedback: MultipleChoiceAnswerFeedback | null;
   onAnswer: (optionId: string) => void;
-};
-
-function MultipleChoice({ activity, feedback, onAnswer }: MultipleChoiceProps) {
+}) {
   const correctOption = getCorrectOption(activity);
 
   return (
-    <View style={styles.questionContainer}>
-      <Text style={styles.instruction}>{activity.instructionRomanian}</Text>
+    <AppCard eyebrow="Întrebare">
+      {activity.instructionRomanian ? (
+        <Text style={styles.instruction}>{activity.instructionRomanian}</Text>
+      ) : null}
       <Text style={styles.question}>{activity.prompt}</Text>
 
       <View style={styles.options}>
         {activity.options.map((option) => {
           const isSelected = feedback?.selectedOptionId === option.id;
-          const isCorrectAnswer = feedback && option.id === feedback.correctOptionId;
+          const isCorrectAnswer = Boolean(feedback && option.id === feedback.correctOptionId);
 
           return (
-            <ActionOption
+            <AnswerOption
               key={option.id}
-              label={option.text}
+              correct={isCorrectAnswer}
               disabled={Boolean(feedback)}
-              selected={isSelected}
-              correct={Boolean(isCorrectAnswer)}
               incorrect={Boolean(isSelected && feedback && !feedback.isCorrect)}
+              label={option.text}
               onPress={() => onAnswer(option.id)}
+              selected={isSelected}
             />
           );
         })}
       </View>
 
       {feedback ? (
-        <View
-          accessibilityLiveRegion="polite"
-          style={[styles.feedback, feedback.isCorrect ? styles.correctFeedback : styles.wrongFeedback]}>
-          <Text style={[styles.feedbackTitle, feedback.isCorrect ? styles.correctText : styles.wrongText]}>
-            {feedback.isCorrect ? 'Corect!' : 'Nu este corect.'}
-          </Text>
-          <Text style={styles.feedbackMessage}>
-            {feedback.isCorrect
-              ? activity.explanationRomanian
-              : `Răspunsul corect este „${correctOption?.text ?? ''}”. ${activity.explanationRomanian ?? ''}`}
-          </Text>
-        </View>
+        <AnswerFeedback
+          correct={feedback.isCorrect}
+          message={
+            feedback.isCorrect
+              ? (activity.explanationRomanian ?? '')
+              : `Răspunsul corect este „${correctOption?.text ?? ''}”. ${activity.explanationRomanian ?? ''}`
+          }
+        />
       ) : null}
-    </View>
+    </AppCard>
   );
 }
 
-type SentenceBuildingProps = {
-  activity: SentenceBuildingActivity;
-  feedback: SentenceBuildingAnswerFeedback | null;
-  selectedTokenIds: readonly string[];
-  onToggleToken: (tokenId: string) => void;
-  onCheckAnswer: () => void;
-};
+function Listening({
+  activity,
+  feedback,
+  onAnswer,
+  audioState,
+  audioError,
+  onPlayAudio,
+}: {
+  activity: ListeningActivity;
+  feedback: MultipleChoiceAnswerFeedback | null;
+  onAnswer: (optionId: string) => void;
+} & AudioProps) {
+  const correctOption = getCorrectOption(activity);
+
+  return (
+    <AppCard eyebrow="Ascultă conversația">
+      {activity.instructionRomanian ? (
+        <Text style={styles.instruction}>{activity.instructionRomanian}</Text>
+      ) : null}
+      <View style={styles.audioArea}>
+        <AudioControls
+          errorMessage={audioError}
+          label="conversația"
+          onPlay={onPlayAudio}
+          source={activity.audio}
+          state={audioState}
+        />
+      </View>
+      <Text style={styles.listeningQuestion}>{activity.promptRomanian}</Text>
+
+      <View style={styles.options}>
+        {activity.options.map((option) => {
+          const isSelected = feedback?.selectedOptionId === option.id;
+          const isCorrectAnswer = Boolean(feedback && option.id === feedback.correctOptionId);
+
+          return (
+            <AnswerOption
+              key={option.id}
+              correct={isCorrectAnswer}
+              disabled={Boolean(feedback)}
+              incorrect={Boolean(isSelected && feedback && !feedback.isCorrect)}
+              label={option.text}
+              onPress={() => onAnswer(option.id)}
+              selected={isSelected}
+            />
+          );
+        })}
+      </View>
+
+      {feedback ? (
+        <>
+          <AnswerFeedback
+            correct={feedback.isCorrect}
+            message={
+              feedback.isCorrect
+                ? (activity.explanationRomanian ?? '')
+                : `Răspunsul corect este „${correctOption?.text ?? ''}”. ${activity.explanationRomanian ?? ''}`
+            }
+          />
+          <View style={styles.transcript}>
+            <Text style={styles.sectionLabel}>Ce s-a spus</Text>
+            {activity.transcript.map((line, index) => (
+              <View key={`${index}-${line.english}`} style={styles.transcriptLine}>
+                <Text style={styles.transcriptSpeaker}>
+                  {line.speaker === 'staff' ? 'Magazinul' : 'Tu'}
+                </Text>
+                <Text style={styles.formEnglish}>{line.english}</Text>
+                <Text style={styles.formRomanian}>{line.romanian}</Text>
+              </View>
+            ))}
+          </View>
+        </>
+      ) : null}
+    </AppCard>
+  );
+}
 
 function SentenceBuilding({
   activity,
   feedback,
   selectedTokenIds,
   onToggleToken,
-  onCheckAnswer,
-}: SentenceBuildingProps) {
+}: {
+  activity: SentenceBuildingActivity;
+  feedback: SentenceBuildingAnswerFeedback | null;
+  selectedTokenIds: readonly string[];
+  onToggleToken: (tokenId: string) => void;
+}) {
   const selectedTokens = selectedTokenIds.flatMap((tokenId) => {
     const token = activity.tokens.find((candidate) => candidate.id === tokenId);
     return token ? [token] : [];
   });
   const availableTokens = activity.tokens.filter((token) => !selectedTokenIds.includes(token.id));
-  const readyToCheck = selectedTokenIds.length === activity.correctTokenOrder.length;
 
   return (
-    <AppCard eyebrow="Construiește propoziția" title={activity.promptRomanian}>
+    <AppCard eyebrow="Construiește propoziția">
+      <Text style={styles.instruction}>{activity.promptRomanian}</Text>
       {activity.translationRomanian ? (
         <Text style={styles.sentenceTranslation}>{activity.translationRomanian}</Text>
       ) : null}
 
-      <Text style={styles.sentenceAreaLabel}>Propoziția ta</Text>
-      <View
-        accessibilityLabel="Propoziția construită"
-        style={styles.sentenceAnswerArea}>
+      <View accessibilityLabel="Propoziția ta" style={styles.answerArea}>
         {selectedTokens.length > 0 ? (
           <View style={styles.tokenRow}>
             {selectedTokens.map((token, index) => (
-              <ActionButtonShell
+              <PressableShell
                 key={token.id}
-                accessibilityLabel={`Elimină „${token.text}”, poziția ${index + 1}`}
+                accessibilityLabel={`Scoate „${token.text}”, poziția ${index + 1}`}
                 disabled={Boolean(feedback)}
                 onPress={() => onToggleToken(token.id)}
                 style={[styles.wordToken, styles.selectedWordToken]}>
-                <Text style={styles.wordTokenText}>{token.text}</Text>
-                <Text style={styles.removeTokenHint}>elimină</Text>
-              </ActionButtonShell>
+                <Text style={[styles.wordTokenText, styles.selectedWordTokenText]}>
+                  {token.text}
+                </Text>
+              </PressableShell>
             ))}
           </View>
         ) : (
-          <Text style={styles.sentencePlaceholder}>Atinge cuvintele în ordinea corectă.</Text>
+          <Text style={styles.answerPlaceholder}>Atinge cuvintele de mai jos, în ordine.</Text>
         )}
       </View>
 
-      {!feedback ? (
-        <Text style={styles.reorderHint}>
-          Pentru a schimba ordinea, atinge un cuvânt ales și adaugă-l din nou.
-        </Text>
+      {!feedback && selectedTokens.length > 0 ? (
+        <Text style={styles.hint}>Ai greșit ordinea? Atinge un cuvânt de sus ca să-l scoți.</Text>
       ) : null}
 
-      <Text style={styles.sentenceAreaLabel}>Cuvinte disponibile</Text>
-      <View style={styles.tokenRow}>
+      <View style={[styles.tokenRow, styles.availableTokens]}>
         {availableTokens.map((token) => (
-          <ActionButtonShell
+          <PressableShell
             key={token.id}
             accessibilityLabel={`Adaugă „${token.text}”`}
             disabled={Boolean(feedback)}
             onPress={() => onToggleToken(token.id)}
             style={styles.wordToken}>
             <Text style={styles.wordTokenText}>{token.text}</Text>
-          </ActionButtonShell>
+          </PressableShell>
         ))}
       </View>
 
       {feedback ? (
-        <View
-          accessibilityLiveRegion="polite"
-          style={[styles.feedback, feedback.isCorrect ? styles.correctFeedback : styles.wrongFeedback]}>
-          <Text style={[styles.feedbackTitle, feedback.isCorrect ? styles.correctText : styles.wrongText]}>
-            {feedback.isCorrect ? 'Corect!' : 'Nu este corect.'}
-          </Text>
-          <Text style={styles.feedbackMessage}>
-            {feedback.isCorrect
+        <AnswerFeedback
+          correct={feedback.isCorrect}
+          message={
+            feedback.isCorrect
               ? feedback.correctSentence
-              : `Răspunsul corect este „${feedback.correctSentence}”`}
-          </Text>
-        </View>
-      ) : (
-        <View style={styles.checkAnswerButton}>
-          <ActionButton
-            title="Check Answer · Verifică"
-            onPress={onCheckAnswer}
-            disabled={!readyToCheck}
-          />
-        </View>
-      )}
+              : `Răspunsul corect: „${feedback.correctSentence}”`
+          }
+        />
+      ) : null}
     </AppCard>
   );
 }
-
-type FillInTheBlankProps = {
-  activity: FillInTheBlankActivity;
-  feedback: FillInTheBlankAnswerFeedback | null;
-  selectedAnswer: string | null;
-  onSelectAnswer: (answer: string) => void;
-  onCheckAnswer: () => void;
-};
 
 function FillInTheBlank({
   activity,
   feedback,
   selectedAnswer,
   onSelectAnswer,
-  onCheckAnswer,
-}: FillInTheBlankProps) {
+  audioState,
+  audioError,
+  onPlayAudio,
+}: {
+  activity: FillInTheBlankActivity;
+  feedback: FillInTheBlankAnswerFeedback | null;
+  selectedAnswer: string | null;
+  onSelectAnswer: (answer: string) => void;
+} & AudioProps) {
   return (
-    <AppCard
-      eyebrow="Completează propoziția"
-      title={activity.instructionRomanian ?? 'Alege cuvântul care lipsește.'}>
-      <Text style={styles.fillSentence}>{activity.sentence}</Text>
+    <AppCard eyebrow="Completează">
+      <Text style={styles.instruction}>
+        {activity.instructionRomanian ?? 'Alege cuvântul care lipsește.'}
+      </Text>
+      <Text style={styles.fillSentence}>{activity.sentence.replace('___', '_____')}</Text>
       {activity.translationRomanian ? (
-        <Text style={styles.fillTranslation}>{activity.translationRomanian}</Text>
+        <Text style={styles.romanianSentence}>{activity.translationRomanian}</Text>
       ) : null}
 
-      <View style={styles.fillOptions}>
+      <View style={styles.options}>
         {activity.options.map((option) => {
           const selected = selectedAnswer === option.text;
           const correct = Boolean(feedback && isFillInAnswerCorrect(activity, option.text));
 
           return (
-            <ActionOption
+            <AnswerOption
               key={option.id}
-              label={option.text}
-              disabled={Boolean(feedback)}
-              selected={selected}
               correct={correct}
+              disabled={Boolean(feedback)}
               incorrect={Boolean(selected && feedback && !feedback.isCorrect)}
+              label={option.text}
               onPress={() => onSelectAnswer(option.text)}
+              selected={selected}
             />
           );
         })}
       </View>
 
       {feedback ? (
-        <View
-          accessibilityLiveRegion="polite"
-          style={[styles.feedback, feedback.isCorrect ? styles.correctFeedback : styles.wrongFeedback]}>
-          <Text style={[styles.feedbackTitle, feedback.isCorrect ? styles.correctText : styles.wrongText]}>
-            {feedback.isCorrect ? 'Corect!' : 'Nu este corect.'}
-          </Text>
-          <Text style={styles.feedbackMessage}>
-            {feedback.isCorrect
-              ? feedback.correctSentence
-              : `Răspunsul corect este „${feedback.correctAnswer}”. ${feedback.correctSentence}`}
-          </Text>
-        </View>
-      ) : (
-        <View style={styles.checkAnswerButton}>
-          <ActionButton
-            title="Check Answer · Verifică"
-            onPress={onCheckAnswer}
-            disabled={!selectedAnswer}
+        <>
+          <AnswerFeedback
+            correct={feedback.isCorrect}
+            message={
+              feedback.isCorrect
+                ? feedback.correctSentence
+                : `Răspunsul corect este „${feedback.correctAnswer}”: ${feedback.correctSentence}`
+            }
           />
-        </View>
-      )}
+          {activity.audio ? (
+            <View style={styles.audioArea}>
+              <AudioControls
+                errorMessage={audioError}
+                label={feedback.correctSentence}
+                onPlay={onPlayAudio}
+                size="compact"
+                source={activity.audio}
+                state={audioState}
+              />
+            </View>
+          ) : null}
+        </>
+      ) : null}
     </AppCard>
   );
 }
 
-type ActionOptionProps = {
-  label: string;
-  disabled: boolean;
-  selected: boolean;
-  correct: boolean;
-  incorrect: boolean;
-  onPress: () => void;
-};
+function AnswerFeedback({ correct, message }: { correct: boolean; message: string }) {
+  const trimmed = message.trim();
 
-function ActionOption({
+  return (
+    <View
+      accessibilityLiveRegion="polite"
+      style={[styles.feedback, correct ? styles.correctFeedback : styles.wrongFeedback]}>
+      <Text style={[styles.feedbackTitle, correct ? styles.correctText : styles.wrongText]}>
+        {correct ? '✓  Foarte bine!' : 'Aproape!'}
+      </Text>
+      {trimmed ? <Text style={styles.feedbackMessage}>{trimmed}</Text> : null}
+    </View>
+  );
+}
+
+function AnswerOption({
   label,
   disabled,
   selected,
   correct,
   incorrect,
   onPress,
-}: ActionOptionProps) {
+}: {
+  label: string;
+  disabled: boolean;
+  selected: boolean;
+  correct: boolean;
+  incorrect: boolean;
+  onPress: () => void;
+}) {
   return (
-    <ActionButtonShell
+    <PressableShell
+      accessibilityLabel={label}
       disabled={disabled}
       onPress={onPress}
       style={[
@@ -558,36 +676,105 @@ function ActionOption({
         selected && styles.selectedOption,
         correct && styles.correctOption,
         incorrect && styles.wrongOption,
+        disabled && !correct && !incorrect && styles.dimmedOption,
       ]}>
+      <View
+        style={[
+          styles.optionMarker,
+          selected && styles.selectedMarker,
+          correct && styles.correctMarker,
+          incorrect && styles.wrongMarker,
+        ]}>
+        {correct || incorrect || selected ? (
+          <Text style={styles.optionMarkerText}>{correct ? '✓' : incorrect ? '✕' : '•'}</Text>
+        ) : null}
+      </View>
       <Text style={styles.optionText}>{label}</Text>
-    </ActionButtonShell>
+    </PressableShell>
   );
 }
 
-function LessonComplete({ lesson }: { lesson: Lesson }) {
+function LessonComplete({ lesson, nextLesson }: { lesson: Lesson; nextLesson: NextLessonLink | null }) {
+  const router = useRouter();
+  const newWords = lesson.activities.filter(
+    (activity) => activity.type === 'vocabulary-introduction',
+  ).length;
+
   return (
-    <ScreenContainer style={styles.completeScreen}>
-      <AppCard
-        eyebrow="Lecție finalizată"
-        title="Foarte bine. Ai terminat lecția!"
-        description={`Ai parcurs toate cele ${lesson.activities.length} activități.`}
-      />
-      <View style={styles.completeActions}>
-        <AppButton href="/lessons" title="Înapoi la lecții" variant="primary" />
-        <AppButton href="/" title="Acasă" />
+    <ScreenContainer
+      style={styles.completeScreen}
+      footer={
+        <View style={styles.completeActions}>
+          {nextLesson ? (
+            <ActionButton
+              onPress={() =>
+                router.replace({
+                  pathname: '/lessons/[lessonId]',
+                  params: { lessonId: nextLesson.id },
+                })
+              }
+              title={`Lecția următoare ›`}
+            />
+          ) : null}
+          <ActionButton
+            onPress={() => router.replace('/')}
+            title="Acasă"
+            variant={nextLesson ? 'secondary' : 'primary'}
+          />
+        </View>
+      }>
+      <View style={styles.celebration}>
+        <View style={styles.checkCircle}>
+          <Text style={styles.checkMark}>✓</Text>
+        </View>
+        <Text accessibilityRole="header" style={styles.completeTitle}>
+          Felicitări!
+        </Text>
+        <Text style={styles.completeText}>
+          Ai terminat lecția „{lesson.title.romanian}”.
+        </Text>
       </View>
+
+      <View style={styles.statRow}>
+        {newWords > 0 ? (
+          <View style={styles.statTile}>
+            <Text style={styles.statNumber}>{newWords}</Text>
+            <Text style={styles.statLabel}>{newWords === 1 ? 'cuvânt nou' : 'cuvinte noi'}</Text>
+          </View>
+        ) : null}
+        <View style={styles.statTile}>
+          <Text style={styles.statNumber}>{lesson.activities.length}</Text>
+          <Text style={styles.statLabel}>pași parcurși</Text>
+        </View>
+      </View>
+
+      <AppCard style={styles.tipCard}>
+        <Text style={styles.tipText}>
+          💡 Data viitoare, începe cu <Text style={styles.tipStrong}>Repetă</Text> ca să nu uiți
+          cuvintele de azi.
+        </Text>
+        {nextLesson ? (
+          <Text style={styles.nextLessonText}>
+            Urmează: {nextLesson.icon ? `${nextLesson.icon} ` : ''}
+            {nextLesson.title}
+          </Text>
+        ) : null}
+      </AppCard>
     </ScreenContainer>
   );
 }
 
 function UnsupportedActivity({ lesson }: { lesson: Lesson }) {
+  const router = useRouter();
+
   return (
-    <ScreenContainer style={styles.completeScreen}>
+    <ScreenContainer
+      style={styles.completeScreen}
+      footer={<ActionButton onPress={() => router.replace('/lessons')} title="Înapoi la lecții" />}>
       <AppCard
         title="Activitate indisponibilă"
-        description="Acest tip de activitate va fi adăugat într-o versiune viitoare."
+        description={`Acest exercițiu din „${lesson.title.romanian}” va fi adăugat într-o versiune viitoare.`}
       />
-      <AppButton href="/lessons" title={`Ieși din „${lesson.title.romanian}”`} />
     </ScreenContainer>
   );
 }
@@ -597,249 +784,235 @@ function isSupportedActivity(activity: LessonActivity): activity is SupportedAct
     activity.type === 'vocabulary-introduction' ||
     activity.type === 'example-sentence' ||
     activity.type === 'multiple-choice' ||
+    activity.type === 'listening' ||
     activity.type === 'sentence-building' ||
     activity.type === 'fill-in-the-blank'
   );
 }
 
-type ActionButtonShellProps = Pick<
-  PressableProps,
-  'accessibilityLabel' | 'children' | 'disabled' | 'onPress'
-> & {
-  style: StyleProp<ViewStyle>;
-};
-
-function ActionButtonShell({
+function PressableShell({
   accessibilityLabel,
   children,
   disabled,
   onPress,
   style,
-}: ActionButtonShellProps) {
+}: Pick<PressableProps, 'accessibilityLabel' | 'children' | 'disabled' | 'onPress'> & {
+  style: StyleProp<ViewStyle>;
+}) {
   return (
     <Pressable
       accessibilityLabel={accessibilityLabel}
       accessibilityRole="button"
+      accessibilityState={{ disabled: Boolean(disabled) }}
       disabled={disabled}
       onPress={onPress}
-      style={({ pressed }) => [style, pressed && !disabled && styles.optionPressed]}>
+      style={({ pressed }) => [style, pressed && !disabled && styles.pressed]}>
       {children}
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: {
-    paddingBottom: 36,
-  },
-  progressHeader: {
+  topBar: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
+    gap: 12,
   },
-  progressLabel: {
-    color: colors.textMuted,
-    fontSize: 15,
-    lineHeight: 22,
+  exitPressable: {
+    borderRadius: radii.pill,
   },
-  progressCount: {
+  exitButton: {
+    minHeight: 48,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
+    borderWidth: 1,
+    borderRadius: radii.pill,
+    paddingHorizontal: 14,
+  },
+  exitButtonPressed: {
+    backgroundColor: colors.primarySoft,
+  },
+  exitIcon: {
     color: colors.text,
-    fontSize: 17,
-    lineHeight: 24,
+    fontSize: 16,
+    lineHeight: 20,
     fontWeight: '700',
   },
-  progressTrack: {
-    height: 8,
-    backgroundColor: colors.border,
-    borderRadius: 4,
-    overflow: 'hidden',
-    marginTop: 8,
+  exitText: {
+    color: colors.text,
+    fontSize: 17,
+    lineHeight: 22,
+    fontWeight: '700',
   },
-  progressFill: {
-    height: '100%',
-    backgroundColor: colors.primary,
-    borderRadius: 4,
+  topProgress: {
+    flex: 1,
+  },
+  stepCount: {
+    minWidth: 48,
+    color: colors.textMuted,
+    fontSize: 16,
+    lineHeight: 22,
+    fontWeight: '700',
+    textAlign: 'right',
+    fontVariant: ['tabular-nums'],
+  },
+  lessonTitle: {
+    color: colors.textMuted,
+    fontSize: 16,
+    lineHeight: 22,
+    fontWeight: '600',
+    marginTop: 6,
   },
   activityArea: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    paddingVertical: 28,
+    paddingTop: 14,
+    paddingBottom: 8,
+  },
+  footerContent: {
+    gap: 8,
+  },
+  instruction: {
+    color: colors.textMuted,
+    fontSize: 18,
+    lineHeight: 26,
   },
   englishWord: {
     color: colors.text,
-    fontSize: 42,
-    lineHeight: 50,
-    fontWeight: '700',
+    fontSize: 46,
+    lineHeight: 54,
+    fontWeight: '800',
+    letterSpacing: -0.5,
+    marginTop: 14,
+  },
+  englishPhrase: {
+    color: colors.text,
+    fontSize: 34,
+    lineHeight: 42,
+    fontWeight: '800',
+    marginTop: 14,
   },
   romanianMeaning: {
     color: colors.primary,
-    fontSize: 24,
-    lineHeight: 32,
-    marginTop: 8,
+    fontSize: 26,
+    lineHeight: 34,
+    fontWeight: '600',
+    marginTop: 4,
   },
-  formsSection: {
+  note: {
+    backgroundColor: colors.warmSoft,
+    borderRadius: radii.medium,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    marginTop: 16,
+  },
+  noteText: {
+    color: colors.text,
+    fontSize: 17,
+    lineHeight: 25,
+  },
+  listeningQuestion: {
+    color: colors.text,
+    fontSize: 28,
+    lineHeight: 36,
+    fontWeight: '800',
     marginTop: 22,
   },
-  formsHeading: {
-    color: colors.textMuted,
-    fontSize: 16,
-    lineHeight: 23,
-    fontWeight: '700',
-    marginBottom: 10,
+  transcript: {
+    gap: 10,
+    marginTop: 20,
   },
-  formsList: {
+  transcriptLine: {
+    borderLeftColor: colors.primary,
+    borderLeftWidth: 3,
+    paddingLeft: 12,
+    paddingVertical: 2,
+  },
+  transcriptSpeaker: {
+    color: colors.textMuted,
+    fontSize: 14,
+    lineHeight: 19,
+    fontWeight: '800',
+    textTransform: 'uppercase',
+    letterSpacing: 0.6,
+  },
+  audioArea: {
+    marginTop: 22,
+  },
+  formsSection: {
+    marginTop: 24,
     gap: 8,
+  },
+  sectionLabel: {
+    color: colors.textMuted,
+    fontSize: 15,
+    lineHeight: 20,
+    fontWeight: '800',
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
   },
   formRow: {
     backgroundColor: colors.background,
-    borderColor: colors.border,
-    borderWidth: 1,
-    borderRadius: 12,
+    borderRadius: radii.small,
     paddingHorizontal: 14,
-    paddingVertical: 10,
+    paddingVertical: 11,
+  },
+  exampleRow: {
+    borderLeftColor: colors.primary,
+    borderLeftWidth: 3,
+    paddingLeft: 12,
+    paddingVertical: 4,
   },
   formEnglish: {
     color: colors.text,
-    fontSize: 18,
-    lineHeight: 25,
+    fontSize: 19,
+    lineHeight: 26,
     fontWeight: '700',
   },
   formRomanian: {
     color: colors.textMuted,
-    fontSize: 16,
-    lineHeight: 23,
+    fontSize: 17,
+    lineHeight: 24,
     marginTop: 2,
-  },
-  listenControl: {
-    marginTop: 20,
   },
   englishSentence: {
     color: colors.text,
-    fontSize: 27,
-    lineHeight: 37,
-    fontWeight: '700',
+    fontSize: 30,
+    lineHeight: 39,
+    fontWeight: '800',
+    marginTop: 14,
   },
   romanianSentence: {
     color: colors.textMuted,
-    fontSize: 19,
+    fontSize: 20,
     lineHeight: 29,
-    marginTop: 12,
-  },
-  sentenceTranslation: {
-    color: colors.primary,
-    fontSize: 23,
-    lineHeight: 31,
-    fontWeight: '600',
-  },
-  fillSentence: {
-    color: colors.text,
-    fontSize: 30,
-    lineHeight: 40,
-    fontWeight: '700',
-  },
-  fillTranslation: {
-    color: colors.textMuted,
-    fontSize: 19,
-    lineHeight: 28,
-    marginTop: 12,
-  },
-  fillOptions: {
-    gap: 12,
-    marginTop: 24,
-  },
-  sentenceAreaLabel: {
-    color: colors.textMuted,
-    fontSize: 15,
-    lineHeight: 22,
-    fontWeight: '700',
-    marginTop: 18,
-  },
-  sentenceAnswerArea: {
-    minHeight: 86,
-    justifyContent: 'center',
-    backgroundColor: colors.background,
-    borderColor: colors.borderStrong,
-    borderWidth: 1,
-    borderRadius: 14,
-    padding: 12,
-    marginTop: 8,
-  },
-  sentencePlaceholder: {
-    color: colors.textMuted,
-    fontSize: 17,
-    lineHeight: 25,
-    textAlign: 'center',
-  },
-  reorderHint: {
-    color: colors.textMuted,
-    fontSize: 15,
-    lineHeight: 22,
     marginTop: 10,
-  },
-  tokenRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
-    marginTop: 8,
-  },
-  wordToken: {
-    minHeight: 52,
-    justifyContent: 'center',
-    backgroundColor: colors.surface,
-    borderColor: colors.borderStrong,
-    borderWidth: 2,
-    borderRadius: 13,
-    paddingHorizontal: 16,
-    paddingVertical: 9,
-  },
-  selectedWordToken: {
-    backgroundColor: colors.primarySoft,
-    borderColor: colors.primary,
-  },
-  wordTokenText: {
-    color: colors.text,
-    fontSize: 19,
-    lineHeight: 25,
-    fontWeight: '700',
-    textAlign: 'center',
-  },
-  removeTokenHint: {
-    color: colors.textMuted,
-    fontSize: 11,
-    lineHeight: 15,
-    textAlign: 'center',
-  },
-  checkAnswerButton: {
-    marginTop: 22,
-  },
-  questionContainer: {
-    gap: 16,
-  },
-  instruction: {
-    color: colors.textMuted,
-    fontSize: 17,
-    lineHeight: 25,
   },
   question: {
     color: colors.text,
-    fontSize: 28,
-    lineHeight: 37,
-    fontWeight: '700',
+    fontSize: 32,
+    lineHeight: 40,
+    fontWeight: '800',
+    marginTop: 10,
   },
   options: {
     gap: 12,
+    marginTop: 22,
   },
   option: {
-    minHeight: 60,
-    justifyContent: 'center',
+    minHeight: 64,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
     backgroundColor: colors.surface,
     borderColor: colors.border,
     borderWidth: 2,
-    borderRadius: 14,
-    paddingHorizontal: 18,
+    borderRadius: radii.medium,
+    paddingHorizontal: 16,
     paddingVertical: 12,
   },
-  optionPressed: {
+  pressed: {
     backgroundColor: colors.primarySoft,
   },
   selectedOption: {
@@ -853,52 +1026,226 @@ const styles = StyleSheet.create({
     backgroundColor: colors.errorSoft,
     borderColor: colors.error,
   },
+  dimmedOption: {
+    opacity: 0.6,
+  },
+  optionMarker: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    borderWidth: 2,
+    borderColor: colors.borderStrong,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  selectedMarker: {
+    borderColor: colors.primary,
+    backgroundColor: colors.primary,
+  },
+  correctMarker: {
+    borderColor: colors.success,
+    backgroundColor: colors.success,
+  },
+  wrongMarker: {
+    borderColor: colors.error,
+    backgroundColor: colors.error,
+  },
+  optionMarkerText: {
+    color: colors.onPrimary,
+    fontSize: 15,
+    lineHeight: 18,
+    fontWeight: '800',
+  },
   optionText: {
+    flex: 1,
     color: colors.text,
-    fontSize: 19,
+    fontSize: 20,
     lineHeight: 27,
     fontWeight: '600',
   },
+  sentenceTranslation: {
+    color: colors.primary,
+    fontSize: 24,
+    lineHeight: 32,
+    fontWeight: '700',
+    marginTop: 10,
+  },
+  answerArea: {
+    minHeight: 92,
+    justifyContent: 'center',
+    backgroundColor: colors.background,
+    borderColor: colors.borderStrong,
+    borderStyle: 'dashed',
+    borderWidth: 2,
+    borderRadius: radii.medium,
+    padding: 12,
+    marginTop: 18,
+  },
+  answerPlaceholder: {
+    color: colors.textMuted,
+    fontSize: 18,
+    lineHeight: 25,
+    textAlign: 'center',
+  },
+  hint: {
+    color: colors.textMuted,
+    fontSize: 16,
+    lineHeight: 23,
+    marginTop: 10,
+  },
+  tokenRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+  availableTokens: {
+    marginTop: 18,
+  },
+  wordToken: {
+    minHeight: 56,
+    justifyContent: 'center',
+    backgroundColor: colors.surface,
+    borderColor: colors.borderStrong,
+    borderWidth: 2,
+    borderRadius: radii.small,
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+  },
+  selectedWordToken: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+  wordTokenText: {
+    color: colors.text,
+    fontSize: 20,
+    lineHeight: 26,
+    fontWeight: '700',
+    textAlign: 'center',
+  },
+  selectedWordTokenText: {
+    color: colors.onPrimary,
+  },
+  fillSentence: {
+    color: colors.text,
+    fontSize: 30,
+    lineHeight: 40,
+    fontWeight: '800',
+    marginTop: 14,
+  },
   feedback: {
-    borderRadius: 14,
+    borderRadius: radii.medium,
     padding: 16,
+    marginTop: 20,
+    gap: 4,
   },
   correctFeedback: {
     backgroundColor: colors.successSoft,
   },
   wrongFeedback: {
-    backgroundColor: colors.errorSoft,
+    backgroundColor: colors.warmSoft,
   },
   feedbackTitle: {
-    fontSize: 19,
-    lineHeight: 26,
-    fontWeight: '700',
+    fontSize: 21,
+    lineHeight: 28,
+    fontWeight: '800',
   },
   correctText: {
     color: colors.success,
   },
   wrongText: {
-    color: colors.error,
+    color: colors.warm,
   },
   feedbackMessage: {
     color: colors.text,
-    fontSize: 17,
-    lineHeight: 25,
-    marginTop: 4,
+    fontSize: 18,
+    lineHeight: 26,
   },
   completeScreen: {
     justifyContent: 'center',
-    paddingVertical: 36,
-    gap: 24,
+    paddingVertical: 24,
+    gap: 22,
   },
   completeActions: {
     gap: 12,
+  },
+  celebration: {
+    alignItems: 'center',
+    gap: 10,
+  },
+  checkCircle: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    backgroundColor: colors.successSoft,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 8,
+  },
+  checkMark: {
+    color: colors.success,
+    fontSize: 48,
+    lineHeight: 56,
+    fontWeight: '800',
+  },
+  completeTitle: {
+    color: colors.text,
+    fontSize: 36,
+    lineHeight: 44,
+    fontWeight: '800',
+    textAlign: 'center',
+  },
+  completeText: {
+    color: colors.textMuted,
+    fontSize: 20,
+    lineHeight: 29,
+    textAlign: 'center',
+  },
+  statRow: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  statTile: {
+    flex: 1,
+    backgroundColor: colors.surface,
+    borderRadius: radii.large,
+    borderColor: colors.border,
+    borderWidth: StyleSheet.hairlineWidth,
+    paddingVertical: 18,
+    alignItems: 'center',
+  },
+  statNumber: {
+    color: colors.primary,
+    fontSize: 34,
+    lineHeight: 40,
+    fontWeight: '800',
+  },
+  statLabel: {
+    color: colors.textMuted,
+    fontSize: 16,
+    lineHeight: 22,
+  },
+  tipCard: {
+    gap: 10,
+  },
+  tipText: {
+    color: colors.text,
+    fontSize: 18,
+    lineHeight: 27,
+  },
+  tipStrong: {
+    fontWeight: '800',
+  },
+  nextLessonText: {
+    color: colors.primary,
+    fontSize: 18,
+    lineHeight: 26,
+    fontWeight: '700',
+    marginTop: 10,
   },
   saveError: {
     color: colors.error,
     fontSize: 15,
     lineHeight: 22,
-    marginTop: 10,
     textAlign: 'center',
   },
 });

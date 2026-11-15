@@ -2,7 +2,7 @@ import { Link, type Href } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { layout } from '@/constants/layout';
-import { colors } from '@/constants/theme';
+import { colors, radii } from '@/constants/theme';
 
 type ScreenHeaderProps = {
   title: string;
@@ -17,37 +17,73 @@ export function ScreenHeader({
   description,
   showHomeLink = true,
   backHref = '/',
-  backLabel = '← Acasă',
+  backLabel = 'Acasă',
 }: ScreenHeaderProps) {
   return (
     <View style={styles.container}>
-      {showHomeLink ? (
-        <Link href={backHref} asChild>
-          <Pressable accessibilityRole="button" style={styles.homeLink}>
-            <Text style={styles.homeLinkText}>{backLabel}</Text>
-          </Pressable>
-        </Link>
-      ) : null}
-      <Text style={styles.title}>{title}</Text>
+      {showHomeLink ? <BackButton href={backHref} label={backLabel} /> : null}
+      <Text accessibilityRole="header" style={styles.title}>
+        {title}
+      </Text>
       {description ? <Text style={styles.description}>{description}</Text> : null}
     </View>
   );
 }
 
+export function BackButton({ href, label }: { href: Href; label: string }) {
+  return (
+    <Link href={href} asChild>
+      <Pressable
+        accessibilityLabel={`Înapoi: ${label}`}
+        accessibilityRole="button"
+        hitSlop={8}
+        style={styles.backPressable}>
+        {({ pressed }) => (
+          <View style={[styles.backButton, pressed && styles.backButtonPressed]}>
+            <Text style={styles.backChevron}>‹</Text>
+            <Text style={styles.backText}>{label}</Text>
+          </View>
+        )}
+      </Pressable>
+    </Link>
+  );
+}
+
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 24,
+    paddingTop: 12,
     paddingBottom: layout.sectionGap,
   },
-  homeLink: {
-    minHeight: layout.minimumTouchTarget,
+  backPressable: {
     alignSelf: 'flex-start',
-    justifyContent: 'center',
-    marginBottom: 12,
+    borderRadius: radii.pill,
+    marginBottom: 20,
   },
-  homeLinkText: {
+  backButton: {
+    minHeight: 48,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: colors.surface,
+    borderRadius: radii.pill,
+    borderColor: colors.border,
+    borderWidth: 1,
+    paddingLeft: 14,
+    paddingRight: 18,
+  },
+  backButtonPressed: {
+    backgroundColor: colors.primarySoft,
+  },
+  backChevron: {
     color: colors.primary,
-    fontSize: 17,
+    fontSize: 30,
+    lineHeight: 32,
+    fontWeight: '500',
+    marginTop: -3,
+  },
+  backText: {
+    color: colors.primary,
+    fontSize: 18,
     lineHeight: 24,
     fontWeight: '700',
   },
@@ -55,12 +91,13 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontSize: 34,
     lineHeight: 41,
-    fontWeight: '700',
+    fontWeight: '800',
+    letterSpacing: -0.5,
   },
   description: {
     color: colors.textMuted,
-    fontSize: 18,
-    lineHeight: 27,
-    marginTop: 10,
+    fontSize: 19,
+    lineHeight: 28,
+    marginTop: 8,
   },
 });

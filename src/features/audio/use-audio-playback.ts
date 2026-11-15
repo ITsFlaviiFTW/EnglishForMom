@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import type { AudioPlaybackState, AudioService } from '@/services/audio-service';
+import type {
+  AudioPlaybackState,
+  AudioPlayOptions,
+  AudioService,
+} from '@/services/audio-service';
 import type { AudioSource } from '@/types';
 
 export function useAudioPlayback(audioService: AudioService, activityId: string | undefined) {
@@ -18,11 +22,11 @@ export function useAudioPlayback(audioService: AudioService, activityId: string 
   }, [activityId, audioService]);
 
   const play = useCallback(
-    async (source: AudioSource) => {
+    async (source: AudioSource, options?: AudioPlayOptions) => {
       const currentRequestId = ++requestId.current;
       setPlayback({ activityId, state: 'loading', errorMessage: null });
 
-      const playback = audioService.play(source);
+      const playback = audioService.play(source, options);
       setPlayback({ activityId, state: 'playing', errorMessage: null });
 
       try {

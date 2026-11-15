@@ -6,10 +6,12 @@ export type {
   CourseUnitId,
 } from './course';
 export type {
+  AccentAudio,
   ActivityId,
   ActivityResponse,
   AudioSource,
   ChoiceOption,
+  DialogueLine,
   ExampleSentence,
   ExampleSentenceActivity,
   FillInTheBlankActivity,
@@ -17,7 +19,9 @@ export type {
   LessonActivity,
   LessonId,
   LearningText,
+  ListeningActivity,
   MatchingPair,
+  SpacedAudio,
   MultipleChoiceActivity,
   SentenceBuildingActivity,
   SentenceToken,

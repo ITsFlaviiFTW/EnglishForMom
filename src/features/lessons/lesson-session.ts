@@ -4,6 +4,7 @@ import type {
   FillInTheBlankActivity,
   Lesson,
   LessonActivity,
+  ListeningActivity,
   MultipleChoiceActivity,
 } from '@/types';
 import { isFillInAnswerCorrect } from './fill-in-the-blank.ts';
@@ -93,7 +94,7 @@ export function submitMultipleChoiceAnswer(
   const activity = getCurrentActivity(session);
 
   if (
-    activity?.type !== 'multiple-choice' ||
+    (activity?.type !== 'multiple-choice' && activity?.type !== 'listening') ||
     session.feedback?.activityId === activity.id ||
     !activity.options.some((option) => option.id === selectedOptionId)
   ) {
@@ -240,9 +241,7 @@ export function canAdvanceLessonSession(session: LessonSession): boolean {
   }
 
   return (
-    (activity.type !== 'multiple-choice' &&
-      activity.type !== 'sentence-building' &&
-      activity.type !== 'fill-in-the-blank') ||
+    !isAnsweredActivity(activity) ||
     session.feedback?.activityId === activity.id
   );
 }
@@ -275,9 +274,19 @@ export function retreatLessonSession(session: LessonSession): LessonSession {
 }
 
 export function getCorrectOption(
-  activity: MultipleChoiceActivity,
+  activity: MultipleChoiceActivity | ListeningActivity,
 ): MultipleChoiceActivity['options'][number] | undefined {
   return activity.options.find((option) => option.id === activity.correctOptionId);
+}
+
+/** Activities that need an answer (and get checked) before the learner can go on. */
+export function isAnsweredActivity(activity: LessonActivity): boolean {
+  return (
+    activity.type === 'multiple-choice' ||
+    activity.type === 'listening' ||
+    activity.type === 'sentence-building' ||
+    activity.type === 'fill-in-the-blank'
+  );
 }
 
 function getFirstAcceptedAnswer(activity: FillInTheBlankActivity): string | undefined {

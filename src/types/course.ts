@@ -6,6 +6,8 @@ export type CourseUnitAvailability = 'published' | 'planned';
 
 export type CourseUnit = {
   id: CourseUnitId;
+  /** A familiar picture (emoji) that helps recognise the lesson at a glance. */
+  icon?: string;
   title: LearningText;
   lessonId: LessonId | null;
   prerequisiteLessonIds: readonly LessonId[];
@@ -15,6 +17,7 @@ export type CourseUnit = {
 export type Course = {
   id: CourseId;
   schemaVersion: 1;
+  icon?: string;
   level: number;
   title: LearningText;
   descriptionRomanian: string;

@@ -177,6 +177,10 @@ test('registers all production lessons in course order', () => {
   const lessonIds = getCourseLessonIds();
 
   assert.deepEqual(lessonIds, [
+    'out-1-help-phrases',
+    'out-2-prices',
+    'out-3-at-the-store',
+    'out-4-checkout',
     'level-1-kitchen-basics',
     'level-1-bathroom-basics',
     'level-1-bedroom-basics',

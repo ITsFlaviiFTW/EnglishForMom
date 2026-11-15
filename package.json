@@ -44,7 +44,12 @@
     "generate-audio": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/generate-audio.mjs",
     "lint": "expo lint",
     "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/*.test.mjs",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "build:web": "node scripts/build-web.mjs",
+    "generate-spaced-audio": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/generate-spaced-audio.mjs",
+    "generate-accent-audio": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/generate-accent-audio.mjs",
+    "generate-all-audio": "npm run generate-audio && npm run generate-spaced-audio && npm run generate-accent-audio",
+    "generate-print": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/generate-print.mjs"
   },
   "private": true
 }

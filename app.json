@@ -1,12 +1,12 @@
 {
   "expo": {
-    "name": "EnglishForMom",
+    "name": "Prava",
     "slug": "EnglishForMom",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "englishformom",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "light",
     "ios": {
       "icon": "./assets/expo.icon"
     },
@@ -21,14 +21,19 @@
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/favicon.png",
+      "name": "Prava",
+      "shortName": "Prava",
+      "lang": "ro",
+      "themeColor": "#F5F0E8",
+      "backgroundColor": "#F5F0E8"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#208AEF",
+          "backgroundColor": "#1E5A45",
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76
         }

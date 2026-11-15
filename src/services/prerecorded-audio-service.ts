@@ -1,6 +1,10 @@
 import { createAudioPlayer, type AudioPlayer } from 'expo-audio';
 
-import type { AudioPlaybackState, AudioService } from '@/services/audio-service';
+import type {
+  AudioPlaybackState,
+  AudioPlayOptions,
+  AudioService,
+} from '@/services/audio-service';
 import type { AudioSource } from '@/types';
 
 export class PrerecordedAudioService implements AudioService {
@@ -22,7 +26,7 @@ export class PrerecordedAudioService implements AudioService {
     return this.state;
   }
 
-  async play(source: AudioSource): Promise<void> {
+  async play(source: AudioSource, options?: AudioPlayOptions): Promise<void> {
     const asset = this.assets[source.key];
     if (asset === undefined) {
       throw new Error(`No prerecorded audio for ${source.key}.`);
@@ -50,6 +54,9 @@ export class PrerecordedAudioService implements AudioService {
           } else if (status.playing) {
             this.state = 'playing';
           }
+          if (!status.error && typeof status.currentTime === 'number') {
+            options?.onProgress?.(status.currentTime);
+          }
         });
 
         const finish = (error?: Error) => {
@@ -68,6 +75,10 @@ export class PrerecordedAudioService implements AudioService {
         };
 
         this.finishCurrent = () => finish();
+        const playbackRate = options?.playbackRate ?? 1;
+        if (playbackRate !== 1) {
+          player.setPlaybackRate(playbackRate, 'high');
+        }
         player.play();
       });
     } finally {

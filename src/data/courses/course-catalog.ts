@@ -7,12 +7,64 @@ import { essentialVerbsOneLesson } from '../lessons/essential-verbs-1.ts';
 import { kitchenBasicsLesson } from '../lessons/kitchen-basics.ts';
 import { laundryBasicsLesson } from '../lessons/laundry-basics.ts';
 import { livingRoomBasicsLesson } from '../lessons/living-room-basics.ts';
+import { atTheStoreLesson } from '../lessons/out-at-the-store.ts';
+import { checkoutLesson } from '../lessons/out-checkout.ts';
+import { helpPhrasesLesson } from '../lessons/out-help-phrases.ts';
+import { pricesLesson } from '../lessons/out-prices.ts';
 
 const courses: readonly Course[] = [
   {
-    id: 'my-home',
+    // First, because understanding people at the store is the main goal.
+    id: 'out-and-about',
+    icon: '🛒',
     schemaVersion: 1,
     level: 1,
+    title: {
+      english: 'Out and About',
+      romanian: 'În oraș',
+    },
+    descriptionRomanian:
+      'Engleză pentru magazin și pentru când îți vorbesc oamenii, cu dialoguri la viteză normală.',
+    units: [
+      {
+        id: 'help-phrases',
+        icon: '🙋',
+        title: helpPhrasesLesson.title,
+        lessonId: helpPhrasesLesson.id,
+        prerequisiteLessonIds: [],
+        availability: 'published',
+      },
+      {
+        id: 'prices',
+        icon: '💵',
+        title: pricesLesson.title,
+        lessonId: pricesLesson.id,
+        prerequisiteLessonIds: [helpPhrasesLesson.id],
+        availability: 'published',
+      },
+      {
+        id: 'at-the-store',
+        icon: '🛒',
+        title: atTheStoreLesson.title,
+        lessonId: atTheStoreLesson.id,
+        prerequisiteLessonIds: [pricesLesson.id],
+        availability: 'published',
+      },
+      {
+        id: 'checkout',
+        icon: '🧾',
+        title: checkoutLesson.title,
+        lessonId: checkoutLesson.id,
+        prerequisiteLessonIds: [atTheStoreLesson.id],
+        availability: 'published',
+      },
+    ],
+  },
+  {
+    id: 'my-home',
+    icon: '🏠',
+    schemaVersion: 1,
+    level: 2,
     title: {
       english: 'My Home',
       romanian: 'Casa mea',
@@ -21,6 +73,7 @@ const courses: readonly Course[] = [
     units: [
       {
         id: 'kitchen',
+        icon: '🍳',
         title: kitchenBasicsLesson.title,
         lessonId: kitchenBasicsLesson.id,
         prerequisiteLessonIds: [],
@@ -28,6 +81,7 @@ const courses: readonly Course[] = [
       },
       {
         id: 'bathroom',
+        icon: '🛁',
         title: bathroomBasicsLesson.title,
         lessonId: bathroomBasicsLesson.id,
         prerequisiteLessonIds: [kitchenBasicsLesson.id],
@@ -35,6 +89,7 @@ const courses: readonly Course[] = [
       },
       {
         id: 'bedroom',
+        icon: '🛏️',
         title: bedroomBasicsLesson.title,
         lessonId: bedroomBasicsLesson.id,
         prerequisiteLessonIds: [bathroomBasicsLesson.id],
@@ -42,6 +97,7 @@ const courses: readonly Course[] = [
       },
       {
         id: 'living-room',
+        icon: '🛋️',
         title: livingRoomBasicsLesson.title,
         lessonId: livingRoomBasicsLesson.id,
         prerequisiteLessonIds: [bedroomBasicsLesson.id],
@@ -49,6 +105,7 @@ const courses: readonly Course[] = [
       },
       {
         id: 'laundry',
+        icon: '🧺',
         title: laundryBasicsLesson.title,
         lessonId: laundryBasicsLesson.id,
         prerequisiteLessonIds: [livingRoomBasicsLesson.id],
@@ -56,6 +113,7 @@ const courses: readonly Course[] = [
       },
       {
         id: 'cleaning',
+        icon: '🧹',
         title: cleaningBasicsLesson.title,
         lessonId: cleaningBasicsLesson.id,
         prerequisiteLessonIds: [laundryBasicsLesson.id],
@@ -65,8 +123,9 @@ const courses: readonly Course[] = [
   },
   {
     id: 'everyday-actions',
+    icon: '✋',
     schemaVersion: 1,
-    level: 2,
+    level: 3,
     title: {
       english: 'Everyday Actions',
       romanian: 'Acțiuni de zi cu zi',
@@ -75,6 +134,7 @@ const courses: readonly Course[] = [
     units: [
       {
         id: 'essential-verbs-1',
+        icon: '✋',
         title: essentialVerbsOneLesson.title,
         lessonId: essentialVerbsOneLesson.id,
         prerequisiteLessonIds: [cleaningBasicsLesson.id],
@@ -82,6 +142,7 @@ const courses: readonly Course[] = [
       },
       {
         id: 'essential-verbs-2',
+        icon: '🗣️',
         title: {
           english: 'Essential Verbs II',
           romanian: 'Verbe esențiale II',

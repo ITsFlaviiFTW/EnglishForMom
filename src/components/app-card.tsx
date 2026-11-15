@@ -1,21 +1,24 @@
 import type { PropsWithChildren } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 
-import { colors } from '@/constants/theme';
+import { colors, radii, shadows } from '@/constants/theme';
 
 type AppCardProps = PropsWithChildren<{
   eyebrow?: string;
-  title: string;
+  title?: string;
   description?: string;
+  style?: StyleProp<ViewStyle>;
 }>;
 
-export function AppCard({ eyebrow, title, description, children }: AppCardProps) {
+export function AppCard({ eyebrow, title, description, children, style }: AppCardProps) {
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, style]}>
       {eyebrow ? <Text style={styles.eyebrow}>{eyebrow}</Text> : null}
-      <Text style={styles.title}>{title}</Text>
+      {title ? <Text style={styles.title}>{title}</Text> : null}
       {description ? <Text style={styles.description}>{description}</Text> : null}
-      {children ? <View style={styles.content}>{children}</View> : null}
+      {children ? (
+        <View style={title || description || eyebrow ? styles.content : undefined}>{children}</View>
+      ) : null}
     </View>
   );
 }
@@ -23,16 +26,17 @@ export function AppCard({ eyebrow, title, description, children }: AppCardProps)
 const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.surface,
+    borderRadius: radii.large,
     borderColor: colors.border,
-    borderWidth: 1.5,
-    borderRadius: 16,
-    padding: 20,
+    borderWidth: StyleSheet.hairlineWidth,
+    padding: 22,
+    boxShadow: shadows.card,
   },
   eyebrow: {
     color: colors.primary,
-    fontSize: 13,
-    lineHeight: 18,
-    fontWeight: '700',
+    fontSize: 14,
+    lineHeight: 19,
+    fontWeight: '800',
     letterSpacing: 1,
     textTransform: 'uppercase',
     marginBottom: 8,
@@ -45,9 +49,9 @@ const styles = StyleSheet.create({
   },
   description: {
     color: colors.textMuted,
-    fontSize: 17,
-    lineHeight: 25,
-    marginTop: 8,
+    fontSize: 18,
+    lineHeight: 27,
+    marginTop: 6,
   },
   content: {
     marginTop: 16,

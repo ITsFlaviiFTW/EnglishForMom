@@ -62,6 +62,6 @@ test('calculates level progress from published lessons and excludes planned plac
 test('returns only completed and currently available lesson ids for navigation', () => {
   assert.deepEqual(
     getUnlockedCourseLessonIds(getCourses(), ['level-1-kitchen-basics']),
-    ['level-1-kitchen-basics', 'level-1-bathroom-basics'],
+    ['out-1-help-phrases', 'level-1-kitchen-basics', 'level-1-bathroom-basics'],
   );
 });

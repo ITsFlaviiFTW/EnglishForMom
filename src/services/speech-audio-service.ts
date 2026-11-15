@@ -1,4 +1,8 @@
-import type { AudioPlaybackState, AudioService } from '@/services/audio-service';
+import type {
+  AudioPlaybackState,
+  AudioPlayOptions,
+  AudioService,
+} from '@/services/audio-service';
 import type { AudioSource } from '@/types';
 
 export type SpeechCallbacks = {
@@ -29,7 +33,7 @@ export class SpeechAudioService implements AudioService {
     return this.state;
   }
 
-  async play(source: AudioSource): Promise<void> {
+  async play(source: AudioSource, options?: AudioPlayOptions): Promise<void> {
     const operationId = ++this.operationId;
 
     this.finishCurrent?.();
@@ -64,7 +68,7 @@ export class SpeechAudioService implements AudioService {
 
         this.engine.speak(source.text, {
           language: source.locale ?? 'en-US',
-          rate: source.rate ?? 0.85,
+          rate: (source.rate ?? 0.85) * (options?.playbackRate ?? 1),
           onStart: () => {
             if (operationId === this.operationId) {
               this.state = 'playing';
