@@ -10,6 +10,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'kitchen-example-fridge': {
     asset: require('../../../assets/audio/en-US/accent/kitchen-example-fridge.mp3'),
     respelling: "Dă milc iz in dă frigi.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/kitchen-example-fridge.mp3'),
+      words: ["Dă","milc","iz","in","dă","frigi."],
+      starts: [0.15,1.17,2.394,3.484,4.477,5.497],
+    },
   },
   'kitchen-word-stove': {
     asset: require('../../../assets/audio/en-US/accent/kitchen-word-stove.mp3'),
@@ -18,6 +23,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'kitchen-example-stove': {
     asset: require('../../../assets/audio/en-US/accent/kitchen-example-stove.mp3'),
     respelling: "Dă stouv iz necst tu dă frigi.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/kitchen-example-stove.mp3'),
+      words: ["Dă","stouv","iz","necst","tu","dă","frigi."],
+      starts: [0.15,1.17,2.504,3.594,4.93,5.895,6.915],
+    },
   },
   'kitchen-word-oven': {
     asset: require('../../../assets/audio/en-US/accent/kitchen-word-oven.mp3'),
@@ -26,6 +36,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'kitchen-example-oven': {
     asset: require('../../../assets/audio/en-US/accent/kitchen-example-oven.mp3'),
     respelling: "Dă bred iz in di ovăn.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/kitchen-example-oven.mp3'),
+      words: ["Dă","bred","iz","in","di","ovăn."],
+      starts: [0.15,1.17,2.398,3.488,4.481,5.471],
+    },
   },
   'kitchen-word-sink': {
     asset: require('../../../assets/audio/en-US/accent/kitchen-word-sink.mp3'),
@@ -38,6 +53,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'kitchen-example-sink': {
     asset: require('../../../assets/audio/en-US/accent/kitchen-example-sink.mp3'),
     respelling: "Dă sinc iz necst tu dă stouv.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/kitchen-example-sink.mp3'),
+      words: ["Dă","sinc","iz","necst","tu","dă","stouv."],
+      starts: [0.15,1.17,2.419,3.51,4.846,5.81,6.83],
+    },
   },
   'kitchen-word-table': {
     asset: require('../../../assets/audio/en-US/accent/kitchen-word-table.mp3'),
@@ -46,6 +66,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'kitchen-example-table': {
     asset: require('../../../assets/audio/en-US/accent/kitchen-example-table.mp3'),
     respelling: "Dă teibăl iz in dă chicin.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/kitchen-example-table.mp3'),
+      words: ["Dă","teibăl","iz","in","dă","chicin."],
+      starts: [0.15,1.17,2.409,3.5,4.493,5.513],
+    },
   },
   'kitchen-word-chair': {
     asset: require('../../../assets/audio/en-US/accent/kitchen-word-chair.mp3'),
@@ -54,6 +79,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'kitchen-example-chair': {
     asset: require('../../../assets/audio/en-US/accent/kitchen-example-chair.mp3'),
     respelling: "Dă ceăr iz necst tu dă teibăl.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/kitchen-example-chair.mp3'),
+      words: ["Dă","ceăr","iz","necst","tu","dă","teibăl."],
+      starts: [0.15,1.17,2.498,3.588,4.924,5.889,6.909],
+    },
   },
   'kitchen-word-plate': {
     asset: require('../../../assets/audio/en-US/accent/kitchen-word-plate.mp3'),
@@ -62,10 +92,20 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'kitchen-example-plate': {
     asset: require('../../../assets/audio/en-US/accent/kitchen-example-plate.mp3'),
     respelling: "Put dă pleit on dă teibăl.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/kitchen-example-plate.mp3'),
+      words: ["Put","dă","pleit","on","dă","teibăl."],
+      starts: [0.15,1.296,2.316,3.577,4.569,5.589],
+    },
   },
   'essential-verbs-1-example-put-1': {
     asset: require('../../../assets/audio/en-US/accent/kitchen-example-plate.mp3'),
     respelling: "Put dă pleit on dă teibăl.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/kitchen-example-plate.mp3'),
+      words: ["Put","dă","pleit","on","dă","teibăl."],
+      starts: [0.15,1.296,2.316,3.577,4.569,5.589],
+    },
   },
   'kitchen-word-bowl': {
     asset: require('../../../assets/audio/en-US/accent/kitchen-word-bowl.mp3'),
@@ -74,6 +114,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'kitchen-example-bowl': {
     asset: require('../../../assets/audio/en-US/accent/kitchen-example-bowl.mp3'),
     respelling: "Dă bouăl iz on dă teibăl.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/kitchen-example-bowl.mp3'),
+      words: ["Dă","bouăl","iz","on","dă","teibăl."],
+      starts: [0.15,1.17,2.378,3.468,4.461,5.481],
+    },
   },
   'kitchen-word-cup': {
     asset: require('../../../assets/audio/en-US/accent/kitchen-word-cup.mp3'),
@@ -82,6 +127,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'kitchen-example-cup': {
     asset: require('../../../assets/audio/en-US/accent/kitchen-example-cup.mp3'),
     respelling: "Dă cap iz necst tu dă bouăl.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/kitchen-example-cup.mp3'),
+      words: ["Dă","cap","iz","necst","tu","dă","bouăl."],
+      starts: [0.15,1.17,2.35,3.441,4.777,5.741,6.761],
+    },
   },
   'kitchen-word-glass': {
     asset: require('../../../assets/audio/en-US/accent/kitchen-word-glass.mp3'),
@@ -90,6 +140,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'kitchen-example-glass': {
     asset: require('../../../assets/audio/en-US/accent/kitchen-example-glass.mp3'),
     respelling: "Dă glas iz on dă teibăl.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/kitchen-example-glass.mp3'),
+      words: ["Dă","glas","iz","on","dă","teibăl."],
+      starts: [0.15,1.17,2.465,3.555,4.548,5.568],
+    },
   },
   'kitchen-word-spoon': {
     asset: require('../../../assets/audio/en-US/accent/kitchen-word-spoon.mp3'),
@@ -98,6 +153,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'kitchen-example-spoon': {
     asset: require('../../../assets/audio/en-US/accent/kitchen-example-spoon.mp3'),
     respelling: "Dă spun iz in dă bouăl.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/kitchen-example-spoon.mp3'),
+      words: ["Dă","spun","iz","in","dă","bouăl."],
+      starts: [0.15,1.17,2.398,3.488,4.481,5.501],
+    },
   },
   'kitchen-word-fork': {
     asset: require('../../../assets/audio/en-US/accent/kitchen-word-fork.mp3'),
@@ -106,6 +166,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'kitchen-example-fork': {
     asset: require('../../../assets/audio/en-US/accent/kitchen-example-fork.mp3'),
     respelling: "Dă forc iz necst tu dă pleit.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/kitchen-example-fork.mp3'),
+      words: ["Dă","forc","iz","necst","tu","dă","pleit."],
+      starts: [0.15,1.17,2.458,3.548,4.884,5.848,6.868],
+    },
   },
   'bathroom-word-shower': {
     asset: require('../../../assets/audio/en-US/accent/bathroom-word-shower.mp3'),
@@ -114,6 +179,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'bathroom-example-shower': {
     asset: require('../../../assets/audio/en-US/accent/bathroom-example-shower.mp3'),
     respelling: "Ai teic ă șauăr evri morning.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/bathroom-example-shower.mp3'),
+      words: ["Ai","teic","ă","șauăr","evri","morning."],
+      starts: [0.15,1.142,2.353,3.255,4.65,5.828],
+    },
   },
   'bathroom-word-toilet': {
     asset: require('../../../assets/audio/en-US/accent/bathroom-word-toilet.mp3'),
@@ -122,10 +192,20 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'bathroom-example-toilet': {
     asset: require('../../../assets/audio/en-US/accent/bathroom-example-toilet.mp3'),
     respelling: "Dă toilet iz necst tu dă șauăr.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/bathroom-example-toilet.mp3'),
+      words: ["Dă","toilet","iz","necst","tu","dă","șauăr."],
+      starts: [0.15,1.17,2.541,3.631,4.967,5.932,6.952],
+    },
   },
   'bathroom-example-sink': {
     asset: require('../../../assets/audio/en-US/accent/bathroom-example-sink.mp3'),
     respelling: "Uoș iur hends et dă sinc.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/bathroom-example-sink.mp3'),
+      words: ["Uoș","iur","hends","et","dă","sinc."],
+      starts: [0.15,1.344,2.418,3.736,4.802,5.822],
+    },
   },
   'bathroom-word-mirror': {
     asset: require('../../../assets/audio/en-US/accent/bathroom-word-mirror.mp3'),
@@ -134,6 +214,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'bathroom-example-mirror': {
     asset: require('../../../assets/audio/en-US/accent/bathroom-example-mirror.mp3'),
     respelling: "Dă mirăr iz ăbav dă sinc.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/bathroom-example-mirror.mp3'),
+      words: ["Dă","mirăr","iz","ăbav","dă","sinc."],
+      starts: [0.15,1.17,2.426,3.516,4.871,5.891],
+    },
   },
   'bathroom-word-towel': {
     asset: require('../../../assets/audio/en-US/accent/bathroom-word-towel.mp3'),
@@ -146,6 +231,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'bathroom-example-towel': {
     asset: require('../../../assets/audio/en-US/accent/bathroom-example-towel.mp3'),
     respelling: "Dă tauăl iz necst tu dă șauăr.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/bathroom-example-towel.mp3'),
+      words: ["Dă","tauăl","iz","necst","tu","dă","șauăr."],
+      starts: [0.15,1.17,2.351,3.441,4.777,5.742,6.762],
+    },
   },
   'bathroom-word-soap': {
     asset: require('../../../assets/audio/en-US/accent/bathroom-word-soap.mp3'),
@@ -154,6 +244,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'bathroom-example-soap': {
     asset: require('../../../assets/audio/en-US/accent/bathroom-example-soap.mp3'),
     respelling: "Dă sop iz bai dă sinc.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/bathroom-example-soap.mp3'),
+      words: ["Dă","sop","iz","bai","dă","sinc."],
+      starts: [0.15,1.17,2.372,3.463,4.551,5.571],
+    },
   },
   'bathroom-word-toothbrush': {
     asset: require('../../../assets/audio/en-US/accent/bathroom-word-toothbrush.mp3'),
@@ -162,6 +257,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'bathroom-example-toothbrush': {
     asset: require('../../../assets/audio/en-US/accent/bathroom-example-toothbrush.mp3'),
     respelling: "Mai tutbraș iz bai dă sinc.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/bathroom-example-toothbrush.mp3'),
+      words: ["Mai","tutbraș","iz","bai","dă","sinc."],
+      starts: [0.15,1.209,2.669,3.759,4.848,5.867],
+    },
   },
   'bathroom-word-toothpaste': {
     asset: require('../../../assets/audio/en-US/accent/bathroom-word-toothpaste.mp3'),
@@ -170,6 +270,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'bathroom-example-toothpaste': {
     asset: require('../../../assets/audio/en-US/accent/bathroom-example-toothpaste.mp3'),
     respelling: "Put tutpeist on dă tutbraș.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/bathroom-example-toothpaste.mp3'),
+      words: ["Put","tutpeist","on","dă","tutbraș."],
+      starts: [0.15,1.296,2.831,3.823,4.843],
+    },
   },
   'bathroom-word-shampoo': {
     asset: require('../../../assets/audio/en-US/accent/bathroom-word-shampoo.mp3'),
@@ -178,6 +283,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'bathroom-example-shampoo': {
     asset: require('../../../assets/audio/en-US/accent/bathroom-example-shampoo.mp3'),
     respelling: "Dă șampu iz necst tu dă sop.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/bathroom-example-shampoo.mp3'),
+      words: ["Dă","șampu","iz","necst","tu","dă","sop."],
+      starts: [0.15,1.17,2.547,3.637,4.973,5.938,6.958],
+    },
   },
   'bathroom-word-comb': {
     asset: require('../../../assets/audio/en-US/accent/bathroom-word-comb.mp3'),
@@ -186,6 +296,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'bathroom-example-comb': {
     asset: require('../../../assets/audio/en-US/accent/bathroom-example-comb.mp3'),
     respelling: "Dă coom iz necst tu dă mirăr.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/bathroom-example-comb.mp3'),
+      words: ["Dă","coom","iz","necst","tu","dă","mirăr."],
+      starts: [0.15,1.17,2.361,3.451,4.787,5.752,6.771],
+    },
   },
   'bathroom-word-hair-dryer': {
     asset: require('../../../assets/audio/en-US/accent/bathroom-word-hair-dryer.mp3'),
@@ -194,6 +309,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'bathroom-example-hair-dryer': {
     asset: require('../../../assets/audio/en-US/accent/bathroom-example-hair-dryer.mp3'),
     respelling: "Dă her draiăr iz andăr dă sinc.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/bathroom-example-hair-dryer.mp3'),
+      words: ["Dă","her","draiăr","iz","andăr","dă","sinc."],
+      starts: [0.15,1.17,2.295,3.699,4.789,6.028,7.048],
+    },
   },
   'bathroom-word-toilet-paper': {
     asset: require('../../../assets/audio/en-US/accent/bathroom-word-toilet-paper.mp3'),
@@ -202,10 +322,20 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'bathroom-example-toilet-paper': {
     asset: require('../../../assets/audio/en-US/accent/bathroom-example-toilet-paper.mp3'),
     respelling: "Ui nid toilet peipăr.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/bathroom-example-toilet-paper.mp3'),
+      words: ["Ui","nid","toilet","peipăr."],
+      starts: [0.15,1.196,2.279,3.65],
+    },
   },
   'essential-verbs-1-example-need-4': {
     asset: require('../../../assets/audio/en-US/accent/bathroom-example-toilet-paper.mp3'),
     respelling: "Ui nid toilet peipăr.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/bathroom-example-toilet-paper.mp3'),
+      words: ["Ui","nid","toilet","peipăr."],
+      starts: [0.15,1.196,2.279,3.65],
+    },
   },
   'bathroom-word-water': {
     asset: require('../../../assets/audio/en-US/accent/bathroom-word-water.mp3'),
@@ -214,6 +344,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'bathroom-example-water': {
     asset: require('../../../assets/audio/en-US/accent/bathroom-example-water.mp3'),
     respelling: "Dă uotăr iz cold.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/bathroom-example-water.mp3'),
+      words: ["Dă","uotăr","iz","cold."],
+      starts: [0.15,1.17,2.527,3.617],
+    },
   },
   'bathroom-word-door': {
     asset: require('../../../assets/audio/en-US/accent/bathroom-word-door.mp3'),
@@ -230,6 +365,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'bathroom-example-door': {
     asset: require('../../../assets/audio/en-US/accent/bathroom-example-door.mp3'),
     respelling: "Clouz dă batrum dor.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/bathroom-example-door.mp3'),
+      words: ["Clouz","dă","batrum","dor."],
+      starts: [0.15,1.472,2.492,3.866],
+    },
   },
   'bedroom-word-bed': {
     asset: require('../../../assets/audio/en-US/accent/bedroom-word-bed.mp3'),
@@ -238,6 +378,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'bedroom-example-bed': {
     asset: require('../../../assets/audio/en-US/accent/bedroom-example-bed.mp3'),
     respelling: "Dă bed iz in dă bedrum.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/bedroom-example-bed.mp3'),
+      words: ["Dă","bed","iz","in","dă","bedrum."],
+      starts: [0.15,1.17,2.312,3.402,4.395,5.415],
+    },
   },
   'bedroom-word-pillow': {
     asset: require('../../../assets/audio/en-US/accent/bedroom-word-pillow.mp3'),
@@ -246,6 +391,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'bedroom-example-pillow': {
     asset: require('../../../assets/audio/en-US/accent/bedroom-example-pillow.mp3'),
     respelling: "Dă pilou iz on dă bed.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/bedroom-example-pillow.mp3'),
+      words: ["Dă","pilou","iz","on","dă","bed."],
+      starts: [0.15,1.17,2.353,3.443,4.436,5.456],
+    },
   },
   'bedroom-word-blanket': {
     asset: require('../../../assets/audio/en-US/accent/bedroom-word-blanket.mp3'),
@@ -254,6 +404,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'bedroom-example-blanket': {
     asset: require('../../../assets/audio/en-US/accent/bedroom-example-blanket.mp3'),
     respelling: "Dă blenchet iz on dă bed.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/bedroom-example-blanket.mp3'),
+      words: ["Dă","blenchet","iz","on","dă","bed."],
+      starts: [0.15,1.17,2.684,3.774,4.767,5.787],
+    },
   },
   'bedroom-word-sheet': {
     asset: require('../../../assets/audio/en-US/accent/bedroom-word-sheet.mp3'),
@@ -266,10 +421,20 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'bedroom-example-sheet': {
     asset: require('../../../assets/audio/en-US/accent/bedroom-example-sheet.mp3'),
     respelling: "Dă șiit iz clin.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/bedroom-example-sheet.mp3'),
+      words: ["Dă","șiit","iz","clin."],
+      starts: [0.15,1.17,2.446,3.537],
+    },
   },
   'laundry-example-sheet': {
     asset: require('../../../assets/audio/en-US/accent/bedroom-example-sheet.mp3'),
     respelling: "Dă șiit iz clin.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/bedroom-example-sheet.mp3'),
+      words: ["Dă","șiit","iz","clin."],
+      starts: [0.15,1.17,2.446,3.537],
+    },
   },
   'bedroom-word-closet': {
     asset: require('../../../assets/audio/en-US/accent/bedroom-word-closet.mp3'),
@@ -278,6 +443,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'bedroom-example-closet': {
     asset: require('../../../assets/audio/en-US/accent/bedroom-example-closet.mp3'),
     respelling: "Dă clozit iz necst tu dă dor.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/bedroom-example-closet.mp3'),
+      words: ["Dă","clozit","iz","necst","tu","dă","dor."],
+      starts: [0.15,1.17,2.606,3.696,5.032,5.997,7.017],
+    },
   },
   'bedroom-word-clothes': {
     asset: require('../../../assets/audio/en-US/accent/bedroom-word-clothes.mp3'),
@@ -286,6 +456,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'bedroom-example-clothes': {
     asset: require('../../../assets/audio/en-US/accent/bedroom-example-clothes.mp3'),
     respelling: "Dă clouz ar in dă clozit.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/bedroom-example-clothes.mp3'),
+      words: ["Dă","clouz","ar","in","dă","clozit."],
+      starts: [0.15,1.17,2.492,3.526,4.519,5.539],
+    },
   },
   'bedroom-word-shirt': {
     asset: require('../../../assets/audio/en-US/accent/bedroom-word-shirt.mp3'),
@@ -298,6 +473,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'bedroom-example-shirt': {
     asset: require('../../../assets/audio/en-US/accent/bedroom-example-shirt.mp3'),
     respelling: "Dă șărt iz in dă clozit.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/bedroom-example-shirt.mp3'),
+      words: ["Dă","șărt","iz","in","dă","clozit."],
+      starts: [0.15,1.17,2.457,3.548,4.541,5.561],
+    },
   },
   'bedroom-word-pants': {
     asset: require('../../../assets/audio/en-US/accent/bedroom-word-pants.mp3'),
@@ -310,6 +490,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'bedroom-example-pants': {
     asset: require('../../../assets/audio/en-US/accent/bedroom-example-pants.mp3'),
     respelling: "Dă panț ar on dă bed.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/bedroom-example-pants.mp3'),
+      words: ["Dă","panț","ar","on","dă","bed."],
+      starts: [0.15,1.17,2.437,3.472,4.465,5.485],
+    },
   },
   'bedroom-word-socks': {
     asset: require('../../../assets/audio/en-US/accent/bedroom-word-socks.mp3'),
@@ -322,6 +507,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'bedroom-example-socks': {
     asset: require('../../../assets/audio/en-US/accent/bedroom-example-socks.mp3'),
     respelling: "Dă socs ar andăr dă ceăr.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/bedroom-example-socks.mp3'),
+      words: ["Dă","socs","ar","andăr","dă","ceăr."],
+      starts: [0.15,1.17,2.496,3.531,4.77,5.79],
+    },
   },
   'bedroom-word-shoes': {
     asset: require('../../../assets/audio/en-US/accent/bedroom-word-shoes.mp3'),
@@ -330,6 +520,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'bedroom-example-shoes': {
     asset: require('../../../assets/audio/en-US/accent/bedroom-example-shoes.mp3'),
     respelling: "Dă șuz ar bai dă dor.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/bedroom-example-shoes.mp3'),
+      words: ["Dă","șuz","ar","bai","dă","dor."],
+      starts: [0.15,1.17,2.408,3.443,4.532,5.552],
+    },
   },
   'bedroom-word-lamp': {
     asset: require('../../../assets/audio/en-US/accent/bedroom-word-lamp.mp3'),
@@ -342,6 +537,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'bedroom-example-lamp': {
     asset: require('../../../assets/audio/en-US/accent/bedroom-example-lamp.mp3'),
     respelling: "Dă lamp iz necst tu dă bed.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/bedroom-example-lamp.mp3'),
+      words: ["Dă","lamp","iz","necst","tu","dă","bed."],
+      starts: [0.15,1.17,2.43,3.52,4.856,5.821,6.84],
+    },
   },
   'bedroom-word-window': {
     asset: require('../../../assets/audio/en-US/accent/bedroom-word-window.mp3'),
@@ -354,10 +554,20 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'bedroom-example-window': {
     asset: require('../../../assets/audio/en-US/accent/bedroom-example-window.mp3'),
     respelling: "Dă uindou iz oupăn.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/bedroom-example-window.mp3'),
+      words: ["Dă","uindou","iz","oupăn."],
+      starts: [0.15,1.17,2.437,3.527],
+    },
   },
   'bedroom-example-door': {
     asset: require('../../../assets/audio/en-US/accent/bedroom-example-door.mp3'),
     respelling: "Clouz dă bedrum dor.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/bedroom-example-door.mp3'),
+      words: ["Clouz","dă","bedrum","dor."],
+      starts: [0.15,1.472,2.492,3.806],
+    },
   },
   'bedroom-word-phone': {
     asset: require('../../../assets/audio/en-US/accent/bedroom-word-phone.mp3'),
@@ -366,6 +576,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'bedroom-example-phone': {
     asset: require('../../../assets/audio/en-US/accent/bedroom-example-phone.mp3'),
     respelling: "Dă foun iz on dă teibăl necst tu dă bed.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/bedroom-example-phone.mp3'),
+      words: ["Dă","foun","iz","on","dă","teibăl","necst","tu","dă","bed."],
+      starts: [0.15,1.17,2.356,3.446,4.439,5.459,6.699,8.035,9,10.019],
+    },
   },
   'living-room-word-sofa': {
     asset: require('../../../assets/audio/en-US/accent/living-room-word-sofa.mp3'),
@@ -374,6 +589,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'living-room-example-sofa': {
     asset: require('../../../assets/audio/en-US/accent/living-room-example-sofa.mp3'),
     respelling: "Sit on dă soufă.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/living-room-example-sofa.mp3'),
+      words: ["Sit","on","dă","soufă."],
+      starts: [0.15,1.352,2.345,3.365],
+    },
   },
   'living-room-word-armchair': {
     asset: require('../../../assets/audio/en-US/accent/living-room-word-armchair.mp3'),
@@ -382,6 +602,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'living-room-example-armchair': {
     asset: require('../../../assets/audio/en-US/accent/living-room-example-armchair.mp3'),
     respelling: "Di armceăr iz necst tu dă soufă.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/living-room-example-armchair.mp3'),
+      words: ["Di","armceăr","iz","necst","tu","dă","soufă."],
+      starts: [0.15,1.14,2.674,3.764,5.1,6.065,7.085],
+    },
   },
   'living-room-word-coffee-table': {
     asset: require('../../../assets/audio/en-US/accent/living-room-word-coffee-table.mp3'),
@@ -390,6 +615,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'living-room-example-coffee-table': {
     asset: require('../../../assets/audio/en-US/accent/living-room-example-coffee-table.mp3'),
     respelling: "Dă cap iz on dă cofii teibăl.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/living-room-example-coffee-table.mp3'),
+      words: ["Dă","cap","iz","on","dă","cofii","teibăl."],
+      starts: [0.15,1.17,2.35,3.441,4.433,5.453,6.641],
+    },
   },
   'living-room-word-tv': {
     asset: require('../../../assets/audio/en-US/accent/living-room-word-tv.mp3'),
@@ -398,6 +628,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'living-room-example-tv': {
     asset: require('../../../assets/audio/en-US/accent/living-room-example-tv.mp3'),
     respelling: "Dă ti vi iz in frant ăv dă soufă.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/living-room-example-tv.mp3'),
+      words: ["Dă","ti","vi","iz","in","frant","ăv","dă","soufă."],
+      starts: [0.15,1.17,2.126,3.14,4.231,5.224,6.578,7.734,8.754],
+    },
   },
   'living-room-word-remote-control': {
     asset: require('../../../assets/audio/en-US/accent/living-room-word-remote-control.mp3'),
@@ -406,6 +641,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'living-room-example-remote-control': {
     asset: require('../../../assets/audio/en-US/accent/living-room-example-remote-control.mp3'),
     respelling: "Dă rimout căntroul iz on dă cofii teibăl.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/living-room-example-remote-control.mp3'),
+      words: ["Dă","rimout","căntroul","iz","on","dă","cofii","teibăl."],
+      starts: [0.15,1.17,2.526,3.894,4.984,5.977,6.997,8.185],
+    },
   },
   'living-room-word-rug': {
     asset: require('../../../assets/audio/en-US/accent/living-room-word-rug.mp3'),
@@ -414,6 +654,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'living-room-example-rug': {
     asset: require('../../../assets/audio/en-US/accent/living-room-example-rug.mp3'),
     respelling: "Dă rag iz andăr dă cofii teibăl.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/living-room-example-rug.mp3'),
+      words: ["Dă","rag","iz","andăr","dă","cofii","teibăl."],
+      starts: [0.15,1.17,2.355,3.445,4.684,5.704,6.892],
+    },
   },
   'living-room-word-curtains': {
     asset: require('../../../assets/audio/en-US/accent/living-room-word-curtains.mp3'),
@@ -422,18 +667,38 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'living-room-example-curtains': {
     asset: require('../../../assets/audio/en-US/accent/living-room-example-curtains.mp3'),
     respelling: "Dă cărtănz ar bai dă uindou.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/living-room-example-curtains.mp3'),
+      words: ["Dă","cărtănz","ar","bai","dă","uindou."],
+      starts: [0.15,1.17,2.655,3.689,4.778,5.798],
+    },
   },
   'living-room-example-lamp': {
     asset: require('../../../assets/audio/en-US/accent/living-room-example-lamp.mp3'),
     respelling: "Dă lamp iz necst tu dă soufă.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/living-room-example-lamp.mp3'),
+      words: ["Dă","lamp","iz","necst","tu","dă","soufă."],
+      starts: [0.15,1.17,2.43,3.52,4.856,5.821,6.84],
+    },
   },
   'living-room-example-window': {
     asset: require('../../../assets/audio/en-US/accent/living-room-example-window.mp3'),
     respelling: "Oupăn dă uindou.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/living-room-example-window.mp3'),
+      words: ["Oupăn","dă","uindou."],
+      starts: [0.15,1.42,2.44],
+    },
   },
   'living-room-example-door': {
     asset: require('../../../assets/audio/en-US/accent/living-room-example-door.mp3'),
     respelling: "Clouz dă living rum dor.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/living-room-example-door.mp3'),
+      words: ["Clouz","dă","living","rum","dor."],
+      starts: [0.15,1.472,2.492,3.762,4.853],
+    },
   },
   'living-room-word-shelf': {
     asset: require('../../../assets/audio/en-US/accent/living-room-word-shelf.mp3'),
@@ -442,6 +707,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'living-room-example-shelf': {
     asset: require('../../../assets/audio/en-US/accent/living-room-example-shelf.mp3'),
     respelling: "Dă bucs ar on dă șelf.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/living-room-example-shelf.mp3'),
+      words: ["Dă","bucs","ar","on","dă","șelf."],
+      starts: [0.15,1.17,2.424,3.458,4.451,5.471],
+    },
   },
   'living-room-word-book': {
     asset: require('../../../assets/audio/en-US/accent/living-room-word-book.mp3'),
@@ -450,6 +720,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'living-room-example-book': {
     asset: require('../../../assets/audio/en-US/accent/living-room-example-book.mp3'),
     respelling: "Dă buc iz on dă soufă.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/living-room-example-book.mp3'),
+      words: ["Dă","buc","iz","on","dă","soufă."],
+      starts: [0.15,1.17,2.342,3.432,4.425,5.445],
+    },
   },
   'living-room-word-picture': {
     asset: require('../../../assets/audio/en-US/accent/living-room-word-picture.mp3'),
@@ -458,6 +733,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'living-room-example-picture': {
     asset: require('../../../assets/audio/en-US/accent/living-room-example-picture.mp3'),
     respelling: "Dă picciăr iz ăbav dă soufă.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/living-room-example-picture.mp3'),
+      words: ["Dă","picciăr","iz","ăbav","dă","soufă."],
+      starts: [0.15,1.17,2.613,3.703,5.059,6.079],
+    },
   },
   'living-room-word-clock': {
     asset: require('../../../assets/audio/en-US/accent/living-room-word-clock.mp3'),
@@ -466,6 +746,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'living-room-example-clock': {
     asset: require('../../../assets/audio/en-US/accent/living-room-example-clock.mp3'),
     respelling: "Dă cloc iz on dă uol.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/living-room-example-clock.mp3'),
+      words: ["Dă","cloc","iz","on","dă","uol."],
+      starts: [0.15,1.17,2.392,3.482,4.475,5.495],
+    },
   },
   'laundry-word-washing-machine': {
     asset: require('../../../assets/audio/en-US/accent/laundry-word-washing-machine.mp3'),
@@ -474,6 +759,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'laundry-example-washing-machine': {
     asset: require('../../../assets/audio/en-US/accent/laundry-example-washing-machine.mp3'),
     respelling: "Dă clouz ar in dă uoșing mășin.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/laundry-example-washing-machine.mp3'),
+      words: ["Dă","clouz","ar","in","dă","uoșing","mășin."],
+      starts: [0.15,1.17,2.492,3.526,4.519,5.539,6.868],
+    },
   },
   'laundry-word-clothes-dryer': {
     asset: require('../../../assets/audio/en-US/accent/laundry-word-clothes-dryer.mp3'),
@@ -482,6 +772,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'laundry-example-clothes-dryer': {
     asset: require('../../../assets/audio/en-US/accent/laundry-example-clothes-dryer.mp3'),
     respelling: "Dă tauălz ar in dă draiăr.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/laundry-example-clothes-dryer.mp3'),
+      words: ["Dă","tauălz","ar","in","dă","draiăr."],
+      starts: [0.15,1.17,2.544,3.579,4.572,5.592],
+    },
   },
   'laundry-word-laundry-basket': {
     asset: require('../../../assets/audio/en-US/accent/laundry-word-laundry-basket.mp3'),
@@ -490,6 +785,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'laundry-example-laundry-basket': {
     asset: require('../../../assets/audio/en-US/accent/laundry-example-laundry-basket.mp3'),
     respelling: "Put dă dărti clouz in dă londri beschet.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/laundry-example-laundry-basket.mp3'),
+      words: ["Put","dă","dărti","clouz","in","dă","londri","beschet."],
+      starts: [0.15,1.296,2.316,3.596,4.918,5.911,6.931,8.22],
+    },
   },
   'laundry-word-detergent': {
     asset: require('../../../assets/audio/en-US/accent/laundry-word-detergent.mp3'),
@@ -498,6 +798,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'laundry-example-detergent': {
     asset: require('../../../assets/audio/en-US/accent/laundry-example-detergent.mp3'),
     respelling: "Put dă ditărgent in dă uoșing mășin.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/laundry-example-detergent.mp3'),
+      words: ["Put","dă","ditărgent","in","dă","uoșing","mășin."],
+      starts: [0.15,1.296,2.316,3.935,4.928,5.948,7.277],
+    },
   },
   'laundry-word-fabric-softener': {
     asset: require('../../../assets/audio/en-US/accent/laundry-word-fabric-softener.mp3'),
@@ -506,6 +811,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'laundry-example-fabric-softener': {
     asset: require('../../../assets/audio/en-US/accent/laundry-example-fabric-softener.mp3'),
     respelling: "Dă febric sofănăr iz necst tu dă ditărgent.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/laundry-example-fabric-softener.mp3'),
+      words: ["Dă","febric","sofănăr","iz","necst","tu","dă","ditărgent."],
+      starts: [0.15,1.17,2.558,4.016,5.106,6.442,7.407,8.427],
+    },
   },
   'laundry-word-dirty-clothes': {
     asset: require('../../../assets/audio/en-US/accent/laundry-word-dirty-clothes.mp3'),
@@ -514,6 +824,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'laundry-example-dirty-clothes': {
     asset: require('../../../assets/audio/en-US/accent/laundry-example-dirty-clothes.mp3'),
     respelling: "Dă dărti clouz ar in dă beschet.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/laundry-example-dirty-clothes.mp3'),
+      words: ["Dă","dărti","clouz","ar","in","dă","beschet."],
+      starts: [0.15,1.17,2.45,3.772,4.807,5.8,6.82],
+    },
   },
   'laundry-word-clean-clothes': {
     asset: require('../../../assets/audio/en-US/accent/laundry-word-clean-clothes.mp3'),
@@ -522,22 +837,47 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'laundry-example-clean-clothes': {
     asset: require('../../../assets/audio/en-US/accent/laundry-example-clean-clothes.mp3'),
     respelling: "Dă clin clouz ar on dă bed.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/laundry-example-clean-clothes.mp3'),
+      words: ["Dă","clin","clouz","ar","on","dă","bed."],
+      starts: [0.15,1.17,2.317,3.638,4.673,5.666,6.686],
+    },
   },
   'laundry-example-shirt': {
     asset: require('../../../assets/audio/en-US/accent/laundry-example-shirt.mp3'),
     respelling: "Uoș dă șărt uid dă panț.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/laundry-example-shirt.mp3'),
+      words: ["Uoș","dă","șărt","uid","dă","panț."],
+      starts: [0.15,1.344,2.364,3.651,4.757,5.777],
+    },
   },
   'laundry-example-pants': {
     asset: require('../../../assets/audio/en-US/accent/laundry-example-pants.mp3'),
     respelling: "Dă panț ar in dă uoșing mășin.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/laundry-example-pants.mp3'),
+      words: ["Dă","panț","ar","in","dă","uoșing","mășin."],
+      starts: [0.15,1.17,2.437,3.472,4.465,5.485,6.813],
+    },
   },
   'laundry-example-socks': {
     asset: require('../../../assets/audio/en-US/accent/laundry-example-socks.mp3'),
     respelling: "Dă socs ar in dă londri beschet.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/laundry-example-socks.mp3'),
+      words: ["Dă","socs","ar","in","dă","londri","beschet."],
+      starts: [0.15,1.17,2.496,3.531,4.524,5.544,6.833],
+    },
   },
   'laundry-example-towel': {
     asset: require('../../../assets/audio/en-US/accent/laundry-example-towel.mp3'),
     respelling: "Drai dă tauăl in dă draiăr.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/laundry-example-towel.mp3'),
+      words: ["Drai","dă","tauăl","in","dă","draiăr."],
+      starts: [0.15,1.279,2.299,3.48,4.473,5.493],
+    },
   },
   'laundry-word-wash': {
     asset: require('../../../assets/audio/en-US/accent/laundry-word-wash.mp3'),
@@ -546,6 +886,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'laundry-example-wash': {
     asset: require('../../../assets/audio/en-US/accent/laundry-example-wash.mp3'),
     respelling: "Uoș dă clouz.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/laundry-example-wash.mp3'),
+      words: ["Uoș","dă","clouz."],
+      starts: [0.15,1.344,2.364],
+    },
   },
   'laundry-word-dry': {
     asset: require('../../../assets/audio/en-US/accent/laundry-word-dry.mp3'),
@@ -554,6 +899,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'laundry-example-dry': {
     asset: require('../../../assets/audio/en-US/accent/laundry-example-dry.mp3'),
     respelling: "Drai dă clouz.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/laundry-example-dry.mp3'),
+      words: ["Drai","dă","clouz."],
+      starts: [0.15,1.279,2.299],
+    },
   },
   'cleaning-word-vacuum-cleaner': {
     asset: require('../../../assets/audio/en-US/accent/cleaning-word-vacuum-cleaner.mp3'),
@@ -562,6 +912,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'cleaning-example-vacuum-cleaner': {
     asset: require('../../../assets/audio/en-US/accent/cleaning-example-vacuum-cleaner.mp3'),
     respelling: "Dă vechium clinăr iz in dă clozit.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/cleaning-example-vacuum-cleaner.mp3'),
+      words: ["Dă","vechium","clinăr","iz","in","dă","clozit."],
+      starts: [0.15,1.17,2.674,3.969,5.06,6.053,7.073],
+    },
   },
   'cleaning-word-broom': {
     asset: require('../../../assets/audio/en-US/accent/cleaning-word-broom.mp3'),
@@ -570,6 +925,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'cleaning-example-broom': {
     asset: require('../../../assets/audio/en-US/accent/cleaning-example-broom.mp3'),
     respelling: "Dă brum iz bihaind dă dor.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/cleaning-example-broom.mp3'),
+      words: ["Dă","brum","iz","bihaind","dă","dor."],
+      starts: [0.15,1.17,2.326,3.416,4.783,5.803],
+    },
   },
   'cleaning-word-mop': {
     asset: require('../../../assets/audio/en-US/accent/cleaning-word-mop.mp3'),
@@ -578,6 +938,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'cleaning-example-mop': {
     asset: require('../../../assets/audio/en-US/accent/cleaning-example-mop.mp3'),
     respelling: "Iuz dă mop on dă flor.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/cleaning-example-mop.mp3'),
+      words: ["Iuz","dă","mop","on","dă","flor."],
+      starts: [0.15,1.334,2.354,3.471,4.464,5.484],
+    },
   },
   'cleaning-word-bucket': {
     asset: require('../../../assets/audio/en-US/accent/cleaning-word-bucket.mp3'),
@@ -586,6 +951,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'cleaning-example-bucket': {
     asset: require('../../../assets/audio/en-US/accent/cleaning-example-bucket.mp3'),
     respelling: "Dă uotăr iz in dă bachet.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/cleaning-example-bucket.mp3'),
+      words: ["Dă","uotăr","iz","in","dă","bachet."],
+      starts: [0.15,1.17,2.527,3.617,4.61,5.63],
+    },
   },
   'cleaning-word-sponge': {
     asset: require('../../../assets/audio/en-US/accent/cleaning-word-sponge.mp3'),
@@ -594,6 +964,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'cleaning-example-sponge': {
     asset: require('../../../assets/audio/en-US/accent/cleaning-example-sponge.mp3'),
     respelling: "Clin dă sinc uid dă spangi.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/cleaning-example-sponge.mp3'),
+      words: ["Clin","dă","sinc","uid","dă","spangi."],
+      starts: [0.15,1.297,2.317,3.566,4.672,5.692],
+    },
   },
   'cleaning-word-cloth': {
     asset: require('../../../assets/audio/en-US/accent/cleaning-word-cloth.mp3'),
@@ -602,6 +977,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'cleaning-example-cloth': {
     asset: require('../../../assets/audio/en-US/accent/cleaning-example-cloth.mp3'),
     respelling: "Uaip dă teibăl uid dă clot.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/cleaning-example-cloth.mp3'),
+      words: ["Uaip","dă","teibăl","uid","dă","clot."],
+      starts: [0.15,1.373,2.393,3.632,4.738,5.758],
+    },
   },
   'cleaning-word-cleaning-spray': {
     asset: require('../../../assets/audio/en-US/accent/cleaning-word-cleaning-spray.mp3'),
@@ -610,6 +990,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'cleaning-example-cleaning-spray': {
     asset: require('../../../assets/audio/en-US/accent/cleaning-example-cleaning-spray.mp3'),
     respelling: "Iuz dă clining sprei on dă mirăr.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/cleaning-example-cleaning-spray.mp3'),
+      words: ["Iuz","dă","clining","sprei","on","dă","mirăr."],
+      starts: [0.15,1.334,2.354,3.594,4.817,5.81,6.83],
+    },
   },
   'cleaning-word-gloves': {
     asset: require('../../../assets/audio/en-US/accent/cleaning-word-gloves.mp3'),
@@ -618,6 +1003,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'cleaning-example-gloves': {
     asset: require('../../../assets/audio/en-US/accent/cleaning-example-gloves.mp3'),
     respelling: "Put on dă glavz.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/cleaning-example-gloves.mp3'),
+      words: ["Put","on","dă","glavz."],
+      starts: [0.15,1.296,2.288,3.308],
+    },
   },
   'cleaning-word-trash-can': {
     asset: require('../../../assets/audio/en-US/accent/cleaning-word-trash-can.mp3'),
@@ -626,6 +1016,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'cleaning-example-trash-can': {
     asset: require('../../../assets/audio/en-US/accent/cleaning-example-trash-can.mp3'),
     respelling: "Dă traș can iz andăr dă sinc.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/cleaning-example-trash-can.mp3'),
+      words: ["Dă","traș","can","iz","andăr","dă","sinc."],
+      starts: [0.15,1.17,2.382,3.486,4.576,5.815,6.835],
+    },
   },
   'cleaning-word-trash-bag': {
     asset: require('../../../assets/audio/en-US/accent/cleaning-word-trash-bag.mp3'),
@@ -634,6 +1029,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'cleaning-example-trash-bag': {
     asset: require('../../../assets/audio/en-US/accent/cleaning-example-trash-bag.mp3'),
     respelling: "Put dă traș bag in dă traș can.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/cleaning-example-trash-bag.mp3'),
+      words: ["Put","dă","traș","bag","in","dă","traș","can."],
+      starts: [0.15,1.296,2.316,3.528,4.724,5.717,6.737,7.949],
+    },
   },
   'cleaning-word-dust': {
     asset: require('../../../assets/audio/en-US/accent/cleaning-word-dust.mp3'),
@@ -642,6 +1042,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'cleaning-example-dust': {
     asset: require('../../../assets/audio/en-US/accent/cleaning-example-dust.mp3'),
     respelling: "Der iz dast on dă șelf.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/cleaning-example-dust.mp3'),
+      words: ["Der","iz","dast","on","dă","șelf."],
+      starts: [0.15,1.232,2.322,3.635,4.628,5.648],
+    },
   },
   'cleaning-word-floor': {
     asset: require('../../../assets/audio/en-US/accent/cleaning-word-floor.mp3'),
@@ -650,6 +1055,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'cleaning-example-floor': {
     asset: require('../../../assets/audio/en-US/accent/cleaning-example-floor.mp3'),
     respelling: "Dă flor iz clin.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/cleaning-example-floor.mp3'),
+      words: ["Dă","flor","iz","clin."],
+      starts: [0.15,1.17,2.375,3.465],
+    },
   },
   'cleaning-word-clean': {
     asset: require('../../../assets/audio/en-US/accent/cleaning-word-clean.mp3'),
@@ -658,6 +1068,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'cleaning-example-clean': {
     asset: require('../../../assets/audio/en-US/accent/cleaning-example-clean.mp3'),
     respelling: "Ai clin dă batrum evri dei.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/cleaning-example-clean.mp3'),
+      words: ["Ai","clin","dă","batrum","evri","dei."],
+      starts: [0.15,1.142,2.289,3.309,4.684,5.861],
+    },
   },
   'cleaning-word-dirty': {
     asset: require('../../../assets/audio/en-US/accent/cleaning-word-dirty.mp3'),
@@ -666,6 +1081,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'cleaning-example-dirty': {
     asset: require('../../../assets/audio/en-US/accent/cleaning-example-dirty.mp3'),
     respelling: "Dă chicin flor iz dărti.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/cleaning-example-dirty.mp3'),
+      words: ["Dă","chicin","flor","iz","dărti."],
+      starts: [0.15,1.17,2.413,3.617,4.707],
+    },
   },
   'essential-verbs-1-word-be': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-word-be.mp3'),
@@ -674,18 +1094,38 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'essential-verbs-1-example-be-1': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-example-be-1.mp3'),
     respelling: "Ai em in dă chicin.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/essential-verbs-1-example-be-1.mp3'),
+      words: ["Ai","em","in","dă","chicin."],
+      starts: [0.15,1.142,2.127,3.12,4.14],
+    },
   },
   'essential-verbs-1-example-be-2': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-example-be-2.mp3'),
     respelling: "Iu ar in dă batrum.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/essential-verbs-1-example-be-2.mp3'),
+      words: ["Iu","ar","in","dă","batrum."],
+      starts: [0.15,1.195,2.229,3.222,4.242],
+    },
   },
   'essential-verbs-1-example-be-3': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-example-be-3.mp3'),
     respelling: "Dă tauăl iz in dă batrum.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/essential-verbs-1-example-be-3.mp3'),
+      words: ["Dă","tauăl","iz","in","dă","batrum."],
+      starts: [0.15,1.17,2.351,3.441,4.434,5.454],
+    },
   },
   'essential-verbs-1-example-be-4': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-example-be-4.mp3'),
     respelling: "Dă pleits ar on dă teibăl.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/essential-verbs-1-example-be-4.mp3'),
+      words: ["Dă","pleits","ar","on","dă","teibăl."],
+      starts: [0.15,1.17,2.452,3.486,4.479,5.499],
+    },
   },
   'essential-verbs-1-word-have': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-word-have.mp3'),
@@ -694,18 +1134,38 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'essential-verbs-1-example-have-1': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-example-have-1.mp3'),
     respelling: "Ai hev ă clin tauăl.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/essential-verbs-1-example-have-1.mp3'),
+      words: ["Ai","hev","ă","clin","tauăl."],
+      starts: [0.15,1.142,2.298,3.2,4.347],
+    },
   },
   'essential-verbs-1-example-have-2': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-example-have-2.mp3'),
     respelling: "Iu hev iur foun.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/essential-verbs-1-example-have-2.mp3'),
+      words: ["Iu","hev","iur","foun."],
+      starts: [0.15,1.195,2.35,3.425],
+    },
   },
   'essential-verbs-1-example-have-3': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-example-have-3.mp3'),
     respelling: "Și hez ă glas ăv uotăr.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/essential-verbs-1-example-have-3.mp3'),
+      words: ["Și","hez","ă","glas","ăv","uotăr."],
+      starts: [0.15,1.199,2.387,3.289,4.584,5.739],
+    },
   },
   'essential-verbs-1-example-have-4': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-example-have-4.mp3'),
     respelling: "Ui hev clin șiits.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/essential-verbs-1-example-have-4.mp3'),
+      words: ["Ui","hev","clin","șiits."],
+      starts: [0.15,1.196,2.352,3.498],
+    },
   },
   'essential-verbs-1-word-want': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-word-want.mp3'),
@@ -714,18 +1174,38 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'essential-verbs-1-example-want-1': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-example-want-1.mp3'),
     respelling: "Ai uant sam uotăr.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/essential-verbs-1-example-want-1.mp3'),
+      words: ["Ai","uant","sam","uotăr."],
+      starts: [0.15,1.142,2.423,3.599],
+    },
   },
   'essential-verbs-1-example-want-2': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-example-want-2.mp3'),
     respelling: "Ai uant ă clin tauăl.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/essential-verbs-1-example-want-2.mp3'),
+      words: ["Ai","uant","ă","clin","tauăl."],
+      starts: [0.15,1.142,2.423,3.325,4.471],
+    },
   },
   'essential-verbs-1-example-want-3': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-example-want-3.mp3'),
     respelling: "Și uants dă clin șărt.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/essential-verbs-1-example-want-3.mp3'),
+      words: ["Și","uants","dă","clin","șărt."],
+      starts: [0.15,1.199,2.728,3.748,4.895],
+    },
   },
   'essential-verbs-1-example-want-4': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-example-want-4.mp3'),
     respelling: "Ui uant cofii.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/essential-verbs-1-example-want-4.mp3'),
+      words: ["Ui","uant","cofii."],
+      starts: [0.15,1.196,2.476],
+    },
   },
   'essential-verbs-1-word-need': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-word-need.mp3'),
@@ -734,14 +1214,29 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'essential-verbs-1-example-need-1': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-example-need-1.mp3'),
     respelling: "Ai nid ă tauăl.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/essential-verbs-1-example-need-1.mp3'),
+      words: ["Ai","nid","ă","tauăl."],
+      starts: [0.15,1.142,2.225,3.127],
+    },
   },
   'essential-verbs-1-example-need-2': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-example-need-2.mp3'),
     respelling: "Iu nid iur foun.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/essential-verbs-1-example-need-2.mp3'),
+      words: ["Iu","nid","iur","foun."],
+      starts: [0.15,1.195,2.278,3.352],
+    },
   },
   'essential-verbs-1-example-need-3': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-example-need-3.mp3'),
     respelling: "Hi nidz clin socs.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/essential-verbs-1-example-need-3.mp3'),
+      words: ["Hi","nidz","clin","socs."],
+      starts: [0.15,1.16,2.329,3.476],
+    },
   },
   'essential-verbs-1-word-go': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-word-go.mp3'),
@@ -750,18 +1245,38 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'essential-verbs-1-example-go-1': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-example-go-1.mp3'),
     respelling: "Ai gou apsterz evri morning.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/essential-verbs-1-example-go-1.mp3'),
+      words: ["Ai","gou","apsterz","evri","morning."],
+      starts: [0.15,1.142,2.222,3.795,4.973],
+    },
   },
   'essential-verbs-1-example-go-2': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-example-go-2.mp3'),
     respelling: "Ui gou tu dă chicin.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/essential-verbs-1-example-go-2.mp3'),
+      words: ["Ui","gou","tu","dă","chicin."],
+      starts: [0.15,1.196,2.276,3.241,4.261],
+    },
   },
   'essential-verbs-1-example-go-3': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-example-go-3.mp3'),
     respelling: "Și gouz tu dă batrum.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/essential-verbs-1-example-go-3.mp3'),
+      words: ["Și","gouz","tu","dă","batrum."],
+      starts: [0.15,1.199,2.524,3.489,4.509],
+    },
   },
   'essential-verbs-1-example-go-4': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-example-go-4.mp3'),
     respelling: "Ai em gouing apsterz.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/essential-verbs-1-example-go-4.mp3'),
+      words: ["Ai","em","gouing","apsterz."],
+      starts: [0.15,1.142,2.127,3.382],
+    },
   },
   'essential-verbs-1-word-come': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-word-come.mp3'),
@@ -770,18 +1285,38 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'essential-verbs-1-example-come-1': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-example-come-1.mp3'),
     respelling: "Cam hir, pliz.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/essential-verbs-1-example-come-1.mp3'),
+      words: ["Cam","hir,","pliz."],
+      starts: [0.15,1.24,2.345],
+    },
   },
   'essential-verbs-1-example-come-2': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-example-come-2.mp3'),
     respelling: "Cam tu dă chicin.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/essential-verbs-1-example-come-2.mp3'),
+      words: ["Cam","tu","dă","chicin."],
+      starts: [0.15,1.24,2.205,3.225],
+    },
   },
   'essential-verbs-1-example-come-3': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-example-come-3.mp3'),
     respelling: "Hi camz houm et sics.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/essential-verbs-1-example-come-3.mp3'),
+      words: ["Hi","camz","houm","et","sics."],
+      starts: [0.15,1.16,2.441,3.602,4.668],
+    },
   },
   'essential-verbs-1-example-come-4': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-example-come-4.mp3'),
     respelling: "Ui cam houm eftăr uărc.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/essential-verbs-1-example-come-4.mp3'),
+      words: ["Ui","cam","houm","eftăr","uărc."],
+      starts: [0.15,1.196,2.286,3.447,4.802],
+    },
   },
   'essential-verbs-1-word-take': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-word-take.mp3'),
@@ -790,18 +1325,38 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'essential-verbs-1-example-take-1': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-example-take-1.mp3'),
     respelling: "Teic iur foun.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/essential-verbs-1-example-take-1.mp3'),
+      words: ["Teic","iur","foun."],
+      starts: [0.15,1.361,2.435],
+    },
   },
   'essential-verbs-1-example-take-2': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-example-take-2.mp3'),
     respelling: "Teic ă clin tauăl.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/essential-verbs-1-example-take-2.mp3'),
+      words: ["Teic","ă","clin","tauăl."],
+      starts: [0.15,1.361,2.263,3.41],
+    },
   },
   'essential-verbs-1-example-take-3': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-example-take-3.mp3'),
     respelling: "Ai teic ă cap from dă teibăl.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/essential-verbs-1-example-take-3.mp3'),
+      words: ["Ai","teic","ă","cap","from","dă","teibăl."],
+      starts: [0.15,1.142,2.353,3.255,4.436,5.613,6.633],
+    },
   },
   'essential-verbs-1-example-take-4': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-example-take-4.mp3'),
     respelling: "Și teics ă pleit from dă teibăl.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/essential-verbs-1-example-take-4.mp3'),
+      words: ["Și","teics","ă","pleit","from","dă","teibăl."],
+      starts: [0.15,1.199,2.509,3.411,4.672,5.849,6.869],
+    },
   },
   'essential-verbs-1-word-put': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-word-put.mp3'),
@@ -810,14 +1365,29 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'essential-verbs-1-example-put-2': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-example-put-2.mp3'),
     respelling: "Put dă milc in dă frigi.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/essential-verbs-1-example-put-2.mp3'),
+      words: ["Put","dă","milc","in","dă","frigi."],
+      starts: [0.15,1.296,2.316,3.54,4.533,5.553],
+    },
   },
   'essential-verbs-1-example-put-3': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-example-put-3.mp3'),
     respelling: "Ai put dă foun necst tu dă lamp.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/essential-verbs-1-example-put-3.mp3'),
+      words: ["Ai","put","dă","foun","necst","tu","dă","lamp."],
+      starts: [0.15,1.142,2.288,3.308,4.494,5.83,6.795,7.815],
+    },
   },
   'essential-verbs-1-example-put-4': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-example-put-4.mp3'),
     respelling: "Și puts dă tauălz in dă clozit.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/essential-verbs-1-example-put-4.mp3'),
+      words: ["Și","puts","dă","tauălz","in","dă","clozit."],
+      starts: [0.15,1.199,2.366,3.386,4.761,5.754,6.774],
+    },
   },
   'help-word-excuse-me': {
     asset: require('../../../assets/audio/en-US/accent/help-word-excuse-me.mp3'),
@@ -826,6 +1396,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'help-example-excuse-me': {
     asset: require('../../../assets/audio/en-US/accent/help-example-excuse-me.mp3'),
     respelling: "Ecschiuz mi, uer iz dă milc?",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/help-example-excuse-me.mp3'),
+      words: ["Ecschiuz","mi,","uer","iz","dă","milc?"],
+      starts: [0.15,1.714,2.694,3.784,4.874,5.894],
+    },
   },
   'help-word-sorry': {
     asset: require('../../../assets/audio/en-US/accent/help-word-sorry.mp3'),
@@ -834,22 +1409,47 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'help-example-sorry': {
     asset: require('../../../assets/audio/en-US/accent/help-example-sorry.mp3'),
     respelling: "Sorii? Ai didănt hir iu.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/help-example-sorry.mp3'),
+      words: ["Sorii?","Ai","didănt","hir","iu."],
+      starts: [0.15,1.361,2.353,3.802,4.907],
+    },
   },
   'talk-bus-say-3': {
     asset: require('../../../assets/audio/en-US/accent/help-example-sorry.mp3'),
     respelling: "Sorii? Ai didănt hir iu.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/help-example-sorry.mp3'),
+      words: ["Sorii?","Ai","didănt","hir","iu."],
+      starts: [0.15,1.361,2.353,3.802,4.907],
+    },
   },
   'help-word-repeat': {
     asset: require('../../../assets/audio/en-US/accent/help-word-repeat.mp3'),
     respelling: "Can iu ripiit det, pliz?",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/help-word-repeat.mp3'),
+      words: ["Can","iu","ripiit","det,","pliz?"],
+      starts: [0.15,1.254,2.298,3.681,4.851],
+    },
   },
   'help-example-repeat': {
     asset: require('../../../assets/audio/en-US/accent/help-example-repeat.mp3'),
     respelling: "Ai dount andărstend. Can iu ripiit det, pliz?",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/help-example-repeat.mp3'),
+      words: ["Ai","dount","andărstend.","Can","iu","ripiit","det,","pliz?"],
+      starts: [0.15,1.142,2.45,4.051,5.155,6.2,7.582,8.752],
+    },
   },
   'talk-clinic-say-3': {
     asset: require('../../../assets/audio/en-US/accent/help-example-repeat.mp3'),
     respelling: "Ai dount andărstend. Can iu ripiit det, pliz?",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/help-example-repeat.mp3'),
+      words: ["Ai","dount","andărstend.","Can","iu","ripiit","det,","pliz?"],
+      starts: [0.15,1.142,2.45,4.051,5.155,6.2,7.582,8.752],
+    },
   },
   'help-word-slowly': {
     asset: require('../../../assets/audio/en-US/accent/help-word-slowly.mp3'),
@@ -858,62 +1458,137 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'help-example-slowly': {
     asset: require('../../../assets/audio/en-US/accent/help-example-slowly.mp3'),
     respelling: "Can iu spiic sloulii, pliz?",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/help-example-slowly.mp3'),
+      words: ["Can","iu","spiic","sloulii,","pliz?"],
+      starts: [0.15,1.254,2.298,3.697,5.035],
+    },
   },
   'talk-pharmacy-say-3': {
     asset: require('../../../assets/audio/en-US/accent/help-example-slowly.mp3'),
     respelling: "Can iu spiic sloulii, pliz?",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/help-example-slowly.mp3'),
+      words: ["Can","iu","spiic","sloulii,","pliz?"],
+      starts: [0.15,1.254,2.298,3.697,5.035],
+    },
   },
   'help-word-dont-understand': {
     asset: require('../../../assets/audio/en-US/accent/help-word-dont-understand.mp3'),
     respelling: "Ai dount andărstend.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/help-word-dont-understand.mp3'),
+      words: ["Ai","dount","andărstend."],
+      starts: [0.15,1.142,2.45],
+    },
   },
   'help-example-dont-understand': {
     asset: require('../../../assets/audio/en-US/accent/help-example-dont-understand.mp3'),
     respelling: "Sorii, ai dount andărstend.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/help-example-dont-understand.mp3'),
+      words: ["Sorii,","ai","dount","andărstend."],
+      starts: [0.15,1.361,2.353,3.661],
+    },
   },
   'help-word-little-english': {
     asset: require('../../../assets/audio/en-US/accent/help-word-little-english.mp3'),
     respelling: "Ai spiic ă lităl ingliș.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/help-word-little-english.mp3'),
+      words: ["Ai","spiic","ă","lităl","ingliș."],
+      starts: [0.15,1.142,2.541,3.443,4.661],
+    },
   },
   'help-example-little-english': {
     asset: require('../../../assets/audio/en-US/accent/help-example-little-english.mp3'),
     respelling: "Sorii, ai spiic ă lităl ingliș.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/help-example-little-english.mp3'),
+      words: ["Sorii,","ai","spiic","ă","lităl","ingliș."],
+      starts: [0.15,1.361,2.353,3.752,4.654,5.872],
+    },
   },
   'help-word-write-it-down': {
     asset: require('../../../assets/audio/en-US/accent/help-word-write-it-down.mp3'),
     respelling: "Can iu rait it daun, pliz?",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/help-word-write-it-down.mp3'),
+      words: ["Can","iu","rait","it","daun,","pliz?"],
+      starts: [0.15,1.254,2.298,3.592,4.639,5.86],
+    },
   },
   'help-example-write-it-down': {
     asset: require('../../../assets/audio/en-US/accent/help-example-write-it-down.mp3'),
     respelling: "Di edres? Can iu rait it daun, pliz?",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/help-example-write-it-down.mp3'),
+      words: ["Di","edres?","Can","iu","rait","it","daun,","pliz?"],
+      starts: [0.15,1.14,2.513,3.616,4.661,5.955,7.002,8.223],
+    },
   },
   'help-word-thank-you': {
     asset: require('../../../assets/audio/en-US/accent/help-word-thank-you.mp3'),
     respelling: "Tenc iu verii maci.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/help-word-thank-you.mp3'),
+      words: ["Tenc","iu","verii","maci."],
+      starts: [0.15,1.348,2.392,3.58],
+    },
   },
   'talk-pharmacy-say-4': {
     asset: require('../../../assets/audio/en-US/accent/help-word-thank-you.mp3'),
     respelling: "Tenc iu verii maci.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/help-word-thank-you.mp3'),
+      words: ["Tenc","iu","verii","maci."],
+      starts: [0.15,1.348,2.392,3.58],
+    },
   },
   'help-example-thank-you': {
     asset: require('../../../assets/audio/en-US/accent/help-example-thank-you.mp3'),
     respelling: "Tenc iu verii maci for iur help.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/help-example-thank-you.mp3'),
+      words: ["Tenc","iu","verii","maci","for","iur","help."],
+      starts: [0.15,1.348,2.392,3.58,4.788,5.94,7.014],
+    },
   },
   'talk-store-say-3': {
     asset: require('../../../assets/audio/en-US/accent/help-example-thank-you.mp3'),
     respelling: "Tenc iu verii maci for iur help.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/help-example-thank-you.mp3'),
+      words: ["Tenc","iu","verii","maci","for","iur","help."],
+      starts: [0.15,1.348,2.392,3.58,4.788,5.94,7.014],
+    },
   },
   'money-word-how-much': {
     asset: require('../../../assets/audio/en-US/accent/money-word-how-much.mp3'),
     respelling: "Hau maci iz it?",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/money-word-how-much.mp3'),
+      words: ["Hau","maci","iz","it?"],
+      starts: [0.15,1.26,2.468,3.558],
+    },
   },
   'talk-bus-say-2': {
     asset: require('../../../assets/audio/en-US/accent/money-word-how-much.mp3'),
     respelling: "Hau maci iz it?",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/money-word-how-much.mp3'),
+      words: ["Hau","maci","iz","it?"],
+      starts: [0.15,1.26,2.468,3.558],
+    },
   },
   'money-example-how-much': {
     asset: require('../../../assets/audio/en-US/accent/money-example-how-much.mp3'),
     respelling: "Ecschiuz mi, hau maci iz dis?",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/money-example-how-much.mp3'),
+      words: ["Ecschiuz","mi,","hau","maci","iz","dis?"],
+      starts: [0.15,1.714,2.694,3.804,5.012,6.102],
+    },
   },
   'money-word-dollar': {
     asset: require('../../../assets/audio/en-US/accent/money-word-dollar.mp3'),
@@ -922,6 +1597,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'money-example-dollar': {
     asset: require('../../../assets/audio/en-US/accent/money-example-dollar.mp3'),
     respelling: "Iț uan dolăr.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/money-example-dollar.mp3'),
+      words: ["Iț","uan","dolăr."],
+      starts: [0.15,1.238,2.338],
+    },
   },
   'money-word-cents': {
     asset: require('../../../assets/audio/en-US/accent/money-word-cents.mp3'),
@@ -930,14 +1610,29 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'money-example-cents': {
     asset: require('../../../assets/audio/en-US/accent/money-example-cents.mp3'),
     respelling: "Iț fiftii senț.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/money-example-cents.mp3'),
+      words: ["Iț","fiftii","senț."],
+      starts: [0.15,1.238,2.535],
+    },
   },
   'money-word-price': {
     asset: require('../../../assets/audio/en-US/accent/money-word-price.mp3'),
     respelling: "tu naintii nain",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/money-word-price.mp3'),
+      words: ["tu","naintii","nain"],
+      starts: [0.15,1.115,2.406],
+    },
   },
   'money-example-price': {
     asset: require('../../../assets/audio/en-US/accent/money-example-price.mp3'),
     respelling: "Dă milc iz for fortii nain.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/money-example-price.mp3'),
+      words: ["Dă","milc","iz","for","fortii","nain."],
+      starts: [0.15,1.17,2.394,3.484,4.637,5.902],
+    },
   },
   'money-word-thirteen': {
     asset: require('../../../assets/audio/en-US/accent/money-word-thirteen.mp3'),
@@ -946,6 +1641,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'money-example-thirteen': {
     asset: require('../../../assets/audio/en-US/accent/money-example-thirteen.mp3'),
     respelling: "Iț tărtiin dolărz.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/money-example-thirteen.mp3'),
+      words: ["Iț","tărtiin","dolărz."],
+      starts: [0.15,1.238,2.558],
+    },
   },
   'money-word-thirty': {
     asset: require('../../../assets/audio/en-US/accent/money-word-thirty.mp3'),
@@ -954,6 +1654,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'money-example-thirty': {
     asset: require('../../../assets/audio/en-US/accent/money-example-thirty.mp3'),
     respelling: "Iț tărtii dolărz.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/money-example-thirty.mp3'),
+      words: ["Iț","tărtii","dolărz."],
+      starts: [0.15,1.238,2.43],
+    },
   },
   'money-word-plus-tax': {
     asset: require('../../../assets/audio/en-US/accent/money-word-plus-tax.mp3'),
@@ -962,6 +1667,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'money-example-plus-tax': {
     asset: require('../../../assets/audio/en-US/accent/money-example-plus-tax.mp3'),
     respelling: "Iț ten dolărz plas teacs.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/money-example-plus-tax.mp3'),
+      words: ["Iț","ten","dolărz","plas","teacs."],
+      starts: [0.15,1.238,2.285,3.708,4.957],
+    },
   },
   'money-word-on-sale': {
     asset: require('../../../assets/audio/en-US/accent/money-word-on-sale.mp3'),
@@ -970,30 +1680,65 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'money-example-on-sale': {
     asset: require('../../../assets/audio/en-US/accent/money-example-on-sale.mp3'),
     respelling: "Dă bred iz on seil tudei.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/money-example-on-sale.mp3'),
+      words: ["Dă","bred","iz","on","seil","tudei."],
+      starts: [0.15,1.17,2.398,3.488,4.481,5.623],
+    },
   },
   'money-word-change': {
     asset: require('../../../assets/audio/en-US/accent/money-word-change.mp3'),
     respelling: "Hirz iur ceingi.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/money-word-change.mp3'),
+      words: ["Hirz","iur","ceingi."],
+      starts: [0.15,1.465,2.539],
+    },
   },
   'money-example-change': {
     asset: require('../../../assets/audio/en-US/accent/money-example-change.mp3'),
     respelling: "Hirz iur ceingi end iur risiit.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/money-example-change.mp3'),
+      words: ["Hirz","iur","ceingi","end","iur","risiit."],
+      starts: [0.15,1.465,2.539,3.812,4.914,5.988],
+    },
   },
   'store-word-looking-for': {
     asset: require('../../../assets/audio/en-US/accent/store-word-looking-for.mp3'),
     respelling: "Aim luching for bred.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/store-word-looking-for.mp3'),
+      words: ["Aim","luching","for","bred."],
+      starts: [0.15,1.212,2.503,3.655],
+    },
   },
   'store-example-looking-for': {
     asset: require('../../../assets/audio/en-US/accent/store-example-looking-for.mp3'),
     respelling: "Ecschiuz mi, aim luching for rais.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/store-example-looking-for.mp3'),
+      words: ["Ecschiuz","mi,","aim","luching","for","rais."],
+      starts: [0.15,1.714,2.694,3.756,5.047,6.2],
+    },
   },
   'store-word-where-find': {
     asset: require('../../../assets/audio/en-US/accent/store-word-where-find.mp3'),
     respelling: "Uer can ai faind di egz?",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/store-word-where-find.mp3'),
+      words: ["Uer","can","ai","faind","di","egz?"],
+      starts: [0.15,1.24,2.343,3.336,4.623,5.614],
+    },
   },
   'store-example-where-find': {
     asset: require('../../../assets/audio/en-US/accent/store-example-where-find.mp3'),
     respelling: "Uer can ai faind dă cofii, pliz?",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/store-example-where-find.mp3'),
+      words: ["Uer","can","ai","faind","dă","cofii,","pliz?"],
+      starts: [0.15,1.24,2.343,3.336,4.623,5.643,6.831],
+    },
   },
   'store-word-aisle': {
     asset: require('../../../assets/audio/en-US/accent/store-word-aisle.mp3'),
@@ -1002,22 +1747,47 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'store-example-aisle': {
     asset: require('../../../assets/audio/en-US/accent/store-example-aisle.mp3'),
     respelling: "Di egz ar in ail faiv.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/store-example-aisle.mp3'),
+      words: ["Di","egz","ar","in","ail","faiv."],
+      starts: [0.15,1.14,2.556,3.59,4.583,5.613],
+    },
   },
   'store-word-do-you-have': {
     asset: require('../../../assets/audio/en-US/accent/store-word-do-you-have.mp3'),
     respelling: "Du iu hev egz?",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/store-word-do-you-have.mp3'),
+      words: ["Du","iu","hev","egz?"],
+      starts: [0.15,1.143,2.187,3.343],
+    },
   },
   'store-example-do-you-have': {
     asset: require('../../../assets/audio/en-US/accent/store-example-do-you-have.mp3'),
     respelling: "Du iu hev freș bred tudei?",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/store-example-do-you-have.mp3'),
+      words: ["Du","iu","hev","freș","bred","tudei?"],
+      starts: [0.15,1.143,2.187,3.343,4.605,5.833],
+    },
   },
   'store-word-out-of': {
     asset: require('../../../assets/audio/en-US/accent/store-word-out-of.mp3'),
     respelling: "Uir aut ăv milc.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/store-word-out-of.mp3'),
+      words: ["Uir","aut","ăv","milc."],
+      starts: [0.15,1.255,2.42,3.575],
+    },
   },
   'store-example-out-of': {
     asset: require('../../../assets/audio/en-US/accent/store-example-out-of.mp3'),
     respelling: "Sorii, uir aut ăv egz tudei.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/store-example-out-of.mp3'),
+      words: ["Sorii,","uir","aut","ăv","egz","tudei."],
+      starts: [0.15,1.361,2.466,3.631,4.787,6.202],
+    },
   },
   'store-word-shopping-cart': {
     asset: require('../../../assets/audio/en-US/accent/store-word-shopping-cart.mp3'),
@@ -1026,70 +1796,155 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'store-example-shopping-cart': {
     asset: require('../../../assets/audio/en-US/accent/store-example-shopping-cart.mp3'),
     respelling: "Dă șoping carț ar autsaid.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/store-example-shopping-cart.mp3'),
+      words: ["Dă","șoping","carț","ar","autsaid."],
+      starts: [0.15,1.17,2.503,3.784,4.819],
+    },
   },
   'store-word-can-i-help': {
     asset: require('../../../assets/audio/en-US/accent/store-word-can-i-help.mp3'),
     respelling: "Can ai help iu?",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/store-word-can-i-help.mp3'),
+      words: ["Can","ai","help","iu?"],
+      starts: [0.15,1.254,2.246,3.52],
+    },
   },
   'store-example-can-i-help': {
     asset: require('../../../assets/audio/en-US/accent/store-example-can-i-help.mp3'),
     respelling: "Hai! Can ai help iu faind samting?",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/store-example-can-i-help.mp3'),
+      words: ["Hai!","Can","ai","help","iu","faind","samting?"],
+      starts: [0.15,1.27,2.374,3.366,4.64,5.685,6.973],
+    },
   },
   'store-word-just-looking': {
     asset: require('../../../assets/audio/en-US/accent/store-word-just-looking.mp3'),
     respelling: "Aim giast luching, tencs.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/store-word-just-looking.mp3'),
+      words: ["Aim","giast","luching,","tencs."],
+      starts: [0.15,1.212,2.534,3.825],
+    },
   },
   'store-example-just-looking': {
     asset: require('../../../assets/audio/en-US/accent/store-example-just-looking.mp3'),
     respelling: "Nou, tenc iu. Aim giast luching.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/store-example-just-looking.mp3'),
+      words: ["Nou,","tenc","iu.","Aim","giast","luching."],
+      starts: [0.15,1.226,2.424,3.469,4.531,5.853],
+    },
   },
   'checkout-word-how-are-you': {
     asset: require('../../../assets/audio/en-US/accent/checkout-word-how-are-you.mp3'),
     respelling: "Hai, hau ar iu?",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/checkout-word-how-are-you.mp3'),
+      words: ["Hai,","hau","ar","iu?"],
+      starts: [0.15,1.27,2.38,3.414],
+    },
   },
   'checkout-example-how-are-you': {
     asset: require('../../../assets/audio/en-US/accent/checkout-example-how-are-you.mp3'),
     respelling: "Gud, tencs. End iu?",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/checkout-example-how-are-you.mp3'),
+      words: ["Gud,","tencs.","End","iu?"],
+      starts: [0.15,1.278,2.579,3.681],
+    },
   },
   'talk-checkout-say-1': {
     asset: require('../../../assets/audio/en-US/accent/checkout-example-how-are-you.mp3'),
     respelling: "Gud, tencs. End iu?",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/checkout-example-how-are-you.mp3'),
+      words: ["Gud,","tencs.","End","iu?"],
+      starts: [0.15,1.278,2.579,3.681],
+    },
   },
   'checkout-word-find-everything': {
     asset: require('../../../assets/audio/en-US/accent/checkout-word-find-everything.mp3'),
     respelling: "Did iu faind evriting ochei?",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/checkout-word-find-everything.mp3'),
+      words: ["Did","iu","faind","evriting","ochei?"],
+      starts: [0.15,1.257,2.302,3.59,5.025],
+    },
   },
   'checkout-example-find-everything': {
     asset: require('../../../assets/audio/en-US/accent/checkout-example-find-everything.mp3'),
     respelling: "Ies, ai did. Tenc iu.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/checkout-example-find-everything.mp3'),
+      words: ["Ies,","ai","did.","Tenc","iu."],
+      starts: [0.15,1.34,2.332,3.439,4.637],
+    },
   },
   'talk-checkout-say-2': {
     asset: require('../../../assets/audio/en-US/accent/checkout-example-find-everything.mp3'),
     respelling: "Ies, ai did. Tenc iu.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/checkout-example-find-everything.mp3'),
+      words: ["Ies,","ai","did.","Tenc","iu."],
+      starts: [0.15,1.34,2.332,3.439,4.637],
+    },
   },
   'checkout-word-need-bag': {
     asset: require('../../../assets/audio/en-US/accent/checkout-word-need-bag.mp3'),
     respelling: "Du iu nid ă beag?",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/checkout-word-need-bag.mp3'),
+      words: ["Du","iu","nid","ă","beag?"],
+      starts: [0.15,1.143,2.187,3.27,4.172],
+    },
   },
   'checkout-example-need-bag': {
     asset: require('../../../assets/audio/en-US/accent/checkout-example-need-bag.mp3'),
     respelling: "Nou, tenc iu. Ai hev ă beag.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/checkout-example-need-bag.mp3'),
+      words: ["Nou,","tenc","iu.","Ai","hev","ă","beag."],
+      starts: [0.15,1.226,2.424,3.469,4.461,5.617,6.519],
+    },
   },
   'talk-checkout-say-3': {
     asset: require('../../../assets/audio/en-US/accent/checkout-example-need-bag.mp3'),
     respelling: "Nou, tenc iu. Ai hev ă beag.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/checkout-example-need-bag.mp3'),
+      words: ["Nou,","tenc","iu.","Ai","hev","ă","beag."],
+      starts: [0.15,1.226,2.424,3.469,4.461,5.617,6.519],
+    },
   },
   'checkout-word-points-card': {
     asset: require('../../../assets/audio/en-US/accent/checkout-word-points-card.mp3'),
     respelling: "Du iu hev ă poinț card?",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/checkout-word-points-card.mp3'),
+      words: ["Du","iu","hev","ă","poinț","card?"],
+      starts: [0.15,1.143,2.187,3.343,4.245,5.551],
+    },
   },
   'checkout-example-points-card': {
     asset: require('../../../assets/audio/en-US/accent/checkout-example-points-card.mp3'),
     respelling: "Nou, ai dount. Tenc iu.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/checkout-example-points-card.mp3'),
+      words: ["Nou,","ai","dount.","Tenc","iu."],
+      starts: [0.15,1.226,2.219,3.526,4.724],
+    },
   },
   'checkout-word-debit-credit': {
     asset: require('../../../assets/audio/en-US/accent/checkout-word-debit-credit.mp3'),
     respelling: "Debit or credit?",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/checkout-word-debit-credit.mp3'),
+      words: ["Debit","or","credit?"],
+      starts: [0.15,1.525,2.548],
+    },
   },
   'checkout-example-debit-credit': {
     asset: require('../../../assets/audio/en-US/accent/checkout-example-debit-credit.mp3'),
@@ -1102,42 +1957,92 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'checkout-word-tap': {
     asset: require('../../../assets/audio/en-US/accent/checkout-word-tap.mp3'),
     respelling: "Iu can tap iur card.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/checkout-word-tap.mp3'),
+      words: ["Iu","can","tap","iur","card."],
+      starts: [0.15,1.195,2.298,3.434,4.508],
+    },
   },
   'checkout-example-tap': {
     asset: require('../../../assets/audio/en-US/accent/checkout-example-tap.mp3'),
     respelling: "Tap iur card hir, pliz.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/checkout-example-tap.mp3'),
+      words: ["Tap","iur","card","hir,","pliz."],
+      starts: [0.15,1.286,2.36,3.583,4.689],
+    },
   },
   'checkout-word-receipt': {
     asset: require('../../../assets/audio/en-US/accent/checkout-word-receipt.mp3'),
     respelling: "Du iu uant iur risiit?",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/checkout-word-receipt.mp3'),
+      words: ["Du","iu","uant","iur","risiit?"],
+      starts: [0.15,1.143,2.187,3.468,4.542],
+    },
   },
   'checkout-example-receipt': {
     asset: require('../../../assets/audio/en-US/accent/checkout-example-receipt.mp3'),
     respelling: "Hirz iur risiit.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/checkout-example-receipt.mp3'),
+      words: ["Hirz","iur","risiit."],
+      starts: [0.15,1.465,2.539],
+    },
   },
   'checkout-word-good-day': {
     asset: require('../../../assets/audio/en-US/accent/checkout-word-good-day.mp3'),
     respelling: "Hev ă gud dei!",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/checkout-word-good-day.mp3'),
+      words: ["Hev","ă","gud","dei!"],
+      starts: [0.15,1.306,2.208,3.336],
+    },
   },
   'checkout-example-good-day': {
     asset: require('../../../assets/audio/en-US/accent/checkout-example-good-day.mp3'),
     respelling: "Tencs, iu tu!",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/checkout-example-good-day.mp3'),
+      words: ["Tencs,","iu","tu!"],
+      starts: [0.15,1.451,2.496],
+    },
   },
   'talk-checkout-say-6': {
     asset: require('../../../assets/audio/en-US/accent/checkout-example-good-day.mp3'),
     respelling: "Tencs, iu tu!",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/checkout-example-good-day.mp3'),
+      words: ["Tencs,","iu","tu!"],
+      starts: [0.15,1.451,2.496],
+    },
   },
   'talk-delivery-say-4': {
     asset: require('../../../assets/audio/en-US/accent/checkout-example-good-day.mp3'),
     respelling: "Tencs, iu tu!",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/checkout-example-good-day.mp3'),
+      words: ["Tencs,","iu","tu!"],
+      starts: [0.15,1.451,2.496],
+    },
   },
   'talk-store-say-1': {
     asset: require('../../../assets/audio/en-US/accent/talk-store-say-1.mp3'),
     respelling: "Ies, pliz. Uer can ai faind dă milc?",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/talk-store-say-1.mp3'),
+      words: ["Ies,","pliz.","Uer","can","ai","faind","dă","milc?"],
+      starts: [0.15,1.34,2.567,3.657,4.761,5.753,7.041,8.061],
+    },
   },
   'talk-store-say-2': {
     asset: require('../../../assets/audio/en-US/accent/talk-store-say-2.mp3'),
     respelling: "Sorii, can iu ripiit det, pliz?",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/talk-store-say-2.mp3'),
+      words: ["Sorii,","can","iu","ripiit","det,","pliz?"],
+      starts: [0.15,1.361,2.465,3.51,4.892,6.062],
+    },
   },
   'talk-checkout-say-5': {
     asset: require('../../../assets/audio/en-US/accent/talk-checkout-say-5.mp3'),
@@ -1146,30 +2051,65 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'talk-neighbour-say-1': {
     asset: require('../../../assets/audio/en-US/accent/talk-neighbour-say-1.mp3'),
     respelling: "Gud morning! Aim gud, tenc iu. End iu?",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/talk-neighbour-say-1.mp3'),
+      words: ["Gud","morning!","Aim","gud,","tenc","iu.","End","iu?"],
+      starts: [0.15,1.278,2.638,3.699,4.828,6.025,7.07,8.172],
+    },
   },
   'talk-neighbour-say-2': {
     asset: require('../../../assets/audio/en-US/accent/talk-neighbour-say-2.mp3'),
     respelling: "Ies, iț verii nais.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/talk-neighbour-say-2.mp3'),
+      words: ["Ies,","iț","verii","nais."],
+      starts: [0.15,1.34,2.428,3.615],
+    },
   },
   'talk-neighbour-say-3': {
     asset: require('../../../assets/audio/en-US/accent/talk-neighbour-say-3.mp3'),
     respelling: "Nou, aim gouing tu dă stor.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/talk-neighbour-say-3.mp3'),
+      words: ["Nou,","aim","gouing","tu","dă","stor."],
+      starts: [0.15,1.226,2.288,3.544,4.509,5.528],
+    },
   },
   'talk-neighbour-say-4': {
     asset: require('../../../assets/audio/en-US/accent/talk-neighbour-say-4.mp3'),
     respelling: "Tenc iu, iu tu. Bai!",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/talk-neighbour-say-4.mp3'),
+      words: ["Tenc","iu,","iu","tu.","Bai!"],
+      starts: [0.15,1.348,2.392,3.437,4.402],
+    },
   },
   'talk-delivery-say-1': {
     asset: require('../../../assets/audio/en-US/accent/talk-delivery-say-1.mp3'),
     respelling: "Ies, it iz.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/talk-delivery-say-1.mp3'),
+      words: ["Ies,","it","iz."],
+      starts: [0.15,1.34,2.387],
+    },
   },
   'talk-delivery-say-2': {
     asset: require('../../../assets/audio/en-US/accent/talk-delivery-say-2.mp3'),
     respelling: "Ou, tenc iu!",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/talk-delivery-say-2.mp3'),
+      words: ["Ou,","tenc","iu!"],
+      starts: [0.15,1.142,2.34],
+    },
   },
   'talk-delivery-say-3': {
     asset: require('../../../assets/audio/en-US/accent/talk-delivery-say-3.mp3'),
     respelling: "Ies. Uer du ai sain?",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/talk-delivery-say-3.mp3'),
+      words: ["Ies.","Uer","du","ai","sain?"],
+      starts: [0.15,1.34,2.429,3.422,4.414],
+    },
   },
   'talk-phone-say-1': {
     asset: require('../../../assets/audio/en-US/accent/talk-phone-say-1.mp3'),
@@ -1178,41 +2118,91 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'talk-phone-say-2': {
     asset: require('../../../assets/audio/en-US/accent/talk-phone-say-2.mp3'),
     respelling: "Sorii, hiz not houm rait nau.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/talk-phone-say-2.mp3'),
+      words: ["Sorii,","hiz","not","houm","rait","nau."],
+      starts: [0.15,1.361,2.542,3.725,4.886,6.18],
+    },
   },
   'talk-phone-say-3': {
     asset: require('../../../assets/audio/en-US/accent/talk-phone-say-3.mp3'),
     respelling: "Sorii, ai spiic ă lităl ingliș. Pliz col leităr.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/talk-phone-say-3.mp3'),
+      words: ["Sorii,","ai","spiic","ă","lităl","ingliș.","Pliz","col","leităr."],
+      starts: [0.15,1.361,2.353,3.752,4.654,5.872,7.249,8.476,9.583],
+    },
   },
   'talk-phone-say-4': {
     asset: require('../../../assets/audio/en-US/accent/talk-phone-say-4.mp3'),
     respelling: "Tenc iu. Bai!",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/talk-phone-say-4.mp3'),
+      words: ["Tenc","iu.","Bai!"],
+      starts: [0.15,1.348,2.392],
+    },
   },
   'talk-pharmacy-say-1': {
     asset: require('../../../assets/audio/en-US/accent/talk-pharmacy-say-1.mp3'),
     respelling: "Ai niid samting for ă could, pliz.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/talk-pharmacy-say-1.mp3'),
+      words: ["Ai","niid","samting","for","ă","could,","pliz."],
+      starts: [0.15,1.142,2.372,3.756,4.908,5.81,7.144],
+    },
   },
   'talk-pharmacy-say-2': {
     asset: require('../../../assets/audio/en-US/accent/talk-pharmacy-say-2.mp3'),
     respelling: "Nou, ai dount.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/talk-pharmacy-say-2.mp3'),
+      words: ["Nou,","ai","dount."],
+      starts: [0.15,1.226,2.219],
+    },
   },
   'talk-clinic-say-1': {
     asset: require('../../../assets/audio/en-US/accent/talk-clinic-say-1.mp3'),
     respelling: "Ies, et ten ăcloc.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/talk-clinic-say-1.mp3'),
+      words: ["Ies,","et","ten","ăcloc."],
+      starts: [0.15,1.34,2.406,3.453],
+    },
   },
   'talk-clinic-say-2': {
     asset: require('../../../assets/audio/en-US/accent/talk-clinic-say-2.mp3'),
     respelling: "Ies, hiăr iu gou.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/talk-clinic-say-2.mp3'),
+      words: ["Ies,","hiăr","iu","gou."],
+      starts: [0.15,1.34,2.627,3.671],
+    },
   },
   'talk-clinic-say-4': {
     asset: require('../../../assets/audio/en-US/accent/talk-clinic-say-4.mp3'),
     respelling: "Ochei, tenc iu.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/talk-clinic-say-4.mp3'),
+      words: ["Ochei,","tenc","iu."],
+      starts: [0.15,1.326,2.524],
+    },
   },
   'talk-bus-say-4': {
     asset: require('../../../assets/audio/en-US/accent/talk-clinic-say-4.mp3'),
     respelling: "Ochei, tenc iu.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/talk-clinic-say-4.mp3'),
+      words: ["Ochei,","tenc","iu."],
+      starts: [0.15,1.326,2.524],
+    },
   },
   'talk-bus-say-1': {
     asset: require('../../../assets/audio/en-US/accent/talk-bus-say-1.mp3'),
     respelling: "Ecschiuz mi, daz dis bas gou tu dă mol?",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/talk-bus-say-1.mp3'),
+      words: ["Ecschiuz","mi,","daz","dis","bas","gou","tu","dă","mol?"],
+      starts: [0.15,1.714,2.694,3.93,5.072,6.3,7.381,8.345,9.365],
+    },
   },
 };

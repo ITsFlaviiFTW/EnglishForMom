@@ -8,6 +8,7 @@ import type { AccentAudio, AudioSource, SpacedAudio } from '@/types';
 
 const SPACED_SUFFIX = '--spaced';
 const ACCENT_SUFFIX = '--accent';
+const ACCENT_SPACED_SUFFIX = '--accent-spaced';
 
 const prerecordedAudioService = new PrerecordedAudioService({
   ...generatedAudioAssets,
@@ -16,6 +17,11 @@ const prerecordedAudioService = new PrerecordedAudioService({
   ),
   ...Object.fromEntries(
     Object.entries(accentAudioAssets).map(([key, accent]) => [`${key}${ACCENT_SUFFIX}`, accent.asset]),
+  ),
+  ...Object.fromEntries(
+    Object.entries(accentAudioAssets).flatMap(([key, accent]) =>
+      accent.spaced ? [[`${key}${ACCENT_SPACED_SUFFIX}`, accent.spaced.asset]] : [],
+    ),
   ),
 });
 
@@ -39,7 +45,12 @@ export function getAccentAudio(source: AudioSource): AccentAudio | undefined {
   return accentAudioAssets[source.key];
 }
 
-/** An audio source that plays the Romanian-accent recording of `source`, then the English. */
+/** An audio source that plays the Romanian-accent recording of `source`. */
 export function toAccentSource(source: AudioSource): AudioSource {
   return { ...source, key: `${source.key}${ACCENT_SUFFIX}` };
+}
+
+/** An audio source that plays the Romanian-accent recording of `source` word by word. */
+export function toAccentSpacedSource(source: AudioSource): AudioSource {
+  return { ...source, key: `${source.key}${ACCENT_SPACED_SUFFIX}` };
 }

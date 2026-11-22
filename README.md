@@ -56,7 +56,9 @@ Romanian voice Alina (`ro-RO-AlinaNeural`).
   app says each word and sentence ("Ascultă"; "Mai rar" plays it slower). Alina
   reads each phrase spelled the Romanian way, from
   `src/data/audio/romanian-accent-respellings.ts`, which is also shown as
-  "Se citește". The normal English is a separate, smaller button below.
+  "Se citește". Phrases of three or more words also get her word-by-word
+  reading ("Cuvânt cu cuvânt"), where each word of that spelling lights up as
+  she says it. The normal English is a separate, smaller section below.
 
 They need `AZURE_SPEECH_KEY` and `AZURE_SPEECH_REGION` in `.env.local`
 (git-ignored; the key never goes into the app). Every reading is cached in

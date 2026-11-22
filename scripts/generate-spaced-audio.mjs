@@ -2,6 +2,7 @@
 // phrase of three or more words: the English voice says each word on its own,
 // then the words are joined with a pause, and the start of every word is saved
 // so the app can highlight it while it plays.
+// (The Romanian-accent word-by-word recordings are made by generate-accent-audio.)
 //   npm run generate-spaced-audio
 // Needs the Azure settings described in scripts/audio-tools.mjs.
 import { writeFile } from 'node:fs/promises';
@@ -10,34 +11,25 @@ import { dirname, join, relative } from 'node:path';
 import { generatedEnglishAudioSources } from '../src/data/audio/english-audio-catalog.ts';
 import {
   ENGLISH_VOICE,
+  WORD_BY_WORD_MINIMUM_WORDS,
   ensureSpeech,
   groupByText,
   joinAudio,
   projectRoot,
   removeStaleFiles,
-  speechPath,
+  splitWords,
+  wordByWordParts,
 } from './audio-tools.mjs';
 
 const outputDirectory = join(projectRoot, 'assets', 'audio', 'en-US', 'spaced');
 const assetMapPath = join(projectRoot, 'src', 'data', 'audio', 'spaced-audio-assets.ts');
-const MINIMUM_WORDS = 3;
-const LEAD_SECONDS = 0.15;
-const GAP_SECONDS = 0.7;
-const TAIL_SECONDS = 0.35;
 
 const phrases = groupByText(
   generatedEnglishAudioSources.filter(
-    (source) => source.text.trim().split(/\s+/).length >= MINIMUM_WORDS,
+    (source) => source.text.trim().split(/\s+/).length >= WORD_BY_WORD_MINIMUM_WORDS,
   ),
   outputDirectory,
-).map((phrase) => {
-  const tokens = phrase.text.trim().split(/\s+/);
-  const words = tokens.map((token) => token.replace(/^[^A-Za-z0-9']+|[^A-Za-z0-9']+$/g, ''));
-  if (words.some((word) => word === '')) {
-    throw new Error(`Cannot split "${phrase.text}" into words.`);
-  }
-  return { ...phrase, tokens, words };
-});
+).map((phrase) => ({ ...phrase, ...splitWords(phrase.text) }));
 
 await ensureSpeech(
   phrases.flatMap(({ words }) => words.map((word) => ({ voice: ENGLISH_VOICE, text: word }))),
@@ -45,17 +37,7 @@ await ensureSpeech(
 
 console.log(`Joining ${phrases.length} phrases word by word...`);
 const results = await joinAudio(
-  phrases.map(({ output, words }) => ({
-    output,
-    parts: [
-      { silence: LEAD_SECONDS },
-      ...words.flatMap((word, index) => [
-        ...(index > 0 ? [{ silence: GAP_SECONDS }] : []),
-        { wav: speechPath(ENGLISH_VOICE, word) },
-      ]),
-      { silence: TAIL_SECONDS },
-    ],
-  })),
+  phrases.map(({ output, words }) => ({ output, parts: wordByWordParts(ENGLISH_VOICE, words) })),
 );
 await removeStaleFiles(
   outputDirectory,

@@ -2,32 +2,52 @@
 // voice reads the Romanian spelling from
 // src/data/audio/romanian-accent-respellings.ts. This is the main way the app
 // says each phrase; the normal English recording has its own button.
+// Phrases of three or more words also get a word-by-word recording in the same
+// voice ("Cuvânt cu cuvânt"), with the start of every word saved so the app can
+// highlight it while it plays.
 //   npm run generate-accent-audio
 // Needs the Azure settings described in scripts/audio-tools.mjs.
 import { writeFile } from 'node:fs/promises';
-import { dirname, join, relative } from 'node:path';
+import { basename, dirname, join, relative } from 'node:path';
 
 import { generatedEnglishAudioSources } from '../src/data/audio/english-audio-catalog.ts';
 import { romanianAccentRespellings } from '../src/data/audio/romanian-accent-respellings.ts';
 import {
   ROMANIAN_VOICE,
+  WORD_BY_WORD_MINIMUM_WORDS,
   ensureSpeech,
   groupByText,
   joinAudio,
   projectRoot,
   removeStaleFiles,
   speechPath,
+  splitWords,
+  wordByWordParts,
 } from './audio-tools.mjs';
 
 const outputDirectory = join(projectRoot, 'assets', 'audio', 'en-US', 'accent');
+const spacedDirectory = join(projectRoot, 'assets', 'audio', 'en-US', 'accent-spaced');
 const assetMapPath = join(projectRoot, 'src', 'data', 'audio', 'accent-audio-assets.ts');
 
-const phrases = groupByText(generatedEnglishAudioSources, outputDirectory).map((phrase) => ({
-  ...phrase,
-  respelling: Object.hasOwn(romanianAccentRespellings, phrase.text)
+const phrases = groupByText(generatedEnglishAudioSources, outputDirectory).map((phrase) => {
+  const respelling = Object.hasOwn(romanianAccentRespellings, phrase.text)
     ? romanianAccentRespellings[phrase.text]
-    : undefined,
-}));
+    : undefined;
+  if (!respelling || respelling.trim().split(/\s+/).length < WORD_BY_WORD_MINIMUM_WORDS) {
+    return { ...phrase, respelling };
+  }
+  const { tokens, words } = splitWords(respelling);
+  return {
+    ...phrase,
+    respelling,
+    spaced: {
+      output: join(spacedDirectory, basename(phrase.output)),
+      tokens,
+      // Read in lower case: the same word is then recorded once, wherever it is in a sentence.
+      words: words.map((word) => word.toLocaleLowerCase('ro-RO')),
+    },
+  };
+});
 
 const missing = phrases.filter(({ respelling }) => !respelling).map(({ text }) => text);
 if (missing.length > 0) {
@@ -41,7 +61,13 @@ if (unused.length > 0) {
   console.warn(`Not used by any lesson (can be removed):\n  ${unused.join('\n  ')}`);
 }
 
-await ensureSpeech(phrases.map(({ respelling }) => ({ voice: ROMANIAN_VOICE, text: respelling })));
+const spacedPhrases = phrases.filter(({ spaced }) => spaced);
+await ensureSpeech([
+  ...phrases.map(({ respelling }) => ({ voice: ROMANIAN_VOICE, text: respelling })),
+  ...spacedPhrases.flatMap(({ spaced }) =>
+    spaced.words.map((word) => ({ voice: ROMANIAN_VOICE, text: word })),
+  ),
+]);
 
 console.log(`Saving ${phrases.length} Romanian-accent readings...`);
 await joinAudio(
@@ -55,14 +81,42 @@ await removeStaleFiles(
   phrases.map(({ output }) => output),
 );
 
-const entries = phrases.flatMap(({ output, respelling, keys }) => {
-  const importPath = relative(dirname(assetMapPath), output).replaceAll('\\', '/');
-  return keys.map(
-    (key) =>
-      `  '${key}': {\n` +
-      `    asset: require('${importPath}'),\n` +
-      `    respelling: ${JSON.stringify(respelling)},\n` +
+console.log(`Joining ${spacedPhrases.length} Romanian-accent readings word by word...`);
+const spacedResults = await joinAudio(
+  spacedPhrases.map(({ spaced }) => ({
+    output: spaced.output,
+    parts: wordByWordParts(ROMANIAN_VOICE, spaced.words),
+  })),
+);
+await removeStaleFiles(
+  spacedDirectory,
+  spacedPhrases.map(({ spaced }) => spaced.output),
+);
+
+const importPathOf = (output) => relative(dirname(assetMapPath), output).replaceAll('\\', '/');
+const entries = phrases.flatMap(({ output, respelling, spaced, keys }) => {
+  let spacedLines = [];
+  if (spaced) {
+    const starts = spacedResults[spaced.output]?.starts;
+    if (!starts || starts.length !== spaced.tokens.length) {
+      throw new Error(`Missing timings for "${respelling}".`);
+    }
+    spacedLines = [
+      `    spaced: {\n` +
+        `      asset: require('${importPathOf(spaced.output)}'),\n` +
+        `      words: ${JSON.stringify(spaced.tokens)},\n` +
+        `      starts: ${JSON.stringify(starts)},\n` +
+        `    },`,
+    ];
+  }
+  return keys.map((key) =>
+    [
+      `  '${key}': {`,
+      `    asset: require('${importPathOf(output)}'),`,
+      `    respelling: ${JSON.stringify(respelling)},`,
+      ...spacedLines,
       `  },`,
+    ].join('\n'),
   );
 });
 
@@ -80,4 +134,7 @@ await writeFile(
   ].join('\n'),
   'utf8',
 );
-console.log(`\nDone: ${phrases.length} accent recordings for ${entries.length} lesson items.`);
+console.log(
+  `\nDone: ${phrases.length} accent recordings (${spacedPhrases.length} also word by word) ` +
+    `for ${entries.length} lesson items.`,
+);

@@ -26,13 +26,15 @@ export type SpacedAudio = {
 
 /**
  * A "Cu accent românesc" recording: a Romanian voice reads the phrase spelled
- * the Romanian way, then the normal English recording plays.
+ * the Romanian way.
  */
 export type AccentAudio = {
   /** Bundled recording (from `require`). */
   asset: number;
   /** The phrase written with Romanian letters, e.g. "Dă milc iz in dă frigi." */
   respelling: string;
+  /** The same voice word by word (phrases of three or more words); `words` are the respelling's. */
+  spaced?: SpacedAudio;
 };
 
 export type ExampleSentence = LearningText & {

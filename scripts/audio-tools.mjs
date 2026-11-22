@@ -76,6 +76,34 @@ export async function ensureSpeech(requests) {
   }
 }
 
+/** Phrases this long or longer also get a word-by-word ("Cuvânt cu cuvânt") recording. */
+export const WORD_BY_WORD_MINIMUM_WORDS = 3;
+
+/**
+ * Splits a phrase on spaces for word-by-word playback: `tokens` keep their
+ * punctuation (shown on screen), `words` are what the voice reads.
+ */
+export function splitWords(text) {
+  const tokens = text.trim().split(/\s+/);
+  const words = tokens.map((token) => token.replace(/^[^\p{L}\p{N}']+|[^\p{L}\p{N}']+$/gu, ''));
+  if (words.some((word) => word === '')) {
+    throw new Error(`Cannot split "${text}" into words.`);
+  }
+  return { tokens, words };
+}
+
+/** Recording parts for a word-by-word file: each word alone, with a pause between words. */
+export function wordByWordParts(voice, words) {
+  return [
+    { silence: 0.15 },
+    ...words.flatMap((word, index) => [
+      ...(index > 0 ? [{ silence: 0.7 }] : []),
+      { wav: speechPath(voice, word) },
+    ]),
+    { silence: 0.35 },
+  ];
+}
+
 /** Groups lesson audio sources by text: one recording per distinct phrase. */
 export function groupByText(sources, outputDirectory) {
   const phrases = new Map();

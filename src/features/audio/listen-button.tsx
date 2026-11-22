@@ -7,13 +7,14 @@ import {
   getAccentAudio,
   getSpacedAudio,
   toAccentSource,
+  toAccentSpacedSource,
   toSpacedSource,
 } from '@/services/lesson-audio-service';
 import type { AudioSource, SpacedAudio } from '@/types';
 
 export const SLOW_PLAYBACK_RATE = 0.7;
 
-type Speed = 'accent' | 'accent-slow' | 'normal' | 'slow' | 'words';
+type Speed = 'accent' | 'accent-slow' | 'accent-words' | 'normal' | 'slow' | 'words';
 
 type AudioControlsProps = {
   /** What is being spoken, used for screen-reader labels. */
@@ -31,9 +32,10 @@ type AudioControlsProps = {
 
 /**
  * When a Romanian-accent recording exists, it is the main way to listen:
- * "Ascultă" plays Alina reading the phrase the Romanian way and "Mai rar"
- * plays the same reading slower. The normal English ("În engleză", and
- * "Cuvânt cu cuvânt" for phrases) sits below.
+ * "Ascultă" plays Alina reading the phrase the Romanian way, "Mai rar" plays
+ * the same reading slower, and for phrases "Cuvânt cu cuvânt" plays her
+ * saying one word at a time, each word lighting up as she says it. The normal
+ * English ("În engleză", and its own "Cuvânt cu cuvânt") sits below.
  * Without one (the shop dialogues), "Ascultă" and "Mai rar" play the English.
  * Every button stays enabled while audio plays, so a second tap starts again.
  */
@@ -59,15 +61,21 @@ export function AudioControls({
     setLastSpeed(speed);
     onPlay(playSource, options);
   };
-  const playWords = () => {
-    if (!spaced) {
-      return;
-    }
+  const playWords = (
+    speed: 'words' | 'accent-words',
+    words: SpacedAudio,
+    playSource: AudioSource,
+  ) => {
     setWordIndex(0);
-    play('words', toSpacedSource(source), {
-      onProgress: (seconds) => setWordIndex(findWordIndex(spaced, seconds)),
+    play(speed, playSource, {
+      onProgress: (seconds) => setWordIndex(findWordIndex(words, seconds)),
     });
   };
+  /** The words of the recording that is playing (or last played), the current one lit. */
+  const wordStripFor = (speed: 'words' | 'accent-words', words: SpacedAudio | undefined) =>
+    words && lastSpeed === speed ? (
+      <WordStrip spaced={words} activeIndex={isBusy ? wordIndex : null} />
+    ) : null;
 
   const wordsButton = spaced ? (
     <PlayButton
@@ -75,16 +83,13 @@ export function AudioControls({
       busy={busy('words')}
       compact={compact}
       icon="🐌"
-      onPress={playWords}
+      onPress={() => playWords('words', spaced, toSpacedSource(source))}
       title="Cuvânt cu cuvânt"
       variant={accent ? 'quiet' : 'soft'}
       wraps
     />
   ) : null;
-  const wordStrip =
-    spaced && lastSpeed === 'words' ? (
-      <WordStrip spaced={spaced} activeIndex={isBusy ? wordIndex : null} />
-    ) : null;
+  const wordStrip = wordStripFor('words', spaced);
   const error = errorMessage ? (
     <Text accessibilityLiveRegion="polite" style={styles.error}>
       {errorMessage}
@@ -123,6 +128,7 @@ export function AudioControls({
   }
 
   const accentSource = toAccentSource(source);
+  const accentWords = accent.spaced;
   return (
     <View style={styles.container}>
       {showReadAs ? <ReadAs source={source} /> : null}
@@ -146,6 +152,20 @@ export function AudioControls({
           variant="soft"
         />
       </View>
+      {accentWords ? (
+        <View style={styles.row}>
+          <PlayButton
+            accessibilityLabel={`Ascultă cuvânt cu cuvânt, cu accent românesc: ${label}`}
+            busy={busy('accent-words')}
+            compact={compact}
+            icon="🐌"
+            onPress={() => playWords('accent-words', accentWords, toAccentSpacedSource(source))}
+            title="Cuvânt cu cuvânt"
+            variant="soft"
+          />
+        </View>
+      ) : null}
+      {wordStripFor('accent-words', accentWords)}
 
       {children}
 
