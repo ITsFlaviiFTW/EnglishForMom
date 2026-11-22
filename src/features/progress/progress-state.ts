@@ -106,8 +106,11 @@ export function recordActivityCompletion(
           },
         }
       : progress.questionMistakes;
+  // A wrong answer, or a word or sentence she skipped saying, goes to review.
   const reviewItems =
-    (activity.type === 'multiple-choice' ||
+    (activity.type === 'vocabulary-introduction' ||
+      activity.type === 'example-sentence' ||
+      activity.type === 'multiple-choice' ||
       activity.type === 'listening' ||
       activity.type === 'sentence-building' ||
       activity.type === 'fill-in-the-blank') &&

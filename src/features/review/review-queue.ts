@@ -1,4 +1,5 @@
 import type {
+  ExampleSentenceActivity,
   FillInTheBlankActivity,
   LearnerProgress,
   Lesson,
@@ -28,11 +29,43 @@ export type ReviewAnswer = {
 export function createReviewSeeds(
   lesson: Lesson,
   activity:
+    | VocabularyIntroductionActivity
+    | ExampleSentenceActivity
     | MultipleChoiceActivity
     | ListeningActivity
     | SentenceBuildingActivity
     | FillInTheBlankActivity,
 ): readonly ReviewItemSeed[] {
+  // A word she skipped saying is reviewed as itself.
+  if (activity.type === 'vocabulary-introduction') {
+    return [
+      {
+        id: `vocabulary:${activity.vocabularyId}`,
+        kind: 'vocabulary',
+        lessonId: lesson.id,
+        sourceActivityId: activity.id,
+        learningItemId: activity.vocabularyId,
+        content: activity.content,
+        example: activity.examples?.[0]
+          ? { english: activity.examples[0].english, romanian: activity.examples[0].romanian }
+          : undefined,
+      },
+    ];
+  }
+  // So is a sentence she skipped saying.
+  if (activity.type === 'example-sentence') {
+    return [
+      {
+        id: `comprehension:${lesson.id}:${activity.id}`,
+        kind: 'comprehension',
+        lessonId: lesson.id,
+        sourceActivityId: activity.id,
+        learningItemId: activity.id,
+        content: { english: activity.sentence.english, romanian: activity.sentence.romanian },
+      },
+    ];
+  }
+
   const vocabularyActivities = lesson.activities.filter(
     (candidate): candidate is VocabularyIntroductionActivity =>
       candidate.type === 'vocabulary-introduction',

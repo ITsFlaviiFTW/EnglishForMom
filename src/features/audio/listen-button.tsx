@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { colors, radii } from '@/constants/theme';
@@ -13,7 +13,7 @@ import type { AudioSource, SpacedAudio } from '@/types';
 
 export const SLOW_PLAYBACK_RATE = 0.7;
 
-type Speed = 'normal' | 'slow' | 'words' | 'accent';
+type Speed = 'accent' | 'accent-slow' | 'normal' | 'slow' | 'words';
 
 type AudioControlsProps = {
   /** What is being spoken, used for screen-reader labels. */
@@ -23,14 +23,19 @@ type AudioControlsProps = {
   errorMessage: string | null;
   onPlay: (source: AudioSource, options?: AudioPlayOptions) => void;
   size?: 'large' | 'compact';
+  /** Shows "Se citește: …" above the buttons. Off when the card already shows it. */
+  showReadAs?: boolean;
+  /** Placed under the main buttons, above the normal English (the speaking check). */
+  children?: ReactNode;
 };
 
 /**
- * "Ascultă" (normal), "Mai rar" (slower), for phrases "Cuvânt cu cuvânt"
- * (each word alone, with a pause, highlighted as it is spoken) and "Cu accent
- * românesc" (a Romanian voice reads it the Romanian way, then the normal
- * English plays). Every button stays enabled while audio plays, so a second tap
- * starts again.
+ * When a Romanian-accent recording exists, it is the main way to listen:
+ * "Ascultă" plays Alina reading the phrase the Romanian way and "Mai rar"
+ * plays the same reading slower. The normal English ("În engleză", and
+ * "Cuvânt cu cuvânt" for phrases) sits below.
+ * Without one (the shop dialogues), "Ascultă" and "Mai rar" play the English.
+ * Every button stays enabled while audio plays, so a second tap starts again.
  */
 export function AudioControls({
   label,
@@ -39,114 +44,197 @@ export function AudioControls({
   errorMessage,
   onPlay,
   size = 'large',
+  showReadAs = true,
+  children,
 }: AudioControlsProps) {
-  const [lastSpeed, setLastSpeed] = useState<Speed>('normal');
+  const [lastSpeed, setLastSpeed] = useState<Speed | null>(null);
   const [wordIndex, setWordIndex] = useState(0);
   const spaced = getSpacedAudio(source);
   const accent = getAccentAudio(source);
   const isBusy = state === 'loading' || state === 'playing';
   const compact = size === 'compact';
-  const busyLabel = (speed: Speed, idle: string) =>
-    isBusy && lastSpeed === speed ? 'Se aude…' : idle;
+  const busy = (speed: Speed) => isBusy && lastSpeed === speed;
 
+  const play = (speed: Speed, playSource: AudioSource, options?: AudioPlayOptions) => {
+    setLastSpeed(speed);
+    onPlay(playSource, options);
+  };
+  const playWords = () => {
+    if (!spaced) {
+      return;
+    }
+    setWordIndex(0);
+    play('words', toSpacedSource(source), {
+      onProgress: (seconds) => setWordIndex(findWordIndex(spaced, seconds)),
+    });
+  };
+
+  const wordsButton = spaced ? (
+    <PlayButton
+      accessibilityLabel={`Ascultă în engleză, cuvânt cu cuvânt: ${label}`}
+      busy={busy('words')}
+      compact={compact}
+      icon="🐌"
+      onPress={playWords}
+      title="Cuvânt cu cuvânt"
+      variant={accent ? 'quiet' : 'soft'}
+      wraps
+    />
+  ) : null;
+  const wordStrip =
+    spaced && lastSpeed === 'words' ? (
+      <WordStrip spaced={spaced} activeIndex={isBusy ? wordIndex : null} />
+    ) : null;
+  const error = errorMessage ? (
+    <Text accessibilityLiveRegion="polite" style={styles.error}>
+      {errorMessage}
+    </Text>
+  ) : null;
+
+  if (!accent) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.row}>
+          <PlayButton
+            accessibilityLabel={`Ascultă în engleză: ${label}`}
+            busy={busy('normal')}
+            compact={compact}
+            icon="🔊"
+            onPress={() => play('normal', source)}
+            title="Ascultă"
+            variant="primary"
+          />
+          <PlayButton
+            accessibilityLabel={`Ascultă mai rar: ${label}`}
+            busy={busy('slow')}
+            compact={compact}
+            icon="🐢"
+            onPress={() => play('slow', source, { playbackRate: SLOW_PLAYBACK_RATE })}
+            title="Mai rar"
+            variant="soft"
+          />
+        </View>
+        {wordsButton ? <View style={styles.row}>{wordsButton}</View> : null}
+        {wordStrip}
+        {children}
+        {error}
+      </View>
+    );
+  }
+
+  const accentSource = toAccentSource(source);
   return (
     <View style={styles.container}>
+      {showReadAs ? <ReadAs source={source} /> : null}
       <View style={styles.row}>
-        <Pressable
-          accessibilityLabel={`Ascultă în engleză: ${label}`}
-          accessibilityRole="button"
-          onPress={() => {
-            setLastSpeed('normal');
-            onPlay(source);
-          }}
-          style={styles.flexPressable}>
-          {({ pressed }) => (
-            <View style={[styles.listen, compact && styles.compact, pressed && styles.listenPressed]}>
-              <Text style={[styles.icon, compact && styles.iconCompact]}>🔊</Text>
-              <Text numberOfLines={1} style={[styles.listenText, compact && styles.textCompact]}>
-                {busyLabel('normal', 'Ascultă')}
-              </Text>
-            </View>
-          )}
-        </Pressable>
-        <Pressable
-          accessibilityLabel={`Ascultă mai rar: ${label}`}
-          accessibilityRole="button"
-          onPress={() => {
-            setLastSpeed('slow');
-            onPlay(source, { playbackRate: SLOW_PLAYBACK_RATE });
-          }}
-          style={styles.flexPressable}>
-          {({ pressed }) => (
-            <View style={[styles.soft, compact && styles.compact, pressed && styles.softPressed]}>
-              <Text style={[styles.icon, compact && styles.iconCompact]}>🐢</Text>
-              <Text numberOfLines={1} style={[styles.softText, compact && styles.textCompact]}>
-                {busyLabel('slow', 'Mai rar')}
-              </Text>
-            </View>
-          )}
-        </Pressable>
+        <PlayButton
+          accessibilityLabel={`Ascultă cu accent românesc: ${label}`}
+          busy={busy('accent')}
+          compact={compact}
+          icon="🇷🇴"
+          onPress={() => play('accent', accentSource)}
+          title="Ascultă"
+          variant="primary"
+        />
+        <PlayButton
+          accessibilityLabel={`Ascultă mai rar, cu accent românesc: ${label}`}
+          busy={busy('accent-slow')}
+          compact={compact}
+          icon="🐢"
+          onPress={() => play('accent-slow', accentSource, { playbackRate: SLOW_PLAYBACK_RATE })}
+          title="Mai rar"
+          variant="soft"
+        />
       </View>
 
-      {spaced ? (
-        <Pressable
-          accessibilityLabel={`Ascultă cuvânt cu cuvânt: ${label}`}
-          accessibilityRole="button"
-          onPress={() => {
-            setLastSpeed('words');
-            setWordIndex(0);
-            onPlay(toSpacedSource(source), {
-              onProgress: (seconds) => setWordIndex(findWordIndex(spaced, seconds)),
-            });
-          }}>
-          {({ pressed }) => (
-            <View style={[styles.soft, compact && styles.compact, pressed && styles.softPressed]}>
-              <Text style={[styles.icon, compact && styles.iconCompact]}>🐌</Text>
-              <Text numberOfLines={1} style={[styles.softText, compact && styles.textCompact]}>
-                {busyLabel('words', 'Cuvânt cu cuvânt')}
-              </Text>
-            </View>
-          )}
-        </Pressable>
-      ) : null}
+      {children}
 
-      {spaced && lastSpeed === 'words' ? (
-        <WordStrip spaced={spaced} activeIndex={isBusy ? wordIndex : null} />
-      ) : null}
-
-      {accent ? (
-        <Pressable
-          accessibilityLabel={`Ascultă cu accent românesc, apoi în engleză: ${label}`}
-          accessibilityRole="button"
-          onPress={() => {
-            setLastSpeed('accent');
-            onPlay(toAccentSource(source));
-          }}>
-          {({ pressed }) => (
-            <View style={[styles.accent, compact && styles.compact, pressed && styles.accentPressed]}>
-              <Text style={[styles.icon, compact && styles.iconCompact]}>🇷🇴</Text>
-              <Text numberOfLines={1} style={[styles.accentText, compact && styles.textCompact]}>
-                {busyLabel('accent', 'Cu accent românesc')}
-              </Text>
-            </View>
-          )}
-        </Pressable>
-      ) : null}
-
-      {accent && lastSpeed === 'accent' ? (
-        <View accessibilityLiveRegion="polite" style={styles.readAs}>
-          <Text style={styles.readAsLabel}>Se citește:</Text>
-          <Text style={styles.readAsText}>{accent.respelling}</Text>
-          <Text style={styles.readAsNote}>Apoi se aude în engleză, normal.</Text>
+      <View style={styles.englishSection}>
+        <Text style={styles.englishLabel}>Pronunția normală, în engleză:</Text>
+        <View style={styles.row}>
+          <PlayButton
+            accessibilityLabel={`Ascultă în engleză, normal: ${label}`}
+            busy={busy('normal')}
+            compact
+            icon="🔊"
+            onPress={() => play('normal', source)}
+            title="În engleză"
+            variant="quiet"
+          />
+          {wordsButton}
         </View>
-      ) : null}
-
-      {errorMessage ? (
-        <Text accessibilityLiveRegion="polite" style={styles.error}>
-          {errorMessage}
-        </Text>
-      ) : null}
+        {wordStrip}
+      </View>
+      {error}
     </View>
+  );
+}
+
+/** "Se citește: frigi" — how to say it, written the Romanian way. */
+export function ReadAs({ source }: { source: AudioSource | undefined }) {
+  const accent = source ? getAccentAudio(source) : null;
+  if (!accent) {
+    return null;
+  }
+
+  return (
+    <View style={styles.readAs}>
+      <Text style={styles.readAsLabel}>🇷🇴 Se citește:</Text>
+      <Text style={styles.readAsText}>{accent.respelling}</Text>
+    </View>
+  );
+}
+
+function PlayButton({
+  accessibilityLabel,
+  busy,
+  compact,
+  icon,
+  onPress,
+  title,
+  variant,
+  wraps = false,
+}: {
+  accessibilityLabel: string;
+  busy: boolean;
+  compact: boolean;
+  icon: string;
+  onPress: () => void;
+  title: string;
+  variant: 'primary' | 'soft' | 'quiet';
+  /** Lets a long title use two lines instead of being cut off. */
+  wraps?: boolean;
+}) {
+  const box = {
+    primary: [styles.primary, styles.primaryPressed],
+    soft: [styles.soft, styles.softPressed],
+    quiet: [styles.quiet, styles.quietPressed],
+  }[variant];
+  const text = { primary: styles.primaryText, soft: styles.softText, quiet: styles.quietText }[
+    variant
+  ];
+
+  return (
+    <Pressable
+      accessibilityLabel={accessibilityLabel}
+      accessibilityRole="button"
+      onPress={onPress}
+      style={styles.flexPressable}>
+      {({ pressed }) => (
+        <View style={[styles.button, box[0], compact && styles.compact, pressed && box[1]]}>
+          <Text style={[styles.icon, compact && styles.iconCompact]}>{icon}</Text>
+          <Text
+            numberOfLines={wraps ? 2 : 1}
+            style={[
+              text,
+              compact && variant !== 'quiet' && styles.textCompact,
+              wraps && styles.textWraps,
+            ]}>
+            {busy ? 'Se aude…' : title}
+          </Text>
+        </View>
+      )}
+    </Pressable>
   );
 }
 
@@ -196,50 +284,90 @@ const styles = StyleSheet.create({
   flexPressable: {
     flex: 1,
   },
-  listen: {
-    minHeight: 64,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 10,
-    borderRadius: radii.medium,
-    backgroundColor: colors.primary,
-    paddingHorizontal: 14,
-  },
-  listenPressed: {
-    backgroundColor: colors.primaryPressed,
-  },
-  soft: {
+  button: {
     minHeight: 64,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
     borderRadius: radii.medium,
-    backgroundColor: colors.primarySoft,
     paddingHorizontal: 12,
+  },
+  primary: {
+    backgroundColor: colors.primary,
+  },
+  primaryPressed: {
+    backgroundColor: colors.primaryPressed,
+  },
+  soft: {
+    backgroundColor: colors.primarySoft,
   },
   softPressed: {
     backgroundColor: colors.border,
   },
-  accent: {
-    minHeight: 64,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    borderRadius: radii.medium,
-    backgroundColor: colors.warmSoft,
-    paddingHorizontal: 12,
+  quiet: {
+    gap: 6,
+    borderWidth: 1.5,
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
+    paddingHorizontal: 8,
   },
-  accentPressed: {
-    backgroundColor: colors.border,
+  quietPressed: {
+    backgroundColor: colors.surfaceMuted,
   },
-  accentText: {
-    color: colors.warm,
+  primaryText: {
+    flexShrink: 1,
+    color: colors.onPrimary,
+    fontSize: 20,
+    lineHeight: 26,
+    fontWeight: '700',
+  },
+  softText: {
+    flexShrink: 1,
+    color: colors.primary,
     fontSize: 18,
     lineHeight: 24,
     fontWeight: '700',
+  },
+  quietText: {
+    flexShrink: 1,
+    color: colors.textMuted,
+    fontSize: 16,
+    lineHeight: 20,
+    fontWeight: '700',
+  },
+  compact: {
+    minHeight: 52,
+  },
+  icon: {
+    fontSize: 22,
+    lineHeight: 28,
+  },
+  iconCompact: {
+    fontSize: 19,
+    lineHeight: 24,
+  },
+  textCompact: {
+    fontSize: 17,
+    lineHeight: 22,
+  },
+  textWraps: {
+    fontSize: 16,
+    lineHeight: 20,
+    textAlign: 'center',
+  },
+  englishSection: {
+    gap: 8,
+    marginTop: 6,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+  },
+  englishLabel: {
+    color: colors.textMuted,
+    fontSize: 15,
+    lineHeight: 20,
+    fontWeight: '600',
   },
   readAs: {
     gap: 2,
@@ -256,41 +384,9 @@ const styles = StyleSheet.create({
   },
   readAsText: {
     color: colors.warm,
-    fontSize: 24,
-    lineHeight: 31,
+    fontSize: 26,
+    lineHeight: 33,
     fontWeight: '800',
-  },
-  readAsNote: {
-    color: colors.textMuted,
-    fontSize: 15,
-    lineHeight: 20,
-  },
-  compact: {
-    minHeight: 52,
-  },
-  icon: {
-    fontSize: 22,
-    lineHeight: 28,
-  },
-  iconCompact: {
-    fontSize: 19,
-    lineHeight: 24,
-  },
-  listenText: {
-    color: colors.onPrimary,
-    fontSize: 20,
-    lineHeight: 26,
-    fontWeight: '700',
-  },
-  softText: {
-    color: colors.primary,
-    fontSize: 18,
-    lineHeight: 24,
-    fontWeight: '700',
-  },
-  textCompact: {
-    fontSize: 17,
-    lineHeight: 22,
   },
   strip: {
     flexDirection: 'row',

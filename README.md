@@ -52,9 +52,11 @@ Romanian voice Alina (`ro-RO-AlinaNeural`).
   with a Canadian voice (`en-CA-ClaraNeural` / `en-CA-LiamNeural`).
 - `npm run generate-spaced-audio`: the word-by-word ("Cuvânt cu cuvânt") MP3s,
   with the timing of each word for highlighting.
-- `npm run generate-accent-audio`: the "Cu accent românesc" MP3s. Alina reads
-  each phrase spelled the Romanian way, from
-  `src/data/audio/romanian-accent-respellings.ts`, then Ava says it normally.
+- `npm run generate-accent-audio`: the Romanian-accent MP3s, the main way the
+  app says each word and sentence ("Ascultă"; "Mai rar" plays it slower). Alina
+  reads each phrase spelled the Romanian way, from
+  `src/data/audio/romanian-accent-respellings.ts`, which is also shown as
+  "Se citește". The normal English is a separate, smaller button below.
 
 They need `AZURE_SPEECH_KEY` and `AZURE_SPEECH_REGION` in `.env.local`
 (git-ignored; the key never goes into the app). Every reading is cached in
@@ -69,6 +71,29 @@ set up automatically).
   Avery 5160 sheets). Uses Microsoft Edge or Google Chrome to print. They are
   published with the site at `/print/<file>.pdf`.
 - `python scripts/generate-icons.py`: redraws the app icons (needs Pillow).
+
+## Speaking check ("Acum spune tu")
+
+On every new word and example sentence she taps the microphone and says it;
+Continue unlocks once she says it right. After 5 tries "Sari peste" lets her
+move on, and the item goes to "Repetă". Without a microphone, internet or the
+check itself, the step works as before.
+
+- The phone records a short 16 kHz WAV and posts it to `/api/pronunciation`
+  on the same site. Nginx forwards it to Azure's speech recognition with
+  pronunciation assessment and adds the Azure key there, from
+  `/etc/nginx/prava-secrets/speech.conf` on the server. The key is never in
+  the app or in git.
+- `bash deploy/install-speech-key.sh` writes that file from `.env.local` over
+  SSH (run it once, and again if the key changes).
+- Nginx limits the endpoint to 20 checks a minute per phone and 60 for the
+  whole site. Azure's free tier covers about 5 hours of speech a month; if it
+  runs out, the check reports a problem and she can continue.
+- The pass rules are in `src/features/speaking/pronunciation.ts`. They were set
+  with Azure's scores for the app's own recordings: native English and the
+  Romanian-accent readings pass, a different phrase never does.
+- iPhone's built-in speech recognition (Web Speech API) is not used: it does
+  not work in apps added to the Home Screen.
 
 ## Roadmap
 

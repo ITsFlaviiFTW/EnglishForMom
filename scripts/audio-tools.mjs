@@ -113,7 +113,7 @@ export async function removeStaleFiles(directory, keep) {
   }
 }
 
-async function loadAzureSettings() {
+export async function loadAzureSettings() {
   const fromFile = {};
   const envFile = join(projectRoot, '.env.local');
   if (existsSync(envFile)) {
