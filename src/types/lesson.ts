@@ -145,6 +145,34 @@ export type ListeningActivity = ActivityBase & {
   explanationRomanian?: string;
 };
 
+/** Who she talks to in a conversation ("Casiera", "Vecina"). */
+export type ConversationPartner = {
+  nameRomanian: string;
+  icon: string;
+};
+
+/**
+ * One exchange of a talk-back conversation: the other person speaks (at real
+ * speed), and she answers out loud; the microphone checks her answer.
+ */
+export type ConversationTurnActivity = ActivityBase & {
+  type: 'conversation-turn';
+  partner: ConversationPartner;
+  /** The conversation so far, shown above ("staff" is the other person). */
+  history: readonly DialogueLine[];
+  /** What the other person says now; empty when she speaks first. */
+  partnerLines: readonly LearningText[];
+  partnerAudio?: AudioSource;
+  /** In Romanian, what she should answer ("Spune că nu ai nevoie de pungă."). */
+  taskRomanian: string;
+  /** What she says. */
+  response: LearningText;
+  responseAudio: AudioSource;
+  /** On the last turn: what the other person says to finish the conversation. */
+  closingLines?: readonly LearningText[];
+  closingAudio?: AudioSource;
+};
+
 export type SpeakingActivity = ActivityBase & {
   type: 'speaking';
   target: LearningText;
@@ -161,6 +189,7 @@ export type LessonActivity =
   | SentenceBuildingActivity
   | FillInTheBlankActivity
   | ListeningActivity
+  | ConversationTurnActivity
   | SpeakingActivity;
 
 export type Lesson = {

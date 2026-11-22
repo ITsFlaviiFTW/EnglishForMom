@@ -1,4 +1,5 @@
 import type {
+  ConversationTurnActivity,
   ExampleSentenceActivity,
   FillInTheBlankActivity,
   LearnerProgress,
@@ -31,6 +32,7 @@ export function createReviewSeeds(
   activity:
     | VocabularyIntroductionActivity
     | ExampleSentenceActivity
+    | ConversationTurnActivity
     | MultipleChoiceActivity
     | ListeningActivity
     | SentenceBuildingActivity
@@ -62,6 +64,19 @@ export function createReviewSeeds(
         sourceActivityId: activity.id,
         learningItemId: activity.id,
         content: { english: activity.sentence.english, romanian: activity.sentence.romanian },
+      },
+    ];
+  }
+  // And an answer she skipped in a conversation.
+  if (activity.type === 'conversation-turn') {
+    return [
+      {
+        id: `comprehension:${lesson.id}:${activity.id}`,
+        kind: 'comprehension',
+        lessonId: lesson.id,
+        sourceActivityId: activity.id,
+        learningItemId: activity.id,
+        content: { english: activity.response.english, romanian: activity.response.romanian },
       },
     ];
   }

@@ -3,6 +3,7 @@ import type { Lesson, LessonId } from '@/types';
 import { bathroomBasicsLesson } from './bathroom-basics.ts';
 import { bedroomBasicsLesson } from './bedroom-basics.ts';
 import { cleaningBasicsLesson } from './cleaning-basics.ts';
+import { conversationLessons } from './conversations.ts';
 import { developmentLesson } from './development-lesson.ts';
 import { essentialVerbsOneLesson } from './essential-verbs-1.ts';
 import { kitchenBasicsLesson } from './kitchen-basics.ts';
@@ -18,6 +19,7 @@ const lessons: readonly Lesson[] = [
   pricesLesson,
   atTheStoreLesson,
   checkoutLesson,
+  ...conversationLessons,
   kitchenBasicsLesson,
   bathroomBasicsLesson,
   bedroomBasicsLesson,

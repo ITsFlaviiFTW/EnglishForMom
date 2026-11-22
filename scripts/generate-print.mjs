@@ -28,7 +28,7 @@ const WORKBOOK_FILES = {
 // Home words that are not things you can stick a label on.
 const NOT_LABELS = new Set(['wash', 'dry', 'clean', 'dirty', 'dust', 'dirty clothes', 'clean clothes']);
 
-const browser = findBrowser();
+const browsers = findBrowsers();
 await rm(htmlDirectory, { recursive: true, force: true });
 await mkdir(htmlDirectory, { recursive: true });
 await mkdir(outputDirectory, { recursive: true });
@@ -46,6 +46,10 @@ for (const { course, lessons } of courses) {
   if (fileName && lessons.length > 0) {
     await printPdf(fileName, workbookHtml(course, lessons));
   }
+}
+const conversationCourse = getCourses().find((course) => course.id === 'conversations');
+if (conversationCourse) {
+  await printPdf('prava-conversations.pdf', conversationsHtml(conversationCourse));
 }
 await printPdf('prava-pocket-card.pdf', pocketCardHtml());
 await printPdf(
@@ -313,6 +317,97 @@ function lessonHtml(lesson, number) {
   return wordList + handwriting + exercises + dictation + roleplay;
 }
 
+/**
+ * The talk-back conversations as scripts to act out with family: one page each,
+ * the whole conversation first, then "Scrie tu" (cover the script and write
+ * what you would answer).
+ */
+function conversationsHtml(course) {
+  const conversations = course.units.flatMap((unit) => {
+    const lesson = unit.lessonId ? getLessonById(unit.lessonId) : undefined;
+    const turns = lesson?.activities.filter((activity) => activity.type === 'conversation-turn') ?? [];
+    return turns.length ? [{ icon: unit.icon, lesson, turns }] : [];
+  });
+
+  const conversationPage = ({ icon, lesson, turns }, number) => {
+    const partner = turns[0].partner;
+    const partnerLine = (line) => `
+      <p class="dl"><span class="who">${esc(partner.nameRomanian)}</span>
+        <span class="dl-en">${esc(line.english)}</span>
+        <span class="dl-ro">${esc(line.romanian)}</span></p>`;
+    const script = turns
+      .map((turn) => {
+        const respelling = romanianAccentRespellings[turn.response.english] ?? '';
+        return `${turn.partnerLines.map(partnerLine).join('')}
+          <p class="dl mine"><span class="who">Tu</span>
+            <span class="dl-en">${esc(turn.response.english)}</span>
+            ${respelling ? `<span class="dl-say">Se citește: ${esc(respelling)}</span>` : ''}
+            <span class="dl-ro">${esc(turn.response.romanian)}</span></p>
+          ${(turn.closingLines ?? []).map(partnerLine).join('')}`;
+      })
+      .join('');
+    const writeIt = turns
+      .map(
+        (turn) => `
+        <li>
+          <span class="heard">${
+            turn.partnerLines.length
+              ? `${esc(partner.nameRomanian)}: „${esc(turn.partnerLines.map((line) => line.english).join(' '))}”`
+              : 'Tu începi.'
+          }</span>
+          <span class="hint">${esc(turn.taskRomanian)}</span>
+          <span class="line"></span>
+        </li>`,
+      )
+      .join('');
+
+    const head = `
+        <header class="lesson-head">
+          <span>Conversația ${number} · ${esc(icon ?? '')} ${esc(lesson.title.romanian)}</span>
+          <span class="en">${esc(lesson.title.english)}</span>
+        </header>`;
+    // The answers to "Scrie tu" are on the page before, so she cannot peek.
+    return `
+      <section class="page">
+        ${head}
+        <h2>Citește cu cineva</h2>
+        <p class="instruction">${esc(turns[0].instructionRomanian ?? '')}</p>
+        <div class="dialogue">${script}</div>
+      </section>
+      <section class="page">
+        ${head}
+        <h2>Scrie tu</h2>
+        <p class="instruction">Fără să te uiți pe pagina dinainte: ce răspunzi? Scrie în engleză, apoi verifică în dialog.</p>
+        <ol class="write-answers">${writeIt}</ol>
+      </section>`;
+  };
+
+  return page(`
+    <section class="page cover">
+      <p class="brand">Prava</p>
+      <h1>Conversații de citit cu cineva</h1>
+      <p class="course">${esc(course.icon ?? '')} ${esc(course.title.romanian)} <span>(${esc(course.title.english)})</span></p>
+      <h2>Cum lucrați</h2>
+      <ol class="how">
+        <li>Fă conversația în aplicația Prava.</li>
+        <li>Cineva din familie citește ce spune celălalt (vânzătorul, vecina, curierul…). Tu citești rândurile „Tu”, cu voce tare. „Se citește” te ajută la pronunție.</li>
+        <li>Schimbați rolurile, apoi jucați scena din nou, mai repede.</li>
+        <li>Întoarce pagina: la „Scrie tu” scrie ce ai răspunde, fără să te uiți. Verifică apoi în dialog.</li>
+      </ol>
+      <p class="tip">Jucați scena în picioare, ca în magazin sau la ușă. Așa o ții minte mai ușor.</p>
+      <table class="tracker">
+        <thead><tr><th>Conversația</th><th>Data</th><th>Am jucat-o</th></tr></thead>
+        <tbody>${conversations
+          .map(
+            ({ icon, lesson }, index) =>
+              `<tr><td>${index + 1}. ${esc(icon ?? '')} ${esc(lesson.title.romanian)}</td><td></td><td class="tick">☐</td></tr>`,
+          )
+          .join('')}</tbody>
+      </table>
+    </section>
+    ${conversations.map((conversation, index) => conversationPage(conversation, index + 1)).join('')}`);
+}
+
 function pocketCardHtml() {
   const help = [
     'Sorry?',
@@ -496,6 +591,14 @@ function css(kind) {
     .who { display: inline-block; min-width: 1.05in; font-size: 10pt; font-weight: 800; text-transform: uppercase; color: #9C5226; }
     .dl-en { font-weight: 700; }
     .dl-ro { display: block; margin-left: 1.05in; font-size: 11pt; color: #56625C; }
+    .dl.mine .who { color: #1E5A45; }
+    .dl.mine .dl-en { font-size: 13.5pt; }
+    .dl-say { display: block; margin-left: 1.05in; font-size: 11.5pt; font-weight: 700; color: #9C5226; }
+    .write-answers li { margin-bottom: 16px; break-inside: avoid; }
+    .write-answers .line { height: 0.45in; }
+    .write-answers .heard, .write-answers .hint { display: block; }
+    .write-answers .heard { font-weight: 700; }
+    .write-answers .hint { font-size: 11pt; }
     .answers h3 { margin-top: 12px; }
     .answers p { margin: 0 0 4px; font-size: 11pt; }`;
 }
@@ -505,24 +608,33 @@ async function printPdf(fileName, html) {
   const pdfPath = join(outputDirectory, fileName);
   await writeFile(htmlPath, html, 'utf8');
   await rm(pdfPath, { force: true });
-  const result = spawnSync(
-    browser,
-    [
-      '--headless=new',
-      '--disable-gpu',
-      '--no-pdf-header-footer',
-      `--print-to-pdf=${pdfPath}`,
-      pathToFileURL(htmlPath).href,
-    ],
-    { encoding: 'utf8', windowsHide: true, timeout: 120000 },
-  );
-  if (!existsSync(pdfPath)) {
-    throw new Error(`Could not print ${fileName}: ${result.stderr || result.error}`);
+  // Tries each installed browser in turn: one that is in the middle of an
+  // update can quit without printing anything.
+  const problems = [];
+  for (const [index, browser] of browsers.entries()) {
+    const result = spawnSync(
+      browser,
+      [
+        '--headless=new',
+        '--disable-gpu',
+        '--no-pdf-header-footer',
+        // Its own profile, so an open browser window cannot take the job over.
+        `--user-data-dir=${join(projectRoot, '.tools', `print-profile-${index}`)}`,
+        `--print-to-pdf=${pdfPath}`,
+        pathToFileURL(htmlPath).href,
+      ],
+      { encoding: 'utf8', windowsHide: true, timeout: 120000 },
+    );
+    if (existsSync(pdfPath)) {
+      console.log(`  ${fileName}`);
+      return;
+    }
+    problems.push(`${browser}: ${result.error ?? (result.stderr.trim() || `exit code ${result.status}`)}`);
   }
-  console.log(`  ${fileName}`);
+  throw new Error(`Could not print ${fileName}:\n  ${problems.join('\n  ')}`);
 }
 
-function findBrowser() {
+function findBrowsers() {
   const candidates =
     process.platform === 'win32'
       ? [
@@ -536,8 +648,8 @@ function findBrowser() {
             '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge',
           ]
         : ['/usr/bin/google-chrome', '/usr/bin/chromium', '/usr/bin/microsoft-edge'];
-  const found = candidates.find((candidate) => existsSync(candidate));
-  if (!found) {
+  const found = candidates.filter((candidate) => existsSync(candidate));
+  if (found.length === 0) {
     throw new Error('Microsoft Edge or Google Chrome is needed to make the PDFs.');
   }
   return found;

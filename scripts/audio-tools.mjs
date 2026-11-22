@@ -20,8 +20,16 @@ export const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..'
 export const ENGLISH_VOICE = 'en-US-AvaNeural';
 /** Romanian voice for the "Cu accent românesc" readings. */
 export const ROMANIAN_VOICE = 'ro-RO-AlinaNeural';
-/** Canadian voices for store staff in the real-speed dialogues. */
-export const STAFF_VOICES = { female: 'en-CA-ClaraNeural', male: 'en-CA-LiamNeural' };
+/**
+ * The other person in dialogues and conversations: Canadian voices for store
+ * staff, and two more North American voices so she hears different people.
+ */
+export const STAFF_VOICES = {
+  female: 'en-CA-ClaraNeural',
+  male: 'en-CA-LiamNeural',
+  'female-2': 'en-US-EmmaNeural',
+  'male-2': 'en-US-AndrewNeural',
+};
 /** A little slower than normal, for a beginner (lesson words and phrases). */
 const LESSON_RATE = '-10%';
 /** Normal speaking speed, as heard in a store (dialogues). */

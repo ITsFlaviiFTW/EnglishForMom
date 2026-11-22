@@ -835,6 +835,10 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
     asset: require('../../../assets/audio/en-US/accent/help-example-sorry.mp3'),
     respelling: "Sorii? Ai didănt hir iu.",
   },
+  'talk-bus-say-3': {
+    asset: require('../../../assets/audio/en-US/accent/help-example-sorry.mp3'),
+    respelling: "Sorii? Ai didănt hir iu.",
+  },
   'help-word-repeat': {
     asset: require('../../../assets/audio/en-US/accent/help-word-repeat.mp3'),
     respelling: "Can iu ripiit det, pliz?",
@@ -843,11 +847,19 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
     asset: require('../../../assets/audio/en-US/accent/help-example-repeat.mp3'),
     respelling: "Ai dount andărstend. Can iu ripiit det, pliz?",
   },
+  'talk-clinic-say-3': {
+    asset: require('../../../assets/audio/en-US/accent/help-example-repeat.mp3'),
+    respelling: "Ai dount andărstend. Can iu ripiit det, pliz?",
+  },
   'help-word-slowly': {
     asset: require('../../../assets/audio/en-US/accent/help-word-slowly.mp3'),
     respelling: "Sloulii, pliz.",
   },
   'help-example-slowly': {
+    asset: require('../../../assets/audio/en-US/accent/help-example-slowly.mp3'),
+    respelling: "Can iu spiic sloulii, pliz?",
+  },
+  'talk-pharmacy-say-3': {
     asset: require('../../../assets/audio/en-US/accent/help-example-slowly.mp3'),
     respelling: "Can iu spiic sloulii, pliz?",
   },
@@ -879,11 +891,23 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
     asset: require('../../../assets/audio/en-US/accent/help-word-thank-you.mp3'),
     respelling: "Tenc iu verii maci.",
   },
+  'talk-pharmacy-say-4': {
+    asset: require('../../../assets/audio/en-US/accent/help-word-thank-you.mp3'),
+    respelling: "Tenc iu verii maci.",
+  },
   'help-example-thank-you': {
     asset: require('../../../assets/audio/en-US/accent/help-example-thank-you.mp3'),
     respelling: "Tenc iu verii maci for iur help.",
   },
+  'talk-store-say-3': {
+    asset: require('../../../assets/audio/en-US/accent/help-example-thank-you.mp3'),
+    respelling: "Tenc iu verii maci for iur help.",
+  },
   'money-word-how-much': {
+    asset: require('../../../assets/audio/en-US/accent/money-word-how-much.mp3'),
+    respelling: "Hau maci iz it?",
+  },
+  'talk-bus-say-2': {
     asset: require('../../../assets/audio/en-US/accent/money-word-how-much.mp3'),
     respelling: "Hau maci iz it?",
   },
@@ -1027,6 +1051,10 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
     asset: require('../../../assets/audio/en-US/accent/checkout-example-how-are-you.mp3'),
     respelling: "Gud, tencs. End iu?",
   },
+  'talk-checkout-say-1': {
+    asset: require('../../../assets/audio/en-US/accent/checkout-example-how-are-you.mp3'),
+    respelling: "Gud, tencs. End iu?",
+  },
   'checkout-word-find-everything': {
     asset: require('../../../assets/audio/en-US/accent/checkout-word-find-everything.mp3'),
     respelling: "Did iu faind evriting ochei?",
@@ -1035,11 +1063,19 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
     asset: require('../../../assets/audio/en-US/accent/checkout-example-find-everything.mp3'),
     respelling: "Ies, ai did. Tenc iu.",
   },
+  'talk-checkout-say-2': {
+    asset: require('../../../assets/audio/en-US/accent/checkout-example-find-everything.mp3'),
+    respelling: "Ies, ai did. Tenc iu.",
+  },
   'checkout-word-need-bag': {
     asset: require('../../../assets/audio/en-US/accent/checkout-word-need-bag.mp3'),
     respelling: "Du iu nid ă beag?",
   },
   'checkout-example-need-bag': {
+    asset: require('../../../assets/audio/en-US/accent/checkout-example-need-bag.mp3'),
+    respelling: "Nou, tenc iu. Ai hev ă beag.",
+  },
+  'talk-checkout-say-3': {
     asset: require('../../../assets/audio/en-US/accent/checkout-example-need-bag.mp3'),
     respelling: "Nou, tenc iu. Ai hev ă beag.",
   },
@@ -1056,6 +1092,10 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
     respelling: "Debit or credit?",
   },
   'checkout-example-debit-credit': {
+    asset: require('../../../assets/audio/en-US/accent/checkout-example-debit-credit.mp3'),
+    respelling: "Debit, pliz.",
+  },
+  'talk-checkout-say-4': {
     asset: require('../../../assets/audio/en-US/accent/checkout-example-debit-credit.mp3'),
     respelling: "Debit, pliz.",
   },
@@ -1082,5 +1122,97 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'checkout-example-good-day': {
     asset: require('../../../assets/audio/en-US/accent/checkout-example-good-day.mp3'),
     respelling: "Tencs, iu tu!",
+  },
+  'talk-checkout-say-6': {
+    asset: require('../../../assets/audio/en-US/accent/checkout-example-good-day.mp3'),
+    respelling: "Tencs, iu tu!",
+  },
+  'talk-delivery-say-4': {
+    asset: require('../../../assets/audio/en-US/accent/checkout-example-good-day.mp3'),
+    respelling: "Tencs, iu tu!",
+  },
+  'talk-store-say-1': {
+    asset: require('../../../assets/audio/en-US/accent/talk-store-say-1.mp3'),
+    respelling: "Ies, pliz. Uer can ai faind dă milc?",
+  },
+  'talk-store-say-2': {
+    asset: require('../../../assets/audio/en-US/accent/talk-store-say-2.mp3'),
+    respelling: "Sorii, can iu ripiit det, pliz?",
+  },
+  'talk-checkout-say-5': {
+    asset: require('../../../assets/audio/en-US/accent/talk-checkout-say-5.mp3'),
+    respelling: "Ies, pliz.",
+  },
+  'talk-neighbour-say-1': {
+    asset: require('../../../assets/audio/en-US/accent/talk-neighbour-say-1.mp3'),
+    respelling: "Gud morning! Aim gud, tenc iu. End iu?",
+  },
+  'talk-neighbour-say-2': {
+    asset: require('../../../assets/audio/en-US/accent/talk-neighbour-say-2.mp3'),
+    respelling: "Ies, iț verii nais.",
+  },
+  'talk-neighbour-say-3': {
+    asset: require('../../../assets/audio/en-US/accent/talk-neighbour-say-3.mp3'),
+    respelling: "Nou, aim gouing tu dă stor.",
+  },
+  'talk-neighbour-say-4': {
+    asset: require('../../../assets/audio/en-US/accent/talk-neighbour-say-4.mp3'),
+    respelling: "Tenc iu, iu tu. Bai!",
+  },
+  'talk-delivery-say-1': {
+    asset: require('../../../assets/audio/en-US/accent/talk-delivery-say-1.mp3'),
+    respelling: "Ies, it iz.",
+  },
+  'talk-delivery-say-2': {
+    asset: require('../../../assets/audio/en-US/accent/talk-delivery-say-2.mp3'),
+    respelling: "Ou, tenc iu!",
+  },
+  'talk-delivery-say-3': {
+    asset: require('../../../assets/audio/en-US/accent/talk-delivery-say-3.mp3'),
+    respelling: "Ies. Uer du ai sain?",
+  },
+  'talk-phone-say-1': {
+    asset: require('../../../assets/audio/en-US/accent/talk-phone-say-1.mp3'),
+    respelling: "Helou?",
+  },
+  'talk-phone-say-2': {
+    asset: require('../../../assets/audio/en-US/accent/talk-phone-say-2.mp3'),
+    respelling: "Sorii, hiz not houm rait nau.",
+  },
+  'talk-phone-say-3': {
+    asset: require('../../../assets/audio/en-US/accent/talk-phone-say-3.mp3'),
+    respelling: "Sorii, ai spiic ă lităl ingliș. Pliz col leităr.",
+  },
+  'talk-phone-say-4': {
+    asset: require('../../../assets/audio/en-US/accent/talk-phone-say-4.mp3'),
+    respelling: "Tenc iu. Bai!",
+  },
+  'talk-pharmacy-say-1': {
+    asset: require('../../../assets/audio/en-US/accent/talk-pharmacy-say-1.mp3'),
+    respelling: "Ai niid samting for ă could, pliz.",
+  },
+  'talk-pharmacy-say-2': {
+    asset: require('../../../assets/audio/en-US/accent/talk-pharmacy-say-2.mp3'),
+    respelling: "Nou, ai dount.",
+  },
+  'talk-clinic-say-1': {
+    asset: require('../../../assets/audio/en-US/accent/talk-clinic-say-1.mp3'),
+    respelling: "Ies, et ten ăcloc.",
+  },
+  'talk-clinic-say-2': {
+    asset: require('../../../assets/audio/en-US/accent/talk-clinic-say-2.mp3'),
+    respelling: "Ies, hiăr iu gou.",
+  },
+  'talk-clinic-say-4': {
+    asset: require('../../../assets/audio/en-US/accent/talk-clinic-say-4.mp3'),
+    respelling: "Ochei, tenc iu.",
+  },
+  'talk-bus-say-4': {
+    asset: require('../../../assets/audio/en-US/accent/talk-clinic-say-4.mp3'),
+    respelling: "Ochei, tenc iu.",
+  },
+  'talk-bus-say-1': {
+    asset: require('../../../assets/audio/en-US/accent/talk-bus-say-1.mp3'),
+    respelling: "Ecschiuz mi, daz dis bas gou tu dă mol?",
   },
 };

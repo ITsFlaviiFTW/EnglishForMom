@@ -67,9 +67,29 @@ set up automatically).
 
 - `npm run generate-print`: makes the printable PDFs in `public/print/` from the
   lesson data (one workbook per course with word list, handwriting, exercises,
-  dictation, dialogue role-play and answers; a pocket card; house labels for
-  Avery 5160 sheets). Uses Microsoft Edge or Google Chrome to print. They are
-  published with the site at `/print/<file>.pdf`.
+  dictation, dialogue role-play and answers; the conversation scripts to act
+  out with family; a pocket card; house labels for Avery 5160 sheets). Uses
+  Microsoft Edge or Google Chrome to print, trying the next one if a browser
+  fails (for example in the middle of an update). They are published with the
+  site at `/print/<file>.pdf`.
+
+## Conversations ("Conversații")
+
+Talk-back practice with different people: a store worker, a cashier, a
+neighbour, a delivery driver, a phone call, a pharmacist, a clinic receptionist
+and a bus driver (`src/data/lessons/conversations.ts`). Each conversation is a
+lesson with one step per thing she says: the other person speaks at real speed
+(four voices), she gets a task in Romanian, tries to answer from memory (or
+taps "Arată ce să spui"), and the speaking check unlocks the next step.
+
+- Her answers are recorded like lesson phrases, so they have the
+  Romanian-accent recording, "Se citește" and word by word. Every answer needs a
+  spelling in `romanian-accent-respellings.ts`; each was checked by running
+  Alina's reading through the speaking check.
+- The other person's lines are recorded by `npm run generate-audio`, with the
+  voices in `STAFF_VOICES` (`scripts/audio-tools.mjs`).
+- The phone call asks for "Daniel": change the name in `conversations.ts` to
+  someone in the family.
 - `python scripts/generate-icons.py`: redraws the app icons (needs Pillow).
 
 ## Speaking check ("Acum spune tu")

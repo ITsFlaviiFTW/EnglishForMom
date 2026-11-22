@@ -583,6 +583,11 @@ export const spacedAudioAssets: Readonly<Record<string, SpacedAudio>> = {
     words: ["Sorry?","I","didn't","hear","you."],
     starts: [0.15,1.459,2.498,3.731,4.799],
   },
+  'talk-bus-say-3': {
+    asset: require('../../../assets/audio/en-US/spaced/help-example-sorry.mp3'),
+    words: ["Sorry?","I","didn't","hear","you."],
+    starts: [0.15,1.459,2.498,3.731,4.799],
+  },
   'help-word-repeat': {
     asset: require('../../../assets/audio/en-US/spaced/help-word-repeat.mp3'),
     words: ["Can","you","repeat","that,","please?"],
@@ -593,7 +598,17 @@ export const spacedAudioAssets: Readonly<Record<string, SpacedAudio>> = {
     words: ["I","don't","understand.","Can","you","repeat","that,","please?"],
     starts: [0.15,1.189,2.361,3.938,5.136,6.378,7.714,8.756],
   },
+  'talk-clinic-say-3': {
+    asset: require('../../../assets/audio/en-US/spaced/help-example-repeat.mp3'),
+    words: ["I","don't","understand.","Can","you","repeat","that,","please?"],
+    starts: [0.15,1.189,2.361,3.938,5.136,6.378,7.714,8.756],
+  },
   'help-example-slowly': {
+    asset: require('../../../assets/audio/en-US/spaced/help-example-slowly.mp3'),
+    words: ["Can","you","speak","slowly,","please?"],
+    starts: [0.15,1.348,2.59,3.963,5.419],
+  },
+  'talk-pharmacy-say-3': {
     asset: require('../../../assets/audio/en-US/spaced/help-example-slowly.mp3'),
     words: ["Can","you","speak","slowly,","please?"],
     starts: [0.15,1.348,2.59,3.963,5.419],
@@ -633,12 +648,27 @@ export const spacedAudioAssets: Readonly<Record<string, SpacedAudio>> = {
     words: ["Thank","you","very","much."],
     starts: [0.15,1.336,2.579,3.847],
   },
+  'talk-pharmacy-say-4': {
+    asset: require('../../../assets/audio/en-US/spaced/help-word-thank-you.mp3'),
+    words: ["Thank","you","very","much."],
+    starts: [0.15,1.336,2.579,3.847],
+  },
   'help-example-thank-you': {
     asset: require('../../../assets/audio/en-US/spaced/help-example-thank-you.mp3'),
     words: ["Thank","you","very","much","for","your","help."],
     starts: [0.15,1.336,2.579,3.847,5.145,6.27,7.471],
   },
+  'talk-store-say-3': {
+    asset: require('../../../assets/audio/en-US/spaced/help-example-thank-you.mp3'),
+    words: ["Thank","you","very","much","for","your","help."],
+    starts: [0.15,1.336,2.579,3.847,5.145,6.27,7.471],
+  },
   'money-word-how-much': {
+    asset: require('../../../assets/audio/en-US/spaced/money-word-how-much.mp3'),
+    words: ["How","much","is","it?"],
+    starts: [0.15,1.318,2.616,3.807],
+  },
+  'talk-bus-say-2': {
     asset: require('../../../assets/audio/en-US/spaced/money-word-how-much.mp3'),
     words: ["How","much","is","it?"],
     starts: [0.15,1.318,2.616,3.807],
@@ -773,6 +803,11 @@ export const spacedAudioAssets: Readonly<Record<string, SpacedAudio>> = {
     words: ["Good,","thanks.","And","you?"],
     starts: [0.15,1.203,2.464,3.689],
   },
+  'talk-checkout-say-1': {
+    asset: require('../../../assets/audio/en-US/spaced/checkout-example-how-are-you.mp3'),
+    words: ["Good,","thanks.","And","you?"],
+    starts: [0.15,1.203,2.464,3.689],
+  },
   'checkout-word-find-everything': {
     asset: require('../../../assets/audio/en-US/spaced/checkout-word-find-everything.mp3'),
     words: ["Did","you","find","everything","okay?"],
@@ -783,12 +818,22 @@ export const spacedAudioAssets: Readonly<Record<string, SpacedAudio>> = {
     words: ["Yes,","I","did.","Thank","you."],
     starts: [0.15,1.443,2.482,3.536,4.722],
   },
+  'talk-checkout-say-2': {
+    asset: require('../../../assets/audio/en-US/spaced/checkout-example-find-everything.mp3'),
+    words: ["Yes,","I","did.","Thank","you."],
+    starts: [0.15,1.443,2.482,3.536,4.722],
+  },
   'checkout-word-need-bag': {
     asset: require('../../../assets/audio/en-US/spaced/checkout-word-need-bag.mp3'),
     words: ["Do","you","need","a","bag?"],
     starts: [0.15,1.323,2.566,3.774,4.816],
   },
   'checkout-example-need-bag': {
+    asset: require('../../../assets/audio/en-US/spaced/checkout-example-need-bag.mp3'),
+    words: ["No,","thank","you.","I","have","a","bag."],
+    starts: [0.15,1.412,2.598,3.84,4.879,6.024,7.066],
+  },
+  'talk-checkout-say-3': {
     asset: require('../../../assets/audio/en-US/spaced/checkout-example-need-bag.mp3'),
     words: ["No,","thank","you.","I","have","a","bag."],
     starts: [0.15,1.412,2.598,3.84,4.879,6.024,7.066],
@@ -837,5 +882,110 @@ export const spacedAudioAssets: Readonly<Record<string, SpacedAudio>> = {
     asset: require('../../../assets/audio/en-US/spaced/checkout-example-good-day.mp3'),
     words: ["Thanks,","you","too!"],
     starts: [0.15,1.411,2.654],
+  },
+  'talk-checkout-say-6': {
+    asset: require('../../../assets/audio/en-US/spaced/checkout-example-good-day.mp3'),
+    words: ["Thanks,","you","too!"],
+    starts: [0.15,1.411,2.654],
+  },
+  'talk-delivery-say-4': {
+    asset: require('../../../assets/audio/en-US/spaced/checkout-example-good-day.mp3'),
+    words: ["Thanks,","you","too!"],
+    starts: [0.15,1.411,2.654],
+  },
+  'talk-store-say-1': {
+    asset: require('../../../assets/audio/en-US/spaced/talk-store-say-1.mp3'),
+    words: ["Yes,","please.","Where","can","I","find","the","milk?"],
+    starts: [0.15,1.443,2.72,3.946,5.145,6.183,7.451,8.478],
+  },
+  'talk-store-say-2': {
+    asset: require('../../../assets/audio/en-US/spaced/talk-store-say-2.mp3'),
+    words: ["Sorry,","can","you","repeat","that,","please?"],
+    starts: [0.15,1.459,2.658,3.9,5.236,6.277],
+  },
+  'talk-neighbour-say-1': {
+    asset: require('../../../assets/audio/en-US/spaced/talk-neighbour-say-1.mp3'),
+    words: ["Good","morning!","I'm","good,","thank","you.","And","you?"],
+    starts: [0.15,1.203,2.488,3.725,4.777,5.964,7.206,8.431],
+  },
+  'talk-neighbour-say-2': {
+    asset: require('../../../assets/audio/en-US/spaced/talk-neighbour-say-2.mp3'),
+    words: ["Yes,","it's","very","nice."],
+    starts: [0.15,1.443,2.64,3.909],
+  },
+  'talk-neighbour-say-3': {
+    asset: require('../../../assets/audio/en-US/spaced/talk-neighbour-say-3.mp3'),
+    words: ["No,","I'm","going","to","the","store."],
+    starts: [0.15,1.412,2.648,3.835,5.012,6.038],
+  },
+  'talk-neighbour-say-4': {
+    asset: require('../../../assets/audio/en-US/spaced/talk-neighbour-say-4.mp3'),
+    words: ["Thank","you,","you","too.","Bye!"],
+    starts: [0.15,1.336,2.579,3.821,4.999],
+  },
+  'talk-delivery-say-1': {
+    asset: require('../../../assets/audio/en-US/spaced/talk-delivery-say-1.mp3'),
+    words: ["Yes,","it","is."],
+    starts: [0.15,1.443,2.423],
+  },
+  'talk-delivery-say-2': {
+    asset: require('../../../assets/audio/en-US/spaced/talk-delivery-say-2.mp3'),
+    words: ["Oh,","thank","you!"],
+    starts: [0.15,1.24,2.427],
+  },
+  'talk-delivery-say-3': {
+    asset: require('../../../assets/audio/en-US/spaced/talk-delivery-say-3.mp3'),
+    words: ["Yes.","Where","do","I","sign?"],
+    starts: [0.15,1.443,2.669,3.843,4.882],
+  },
+  'talk-phone-say-2': {
+    asset: require('../../../assets/audio/en-US/spaced/talk-phone-say-2.mp3'),
+    words: ["Sorry,","he's","not","home","right","now."],
+    starts: [0.15,1.459,2.69,3.883,5.199,6.336],
+  },
+  'talk-phone-say-3': {
+    asset: require('../../../assets/audio/en-US/spaced/talk-phone-say-3.mp3'),
+    words: ["Sorry,","I","speak","a","little","English.","Please","call","later."],
+    starts: [0.15,1.459,2.498,3.871,4.913,6.084,7.547,8.824,9.964],
+  },
+  'talk-phone-say-4': {
+    asset: require('../../../assets/audio/en-US/spaced/talk-phone-say-4.mp3'),
+    words: ["Thank","you.","Bye!"],
+    starts: [0.15,1.336,2.579],
+  },
+  'talk-pharmacy-say-1': {
+    asset: require('../../../assets/audio/en-US/spaced/talk-pharmacy-say-1.mp3'),
+    words: ["I","need","something","for","a","cold,","please."],
+    starts: [0.15,1.189,2.397,3.806,4.931,5.973,7.222],
+  },
+  'talk-pharmacy-say-2': {
+    asset: require('../../../assets/audio/en-US/spaced/talk-pharmacy-say-2.mp3'),
+    words: ["No,","I","don't."],
+    starts: [0.15,1.412,2.451],
+  },
+  'talk-clinic-say-1': {
+    asset: require('../../../assets/audio/en-US/spaced/talk-clinic-say-1.mp3'),
+    words: ["Yes,","at","ten","o'clock."],
+    starts: [0.15,1.443,2.472,3.656],
+  },
+  'talk-clinic-say-2': {
+    asset: require('../../../assets/audio/en-US/spaced/talk-clinic-say-2.mp3'),
+    words: ["Yes,","here","you","go."],
+    starts: [0.15,1.443,2.511,3.753],
+  },
+  'talk-clinic-say-4': {
+    asset: require('../../../assets/audio/en-US/spaced/talk-clinic-say-4.mp3'),
+    words: ["Okay,","thank","you."],
+    starts: [0.15,1.291,2.477],
+  },
+  'talk-bus-say-4': {
+    asset: require('../../../assets/audio/en-US/spaced/talk-clinic-say-4.mp3'),
+    words: ["Okay,","thank","you."],
+    starts: [0.15,1.291,2.477],
+  },
+  'talk-bus-say-1': {
+    asset: require('../../../assets/audio/en-US/spaced/talk-bus-say-1.mp3'),
+    words: ["Excuse","me,","does","this","bus","go","to","the","mall?"],
+    starts: [0.15,1.795,2.959,4.202,5.422,6.636,7.81,8.987,10.013],
   },
 };

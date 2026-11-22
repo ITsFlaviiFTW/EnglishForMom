@@ -3,6 +3,7 @@ import type { Course, CourseId } from '@/types';
 import { bathroomBasicsLesson } from '../lessons/bathroom-basics.ts';
 import { bedroomBasicsLesson } from '../lessons/bedroom-basics.ts';
 import { cleaningBasicsLesson } from '../lessons/cleaning-basics.ts';
+import { conversationLessons } from '../lessons/conversations.ts';
 import { essentialVerbsOneLesson } from '../lessons/essential-verbs-1.ts';
 import { kitchenBasicsLesson } from '../lessons/kitchen-basics.ts';
 import { laundryBasicsLesson } from '../lessons/laundry-basics.ts';
@@ -11,6 +12,17 @@ import { atTheStoreLesson } from '../lessons/out-at-the-store.ts';
 import { checkoutLesson } from '../lessons/out-checkout.ts';
 import { helpPhrasesLesson } from '../lessons/out-help-phrases.ts';
 import { pricesLesson } from '../lessons/out-prices.ts';
+
+const CONVERSATION_ICONS: Readonly<Record<string, string>> = {
+  'talk-1-store-help': '🛒',
+  'talk-2-checkout': '🧾',
+  'talk-3-neighbour': '🏡',
+  'talk-4-delivery': '📦',
+  'talk-5-phone': '📞',
+  'talk-6-pharmacy': '💊',
+  'talk-7-clinic': '🩺',
+  'talk-8-bus': '🚌',
+};
 
 const courses: readonly Course[] = [
   {
@@ -61,10 +73,31 @@ const courses: readonly Course[] = [
     ],
   },
   {
+    // Right after the shop phrases: she uses them in whole conversations.
+    id: 'conversations',
+    icon: '💬',
+    schemaVersion: 1,
+    level: 2,
+    title: {
+      english: 'Conversations',
+      romanian: 'Conversații',
+    },
+    descriptionRomanian:
+      'Vorbești cu oamenii: aplicația spune ce zice celălalt, iar tu îi răspunzi cu voce tare.',
+    units: conversationLessons.map((lesson, index) => ({
+      id: lesson.id.replace(/^talk-\d+-/, 'talk-'),
+      icon: CONVERSATION_ICONS[lesson.id],
+      title: lesson.title,
+      lessonId: lesson.id,
+      prerequisiteLessonIds: index === 0 ? [] : [conversationLessons[index - 1].id],
+      availability: 'published' as const,
+    })),
+  },
+  {
     id: 'my-home',
     icon: '🏠',
     schemaVersion: 1,
-    level: 2,
+    level: 3,
     title: {
       english: 'My Home',
       romanian: 'Casa mea',
@@ -125,7 +158,7 @@ const courses: readonly Course[] = [
     id: 'everyday-actions',
     icon: '✋',
     schemaVersion: 1,
-    level: 3,
+    level: 4,
     title: {
       english: 'Everyday Actions',
       romanian: 'Acțiuni de zi cu zi',

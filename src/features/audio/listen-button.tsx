@@ -160,6 +160,7 @@ export function AudioControls({
             onPress={() => play('normal', source)}
             title="În engleză"
             variant="quiet"
+            wraps
           />
           {wordsButton}
         </View>

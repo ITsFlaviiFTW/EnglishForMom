@@ -1,8 +1,7 @@
 /**
- * Every English lesson phrase written the way a Romanian reader would say it,
- * for the "Cu accent românesc" button. A Romanian voice reads these spellings,
- * then the normal English recording plays, so the accent only ever helps the
- * listener into the real English; it never replaces it.
+ * Every English lesson phrase written the way a Romanian reader would say it.
+ * It is shown as "Se citește", and a Romanian voice reading it is the main
+ * "Ascultă" recording; the normal English recording has its own button.
  *
  * Spelling rules, kept the same everywhere:
  * - "the" is "dă" ("di" before a vowel sound), "a" is "ă"; th is d or t
@@ -298,4 +297,27 @@ export const romanianAccentRespellings: Readonly<Record<string, string>> = {
   "Here's your receipt.": 'Hirz iur risiit.',
   'Have a good day!': 'Hev ă gud dei!',
   'Thanks, you too!': 'Tencs, iu tu!',
+
+  // Conversations (what she answers)
+  'Yes, please. Where can I find the milk?': 'Ies, pliz. Uer can ai faind dă milc?',
+  'Sorry, can you repeat that, please?': 'Sorii, can iu ripiit det, pliz?',
+  'Yes, please.': 'Ies, pliz.',
+  "Good morning! I'm good, thank you. And you?": 'Gud morning! Aim gud, tenc iu. End iu?',
+  "Yes, it's very nice.": 'Ies, iț verii nais.',
+  "No, I'm going to the store.": 'Nou, aim gouing tu dă stor.',
+  'Thank you, you too. Bye!': 'Tenc iu, iu tu. Bai!',
+  'Yes, it is.': 'Ies, it iz.',
+  'Oh, thank you!': 'Ou, tenc iu!',
+  'Yes. Where do I sign?': 'Ies. Uer du ai sain?',
+  'Hello?': 'Helou?',
+  "Sorry, he's not home right now.": 'Sorii, hiz not houm rait nau.',
+  'Sorry, I speak a little English. Please call later.':
+    'Sorii, ai spiic ă lităl ingliș. Pliz col leităr.',
+  'Thank you. Bye!': 'Tenc iu. Bai!',
+  'I need something for a cold, please.': 'Ai niid samting for ă could, pliz.',
+  "No, I don't.": 'Nou, ai dount.',
+  "Yes, at ten o'clock.": 'Ies, et ten ăcloc.',
+  'Yes, here you go.': 'Ies, hiăr iu gou.',
+  'Okay, thank you.': 'Ochei, tenc iu.',
+  'Excuse me, does this bus go to the mall?': 'Ecschiuz mi, daz dis bas gou tu dă mol?',
 };

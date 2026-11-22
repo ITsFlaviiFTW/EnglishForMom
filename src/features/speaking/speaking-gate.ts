@@ -28,6 +28,9 @@ export function getSpeakingTarget(activity: LessonActivity): SpeakingTarget | nu
   if (activity.type === 'example-sentence' && activity.sentence.audio) {
     return { text: activity.sentence.english, audio: activity.sentence.audio };
   }
+  if (activity.type === 'conversation-turn') {
+    return { text: activity.response.english, audio: activity.responseAudio };
+  }
   return null;
 }
 

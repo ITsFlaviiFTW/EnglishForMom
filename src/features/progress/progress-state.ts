@@ -110,6 +110,7 @@ export function recordActivityCompletion(
   const reviewItems =
     (activity.type === 'vocabulary-introduction' ||
       activity.type === 'example-sentence' ||
+      activity.type === 'conversation-turn' ||
       activity.type === 'multiple-choice' ||
       activity.type === 'listening' ||
       activity.type === 'sentence-building' ||

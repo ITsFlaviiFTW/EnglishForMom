@@ -1,6 +1,10 @@
 import { bathroomBasicsAudioSources } from '../lessons/bathroom-basics.ts';
 import { bedroomBasicsAudioSources } from '../lessons/bedroom-basics.ts';
 import { cleaningBasicsAudioSources } from '../lessons/cleaning-basics.ts';
+import {
+  conversationPartnerAudioSources,
+  conversationResponseAudioSources,
+} from '../lessons/conversations.ts';
 import { essentialVerbsOneAudioSources } from '../lessons/essential-verbs-1.ts';
 import { laundryBasicsAudioSources } from '../lessons/laundry-basics.ts';
 import { livingRoomBasicsAudioSources } from '../lessons/living-room-basics.ts';
@@ -36,14 +40,20 @@ export const generatedEnglishAudioSources = [
   ...pricesAudioSources,
   ...atTheStoreAudioSources,
   ...checkoutAudioSources,
+  // Last, so phrases shared with the lessons keep their lessons' file names.
+  ...conversationResponseAudioSources,
 ];
 
-/** Real-speed shop dialogues (several voices), recorded by `npm run generate-audio`. */
+/**
+ * Real-speed shop dialogues and what the other person says in the
+ * conversations (several voices), recorded by `npm run generate-audio`.
+ */
 export const dialogueAudioSources = [
   ...helpPhrasesDialogues,
   ...pricesDialogues,
   ...atTheStoreDialogues,
   ...checkoutDialogues,
+  ...conversationPartnerAudioSources,
 ];
 
 function createPair(word: string, example: string) {

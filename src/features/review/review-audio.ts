@@ -27,5 +27,8 @@ export function findReviewItemAudio(item: ReviewItemProgress): AudioSource | und
   if (source?.type === 'example-sentence') {
     return source.sentence.audio;
   }
+  if (source?.type === 'conversation-turn') {
+    return source.responseAudio;
+  }
   return undefined;
 }

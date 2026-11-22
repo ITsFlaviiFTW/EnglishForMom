@@ -27,6 +27,7 @@ import {
   speakingCompletion,
   type SpeakingOutcome,
 } from '@/features/speaking/speaking-gate';
+import { ConversationTurn } from '@/features/lessons/conversation-turn';
 import { isFillInAnswerCorrect } from '@/features/lessons/fill-in-the-blank';
 import {
   getCorrectOption,
@@ -44,6 +45,7 @@ import type {
 import type {
   ActivityResponse,
   AudioSource,
+  ConversationTurnActivity,
   ExampleSentenceActivity,
   FillInTheBlankActivity,
   Lesson,
@@ -60,7 +62,8 @@ type SupportedActivity =
   | MultipleChoiceActivity
   | ListeningActivity
   | SentenceBuildingActivity
-  | FillInTheBlankActivity;
+  | FillInTheBlankActivity
+  | ConversationTurnActivity;
 
 export type NextLessonLink = {
   id: string;
@@ -172,7 +175,11 @@ export function LessonPlayer({
   };
 
   const continueAction = {
-    title: isLastActivity ? 'Termină lecția' : 'Continuă',
+    title: isLastActivity
+      ? currentActivity.type === 'conversation-turn'
+        ? 'Termină conversația'
+        : 'Termină lecția'
+      : 'Continuă',
     onPress: handleAdvance,
     disabled: !canContinue,
   };
@@ -292,6 +299,8 @@ function ActivityRenderer({
       return <VocabularyActivity activity={activity} speaking={speaking} {...audioProps} />;
     case 'example-sentence':
       return <ExampleActivity activity={activity} speaking={speaking} {...audioProps} />;
+    case 'conversation-turn':
+      return <ConversationTurn activity={activity} speaking={speaking} {...audioProps} />;
     case 'multiple-choice':
       return (
         <MultipleChoice
@@ -766,6 +775,7 @@ function LessonComplete({ lesson, nextLesson }: { lesson: Lesson; nextLesson: Ne
   const newWords = lesson.activities.filter(
     (activity) => activity.type === 'vocabulary-introduction',
   ).length;
+  const isConversation = lesson.activities.every((activity) => activity.type === 'conversation-turn');
 
   return (
     <ScreenContainer
@@ -798,7 +808,7 @@ function LessonComplete({ lesson, nextLesson }: { lesson: Lesson; nextLesson: Ne
           Felicitări!
         </Text>
         <Text style={styles.completeText}>
-          Ai terminat lecția „{lesson.title.romanian}”.
+          Ai terminat {isConversation ? 'conversația' : 'lecția'} „{lesson.title.romanian}”.
         </Text>
       </View>
 
@@ -811,7 +821,7 @@ function LessonComplete({ lesson, nextLesson }: { lesson: Lesson; nextLesson: Ne
         ) : null}
         <View style={styles.statTile}>
           <Text style={styles.statNumber}>{lesson.activities.length}</Text>
-          <Text style={styles.statLabel}>pași parcurși</Text>
+          <Text style={styles.statLabel}>{isConversation ? 'răspunsuri spuse' : 'pași parcurși'}</Text>
         </View>
       </View>
 
@@ -853,7 +863,8 @@ function isSupportedActivity(activity: LessonActivity): activity is SupportedAct
     activity.type === 'multiple-choice' ||
     activity.type === 'listening' ||
     activity.type === 'sentence-building' ||
-    activity.type === 'fill-in-the-blank'
+    activity.type === 'fill-in-the-blank' ||
+    activity.type === 'conversation-turn'
   );
 }
 

@@ -11,6 +11,8 @@ export type {
   ActivityResponse,
   AudioSource,
   ChoiceOption,
+  ConversationPartner,
+  ConversationTurnActivity,
   DialogueLine,
   ExampleSentence,
   ExampleSentenceActivity,

@@ -1,9 +1,16 @@
 import type { ChoiceOption, DialogueLine, ListeningActivity } from '@/types';
 
 /**
+ * The voice of the other person (store staff, a neighbour…). female and male
+ * are Canadian voices; female-2 and male-2 are other North American voices,
+ * so she gets used to hearing different people.
+ */
+export type PartnerVoice = 'female' | 'male' | 'female-2' | 'male-2';
+
+/**
  * A recorded real-life dialogue, made by `npm run generate-audio`: staff lines
- * are read by a Canadian voice (female or male), customer lines by the usual
- * English voice, all at normal speaking speed.
+ * are read by the partner voice, customer lines by the usual English voice, all
+ * at normal speaking speed.
  */
 export type DialogueAudioSource = {
   key: string;
@@ -11,13 +18,13 @@ export type DialogueAudioSource = {
   text: string;
   locale: 'en-US';
   rate: number;
-  staffVoice: 'female' | 'male';
+  staffVoice: PartnerVoice;
   lines: readonly DialogueLine[];
 };
 
 type DialogueQuestion = {
   id: string;
-  staffVoice: 'female' | 'male';
+  staffVoice: PartnerVoice;
   lines: readonly DialogueLine[];
   promptRomanian: string;
   options: readonly ChoiceOption[];
