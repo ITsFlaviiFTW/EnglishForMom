@@ -24,6 +24,22 @@ const CONVERSATION_ICONS: Readonly<Record<string, string>> = {
   'talk-8-bus': '🚌',
 };
 
+/**
+ * Conversations come slowly: the two shop ones right after the shop lessons,
+ * then one after every lesson or two of the other courses, so she never does
+ * two in a row there. Each also needs the conversation before it. "Începe"
+ * picks the first lesson that is open, and this course is listed before
+ * "Casa mea", so a conversation comes as soon as its lesson is done.
+ */
+const CONVERSATION_AFTER: Readonly<Record<string, string>> = {
+  'talk-1-store-help': checkoutLesson.id,
+  'talk-3-neighbour': bathroomBasicsLesson.id,
+  'talk-4-delivery': livingRoomBasicsLesson.id,
+  'talk-5-phone': laundryBasicsLesson.id,
+  'talk-6-pharmacy': cleaningBasicsLesson.id,
+  'talk-7-clinic': essentialVerbsOneLesson.id,
+};
+
 const courses: readonly Course[] = [
   {
     // First, because understanding people at the store is the main goal.
@@ -74,6 +90,7 @@ const courses: readonly Course[] = [
   },
   {
     // Right after the shop phrases: she uses them in whole conversations.
+    // The later ones open one at a time, between the other lessons.
     id: 'conversations',
     icon: '💬',
     schemaVersion: 1,
@@ -89,7 +106,10 @@ const courses: readonly Course[] = [
       icon: CONVERSATION_ICONS[lesson.id],
       title: lesson.title,
       lessonId: lesson.id,
-      prerequisiteLessonIds: index === 0 ? [] : [conversationLessons[index - 1].id],
+      prerequisiteLessonIds: [
+        ...(index === 0 ? [] : [conversationLessons[index - 1].id]),
+        ...(CONVERSATION_AFTER[lesson.id] ? [CONVERSATION_AFTER[lesson.id]] : []),
+      ],
       availability: 'published' as const,
     })),
   },

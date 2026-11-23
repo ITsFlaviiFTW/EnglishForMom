@@ -36,7 +36,10 @@ export function useAudioPlayback(audioService: AudioService, activityId: string 
           setPlayback({
             activityId,
             state: 'idle',
-            errorMessage: 'Pronunția nu este disponibilă pe acest dispozitiv.',
+            // A card that could not start its word by itself just waits for a tap.
+            errorMessage: options?.automatic
+              ? null
+              : 'Pronunția nu este disponibilă pe acest dispozitiv.',
           });
         }
       } finally {

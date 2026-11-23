@@ -65,3 +65,24 @@ test('falls back to device speech if saved playback fails', async () => {
   assert.deepEqual(prerecorded.played, [source]);
   assert.deepEqual(deviceSpeech.played, [source]);
 });
+
+test('a recording that plays by itself never falls back to device speech', async () => {
+  const blocked = new Error('NotAllowedError');
+  const prerecorded = new FakeAudioService({ failure: blocked });
+  const deviceSpeech = new FakeAudioService();
+  const service = new FallbackAudioService(prerecorded, deviceSpeech);
+
+  await assert.rejects(service.play(source, { automatic: true }), blocked);
+  assert.deepEqual(deviceSpeech.played, []);
+});
+
+test('text without a recording is not spoken by itself', async () => {
+  const prerecorded = new FakeAudioService({ available: false });
+  const deviceSpeech = new FakeAudioService();
+  const service = new FallbackAudioService(prerecorded, deviceSpeech);
+
+  await service.play(source, { automatic: true });
+
+  assert.deepEqual(prerecorded.played, []);
+  assert.deepEqual(deviceSpeech.played, []);
+});

@@ -1,3 +1,4 @@
+import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -10,11 +11,12 @@ import { ScreenHeader } from '@/components/screen-header';
 import { colors, radii } from '@/constants/theme';
 import { AudioControls } from '@/features/audio/listen-button';
 import { useAudioPlayback } from '@/features/audio/use-audio-playback';
+import { getLessonById } from '@/data/lessons/lesson-catalog';
 import { findReviewItemAudio } from '@/features/review/review-audio';
 import { getDueReviewCount, prioritizeReviewItems } from '@/features/review/review-queue';
 import { useLearningProgress } from '@/hooks/use-learning-progress';
 import { lessonAudioService } from '@/services/lesson-audio-service';
-import type { ReviewItemProgress } from '@/types';
+import type { LearnerProgress, ReviewItemProgress } from '@/types';
 
 type ReviewSession = {
   itemIds: readonly string[];
@@ -25,23 +27,31 @@ type ReviewSession = {
   completed: boolean;
 };
 
+function createSession(progress: LearnerProgress): ReviewSession {
+  const items = prioritizeReviewItems(progress.reviewItems);
+  return {
+    itemIds: items.map((item) => item.id),
+    currentIndex: 0,
+    revealed: false,
+    correctAnswers: 0,
+    incorrectAnswers: 0,
+    completed: items.length === 0,
+  };
+}
+
 export default function ReviewScreen() {
+  // From the home button: review first, then the lesson `next`.
+  const { next } = useLocalSearchParams<{ next?: string }>();
+  const nextLesson = next ? getLessonById(next) : undefined;
   const { progress, isLoading, saveError, answerReview } = useLearningProgress();
-  const [session, setSession] = useState<ReviewSession | null>(null);
+  const [startedSession, setSession] = useState<ReviewSession | null>(null);
   const dueCount = getDueReviewCount(progress.reviewItems);
+  // Coming from the home button, the review starts straight away.
+  const session =
+    startedSession ?? (nextLesson && !isLoading && dueCount > 0 ? createSession(progress) : null);
   const currentItem = session ? progress.reviewItems[session.itemIds[session.currentIndex]] : null;
 
-  const startSession = () => {
-    const items = prioritizeReviewItems(progress.reviewItems);
-    setSession({
-      itemIds: items.map((item) => item.id),
-      currentIndex: 0,
-      revealed: false,
-      correctAnswers: 0,
-      incorrectAnswers: 0,
-      completed: items.length === 0,
-    });
-  };
+  const startSession = () => setSession(createSession(progress));
 
   const recordAnswer = (correct: boolean) => {
     if (!session || !currentItem) {
@@ -62,6 +72,11 @@ export default function ReviewScreen() {
 
   const inQuestion = Boolean(session && !session.completed && currentItem);
 
+  if (nextLesson && !isLoading && !session) {
+    // Nothing left to review: straight to the lesson.
+    return <Redirect href={{ pathname: '/lessons/[lessonId]', params: { lessonId: nextLesson.id } }} />;
+  }
+
   return (
     <ScreenContainer
       footer={
@@ -74,13 +89,22 @@ export default function ReviewScreen() {
       }>
       <ScreenHeader
         title="Repetă"
-        description="Cuvintele la care ai greșit revin aici, până le știi."
+        description={
+          nextLesson
+            ? 'Întâi repeți ce ți-a fost greu. Apoi începe lecția.'
+            : 'Cuvintele la care ai greșit revin aici, până le știi.'
+        }
       />
 
       {isLoading ? (
         <AppCard title="Se încarcă…" />
       ) : session?.completed ? (
-        <ReviewComplete dueCount={dueCount} onRestart={startSession} session={session} />
+        <ReviewComplete
+          dueCount={dueCount}
+          nextLesson={nextLesson ? { id: nextLesson.id, title: nextLesson.title.romanian } : null}
+          onRestart={startSession}
+          session={session}
+        />
       ) : session && currentItem ? (
         <ReviewQuestion
           key={currentItem.id}
@@ -158,6 +182,7 @@ function ReviewQuestion({
         <Text style={styles.prompt}>{prompt}</Text>
         {askForRomanian && audio ? (
           <AudioControls
+            autoPlay
             errorMessage={audioPlayback.errorMessage}
             label={item.content.english}
             onPlay={(source, options) => void audioPlayback.play(source, options)}
@@ -227,19 +252,32 @@ function SelfCheckButton({
 function ReviewComplete({
   session,
   dueCount,
+  nextLesson,
   onRestart,
 }: {
   session: ReviewSession;
   dueCount: number;
+  nextLesson: { id: string; title: string } | null;
   onRestart: () => void;
 }) {
+  const router = useRouter();
+
   return (
     <View style={styles.emptyState}>
       <AppCard
         eyebrow="Gata!"
         title="Foarte bine, ai terminat repetarea."
         description={`Ai știut ${session.correctAnswers} din ${session.correctAnswers + session.incorrectAnswers}. Cuvintele pe care nu le-ai știut vor reveni.`}>
-        {dueCount > 0 ? (
+        {nextLesson ? (
+          <View style={styles.nextLesson}>
+            <ActionButton
+              onPress={() =>
+                router.replace({ pathname: '/lessons/[lessonId]', params: { lessonId: nextLesson.id } })
+              }
+              title={`Acum lecția: ${nextLesson.title} ›`}
+            />
+          </View>
+        ) : dueCount > 0 ? (
           <ActionButton onPress={onRestart} title="Mai repetă o dată" variant="secondary" />
         ) : null}
       </AppCard>
@@ -271,6 +309,9 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     fontSize: 18,
     lineHeight: 27,
+    marginTop: 8,
+  },
+  nextLesson: {
     marginTop: 8,
   },
   startButton: {

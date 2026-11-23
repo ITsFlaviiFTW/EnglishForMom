@@ -8,6 +8,7 @@ import {
 import { romanianAccentRespellings } from '../src/data/audio/romanian-accent-respellings.ts';
 import { getCourseById, getCourses } from '../src/data/courses/course-catalog.ts';
 import { getLessonById } from '../src/data/lessons/lesson-catalog.ts';
+import { getUnlockedCourseLessonIds } from '../src/features/lessons/course-progression.ts';
 import { conversationPartnerAudioSources } from '../src/data/lessons/conversations.ts';
 import {
   createDefaultProgress,
@@ -24,19 +25,52 @@ const lessons = course.units.map((unit) => getLessonById(unit.lessonId));
 const lessonAudioKeys = new Set(generatedEnglishAudioSources.map((source) => source.key));
 const partnerAudioKeys = new Set(dialogueAudioSources.map((source) => source.key));
 
-test('"Conversații" comes right after "În oraș", opens with its first conversation, and is chained', () => {
+test('"Conversații" comes right after "În oraș", and each conversation needs the one before', () => {
   assert.deepEqual(
     getCourses().map((candidate) => candidate.id).slice(0, 2),
     ['out-and-about', 'conversations'],
   );
   assert.equal(course.level, 2);
   assert.ok(lessons.length >= 8);
-  assert.deepEqual(course.units[0].prerequisiteLessonIds, []);
+  assert.deepEqual(course.units[0].prerequisiteLessonIds, ['out-4-checkout']);
   for (let index = 1; index < course.units.length; index += 1) {
-    assert.deepEqual(course.units[index].prerequisiteLessonIds, [course.units[index - 1].lessonId]);
+    assert.equal(course.units[index].prerequisiteLessonIds[0], course.units[index - 1].lessonId);
   }
   for (const unit of course.units) {
     assert.ok(unit.icon, `${unit.lessonId} has an icon`);
+  }
+});
+
+test('"Începe" goes slowly: the two shop conversations, then the others one at a time between lessons', () => {
+  const order = [];
+  for (;;) {
+    const next = getUnlockedCourseLessonIds(getCourses(), order).find((id) => !order.includes(id));
+    if (!next) break;
+    order.push(next);
+  }
+  const isTalk = (id) => id.startsWith('talk-');
+  assert.deepEqual(order.slice(0, 6), [
+    'out-1-help-phrases',
+    'out-2-prices',
+    'out-3-at-the-store',
+    'out-4-checkout',
+    'talk-1-store-help',
+    'talk-2-checkout',
+  ]);
+  // After the shop ones, never two conversations in a row while lessons are left.
+  const lastLesson = order.findLastIndex((id) => !isTalk(id));
+  for (let index = 7; index <= lastLesson; index += 1) {
+    assert.ok(!(isTalk(order[index]) && isTalk(order[index - 1])), `${order[index - 1]}, ${order[index]}`);
+  }
+  assert.equal(order.filter(isTalk).length, lessons.length);
+});
+
+test('her answers are short: six words at most, most of them lesson phrases', () => {
+  for (const lesson of lessons) {
+    for (const activity of lesson.activities) {
+      const words = activity.response.english.split(/s+/).length;
+      assert.ok(words <= 6, `${activity.response.english} (${words} words)`);
+    }
   }
 });
 

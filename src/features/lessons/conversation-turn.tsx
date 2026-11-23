@@ -1,10 +1,10 @@
-import { useState, type ComponentProps } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useRef, useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { AppCard } from '@/components/app-card';
 import { colors, radii } from '@/constants/theme';
 import { AudioControls, ReadAs } from '@/features/audio/listen-button';
-import { SpeakCheck } from '@/features/speaking/speak-check';
+import { SpokenWords, type SpeakCheck } from '@/features/speaking/speak-check';
 import { isSpeakingStepDone } from '@/features/speaking/speaking-gate';
 import type { AudioPlaybackState, AudioPlayOptions } from '@/services/audio-service';
 import type {
@@ -19,18 +19,19 @@ type AudioGroup = 'partner' | 'response' | 'closing';
 
 type ConversationTurnProps = {
   activity: ConversationTurnActivity;
-  /** The microphone check, or null on a phone that cannot record. */
-  speaking: ComponentProps<typeof SpeakCheck> | null;
+  /** The microphone check (its button is at the bottom), or null on a phone that cannot record. */
+  speaking: SpeakCheck | null;
   audioState: AudioPlaybackState;
   audioError: string | null;
-  onPlayAudio: (source: AudioSource, options?: AudioPlayOptions) => void;
+  onPlayAudio: (source: AudioSource, options?: AudioPlayOptions) => Promise<void>;
 };
 
 /**
  * One exchange of a talk-back conversation: what was said so far, what the
- * other person says now (real speed), and her turn. She can try to answer from
- * memory; "Arată ce să spui" (or a first miss) shows the English, the
- * "Se citește" spelling and the recordings.
+ * other person says now (real speed, playing by itself), and her turn. Her
+ * answer is always shown, with its "Se citește" spelling, and plays by itself
+ * right after the other person, so she only has to repeat it: listen, then
+ * the microphone button at the bottom.
  */
 export function ConversationTurn({
   activity,
@@ -39,26 +40,30 @@ export function ConversationTurn({
   audioError,
   onPlayAudio,
 }: ConversationTurnProps) {
-  const [revealed, setRevealed] = useState(false);
+  const partnerSpeaks = activity.partnerLines.length > 0 && Boolean(activity.partnerAudio);
   const [activeAudio, setActiveAudio] = useState<AudioGroup | null>(null);
-  const outcome = speaking?.outcome;
-  const attempts = outcome?.attempts ?? 0;
-  const missedOnce = attempts > (outcome?.status === 'passed' ? 1 : 0);
-  const showAnswer = revealed || missedOnce;
-  const fromMemory = outcome?.status === 'passed' && attempts === 1 && !revealed;
-  const finished = !speaking || isSpeakingStepDone(outcome);
+  // Her answer plays once the other person has finished; at once when she speaks first.
+  const [partnerHeard, setPartnerHeard] = useState(!partnerSpeaks);
+  const plays = useRef(0);
+  const finished = !speaking || isSpeakingStepDone(speaking.outcome);
 
   const audioFor = (group: AudioGroup) => ({
     state: activeAudio === group ? audioState : ('idle' as const),
     errorMessage: activeAudio === group ? audioError : null,
     onPlay: (source: AudioSource, options?: AudioPlayOptions) => {
+      const play = ++plays.current;
       setActiveAudio(group);
-      onPlayAudio(source, options);
+      void onPlayAudio(source, options).then(() => {
+        // Only when nothing else started meanwhile: a tap on another button wins.
+        if (group === 'partner' && plays.current === play) {
+          setPartnerHeard(true);
+        }
+      });
     },
   });
 
   return (
-    <AppCard eyebrow="Conversație">
+    <AppCard>
       {activity.instructionRomanian ? (
         <Text style={styles.instruction}>{activity.instructionRomanian}</Text>
       ) : null}
@@ -70,6 +75,7 @@ export function ConversationTurn({
       {activity.partnerLines.length > 0 && activity.partnerAudio ? (
         <PartnerSays
           audio={activity.partnerAudio}
+          autoPlay
           lines={activity.partnerLines}
           partner={activity.partner}
           {...audioFor('partner')}
@@ -80,50 +86,26 @@ export function ConversationTurn({
         <Text style={styles.yourTurnLabel}>🗣️ Rândul tău</Text>
         <Text style={styles.task}>{activity.taskRomanian}</Text>
 
-        {showAnswer ? (
-          <View style={styles.answer}>
-            <Text style={styles.answerEnglish}>{activity.response.english}</Text>
-            <ReadAs source={activity.responseAudio} />
-            <Text style={styles.answerRomanian}>{activity.response.romanian}</Text>
-            <AudioControls
-              label={activity.response.english}
-              showReadAs={false}
-              size="compact"
-              source={activity.responseAudio}
-              {...audioFor('response')}
-            />
-          </View>
-        ) : (
-          <View style={styles.revealArea}>
-            <Text style={styles.revealHint}>
-              Încearcă întâi din memorie. Dacă nu știi ce să spui, apasă aici:
-            </Text>
-            <Pressable accessibilityRole="button" onPress={() => setRevealed(true)}>
-              {({ pressed }) => (
-                <View style={[styles.revealButton, pressed && styles.revealButtonPressed]}>
-                  <Text style={styles.revealButtonText}>👀 Arată ce să spui</Text>
-                </View>
-              )}
-            </Pressable>
-          </View>
-        )}
-      </View>
-
-      {speaking ? (
-        <View style={styles.speakArea}>
-          <SpeakCheck {...speaking} />
+        <View style={styles.answer}>
+          <Text style={styles.answerEnglish}>{activity.response.english}</Text>
+          <ReadAs source={activity.responseAudio} />
+          <Text style={styles.answerRomanian}>{activity.response.romanian}</Text>
+          <AudioControls
+            autoPlay={partnerHeard}
+            label={activity.response.english}
+            showReadAs={false}
+            size="compact"
+            source={activity.responseAudio}
+            {...audioFor('response')}>
+            {speaking ? <SpokenWords check={speaking} /> : null}
+          </AudioControls>
         </View>
-      ) : null}
-
-      {fromMemory ? (
-        <Text accessibilityLiveRegion="polite" style={styles.praise}>
-          ⭐ Ai răspuns din memorie! Excelent!
-        </Text>
-      ) : null}
+      </View>
 
       {finished && activity.closingLines && activity.closingAudio ? (
         <PartnerSays
           audio={activity.closingAudio}
+          autoPlay
           lines={activity.closingLines}
           partner={activity.partner}
           {...audioFor('closing')}
@@ -137,6 +119,7 @@ function PartnerSays({
   partner,
   lines,
   audio,
+  autoPlay = false,
   state,
   errorMessage,
   onPlay,
@@ -144,6 +127,7 @@ function PartnerSays({
   partner: ConversationPartner;
   lines: readonly LearningText[];
   audio: AudioSource;
+  autoPlay?: boolean;
   state: AudioPlaybackState;
   errorMessage: string | null;
   onPlay: (source: AudioSource, options?: AudioPlayOptions) => void;
@@ -160,6 +144,7 @@ function PartnerSays({
         </View>
       ))}
       <AudioControls
+        autoPlay={autoPlay}
         errorMessage={errorMessage}
         label={`ce spune ${partner.nameRomanian}`}
         onPlay={onPlay}
@@ -287,42 +272,5 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     fontSize: 17,
     lineHeight: 24,
-  },
-  revealArea: {
-    gap: 8,
-    marginTop: 2,
-  },
-  revealHint: {
-    color: colors.textMuted,
-    fontSize: 16,
-    lineHeight: 22,
-  },
-  revealButton: {
-    minHeight: 52,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: radii.medium,
-    backgroundColor: colors.primarySoft,
-    paddingHorizontal: 14,
-  },
-  revealButtonPressed: {
-    backgroundColor: colors.border,
-  },
-  revealButtonText: {
-    color: colors.primary,
-    fontSize: 18,
-    lineHeight: 24,
-    fontWeight: '800',
-  },
-  speakArea: {
-    marginTop: 14,
-  },
-  praise: {
-    marginTop: 10,
-    color: colors.warm,
-    fontSize: 18,
-    lineHeight: 25,
-    fontWeight: '800',
-    textAlign: 'center',
   },
 });

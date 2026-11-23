@@ -366,7 +366,8 @@ function conversationsHtml(course) {
           <span>Conversația ${number} · ${esc(icon ?? '')} ${esc(lesson.title.romanian)}</span>
           <span class="en">${esc(lesson.title.english)}</span>
         </header>`;
-    // The answers to "Scrie tu" are on the page before, so she cannot peek.
+    // The answers to "Scrie tu" are on the page before: she tries first, and
+    // copies from there when she does not remember (that is fine too).
     return `
       <section class="page">
         ${head}
@@ -377,7 +378,7 @@ function conversationsHtml(course) {
       <section class="page">
         ${head}
         <h2>Scrie tu</h2>
-        <p class="instruction">Fără să te uiți pe pagina dinainte: ce răspunzi? Scrie în engleză, apoi verifică în dialog.</p>
+        <p class="instruction">Ce răspunzi? Scrie în engleză. Dacă nu-ți amintești, e în regulă: uită-te în dialog și copiază.</p>
         <ol class="write-answers">${writeIt}</ol>
       </section>`;
   };
@@ -391,8 +392,8 @@ function conversationsHtml(course) {
       <ol class="how">
         <li>Fă conversația în aplicația Prava.</li>
         <li>Cineva din familie citește ce spune celălalt (vânzătorul, vecina, curierul…). Tu citești rândurile „Tu”, cu voce tare. „Se citește” te ajută la pronunție.</li>
-        <li>Schimbați rolurile, apoi jucați scena din nou, mai repede.</li>
-        <li>Întoarce pagina: la „Scrie tu” scrie ce ai răspunde, fără să te uiți. Verifică apoi în dialog.</li>
+        <li>Schimbați rolurile și jucați scena încă o dată. Încet, nu e nicio grabă.</li>
+        <li>Întoarce pagina: la „Scrie tu” scrie ce ai răspunde. Dacă nu-ți amintești, uită-te în dialog și copiază.</li>
       </ol>
       <p class="tip">Jucați scena în picioare, ca în magazin sau la ușă. Așa o ții minte mai ușor.</p>
       <table class="tracker">

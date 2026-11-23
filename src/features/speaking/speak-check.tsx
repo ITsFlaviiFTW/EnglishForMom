@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { ActionButton } from '@/components/action-button';
 import { colors, radii } from '@/constants/theme';
 import { assessPronunciation, PronunciationCheckError } from '@/services/pronunciation-service';
 
@@ -11,21 +12,34 @@ import { canSkipSpeaking, type SpeakingOutcome } from './speaking-gate';
 type Phase = 'idle' | 'starting' | 'listening' | 'checking';
 type Message = { tone: 'good' | 'retry' | 'info'; text: string };
 
-type SpeakCheckProps = {
+/** What the step asks her to say, and where the result goes. */
+export type SpeakCheckConfig = {
   text: string;
   outcome: SpeakingOutcome | undefined;
   onResult: (result: 'passed' | 'retry' | 'unavailable') => void;
-  onSkip: () => void;
   /** Stops lesson audio, so the microphone does not hear it. */
   onBeforeRecord: () => void;
 };
 
+export type SpeakCheck = {
+  text: string;
+  outcome: SpeakingOutcome | undefined;
+  phase: Phase;
+  heardVoice: boolean;
+  /** Her last try, word by word (green said well, red to practise). */
+  verdict: PronunciationVerdict | null;
+  message: Message | null;
+  /** Starts listening, or stops early while listening. */
+  press: () => void;
+};
+
 /**
- * "Acum spune tu": she taps the microphone, says the word or sentence, and the
- * app checks it. Continue unlocks once she says it right; after
- * MAX_SPEAKING_ATTEMPTS tries she may skip it, and it goes to review.
+ * "Acum spune tu": she taps the big microphone button at the bottom, says the
+ * word or sentence, and the app checks it. The step moves on once she says it
+ * right; after MAX_SPEAKING_ATTEMPTS tries she may skip it, and it goes to
+ * review. Without a step to check (`config` null) it does nothing.
  */
-export function SpeakCheck({ text, outcome, onResult, onSkip, onBeforeRecord }: SpeakCheckProps) {
+export function useSpeakCheck(config: SpeakCheckConfig | null): SpeakCheck {
   const [phase, setPhase] = useState<Phase>('idle');
   const [heardVoice, setHeardVoice] = useState(false);
   const [verdict, setVerdict] = useState<PronunciationVerdict | null>(null);
@@ -41,10 +55,7 @@ export function SpeakCheck({ text, outcome, onResult, onSkip, onBeforeRecord }: 
     };
   }, []);
 
-  const passed = outcome?.status === 'passed';
-  const skipped = outcome?.status === 'skipped';
-
-  const attempt = async () => {
+  const attempt = async ({ text, onResult, onBeforeRecord }: SpeakCheckConfig) => {
     onBeforeRecord();
     setPhase('starting');
     setHeardVoice(false);
@@ -78,7 +89,7 @@ export function SpeakCheck({ text, outcome, onResult, onSkip, onBeforeRecord }: 
         return;
       }
       setVerdict(result.status === 'not-heard' ? null : result);
-      setMessage(messageFor(result, passed));
+      setMessage(messageFor(result));
       onResult(result.status === 'passed' ? 'passed' : 'retry');
     } catch (error) {
       if (!mounted.current) {
@@ -95,109 +106,33 @@ export function SpeakCheck({ text, outcome, onResult, onSkip, onBeforeRecord }: 
     }
   };
 
-  const onPress = () => {
+  const press = () => {
     if (phase === 'listening') {
       recording.current?.stop();
-    } else if (phase === 'idle') {
-      void attempt();
+    } else if (phase === 'idle' && config) {
+      void attempt(config);
     }
   };
 
-  const listening = phase === 'listening';
-  const working = phase === 'starting' || phase === 'checking';
-  const buttonTitle = {
-    idle: passed || skipped ? 'Mai spune o dată' : outcome?.attempts ? 'Încearcă din nou' : 'Apasă și vorbește',
-    starting: 'Pornesc microfonul…',
-    listening: 'Gata',
-    checking: 'Verific…',
-  }[phase];
-
-  return (
-    <View style={styles.section}>
-      <Text style={styles.title}>🎤 Acum spune tu</Text>
-      {!passed && phase === 'idle' && !message ? (
-        <Text style={styles.hint}>Ascultă, apoi apasă butonul și spune cu voce tare.</Text>
-      ) : null}
-
-      <Pressable
-        accessibilityLabel={listening ? 'Gata, am terminat de vorbit' : `Apasă și spune: ${text}`}
-        accessibilityRole="button"
-        accessibilityState={{ disabled: working, busy: working }}
-        disabled={working}
-        onPress={onPress}>
-        {({ pressed }) => (
-          <View
-            style={[
-              styles.micButton,
-              (passed || skipped) && !listening && styles.micButtonSoft,
-              listening && styles.micButtonListening,
-              working && styles.micButtonWorking,
-              pressed && styles.micButtonPressed,
-            ]}>
-            <Text style={styles.micIcon}>{listening ? '⏹' : '🎤'}</Text>
-            <Text
-              style={[
-                styles.micText,
-                (passed || skipped) && !listening && !working && styles.micTextSoft,
-              ]}>
-              {buttonTitle}
-            </Text>
-          </View>
-        )}
-      </Pressable>
-
-      {listening ? (
-        <Text accessibilityLiveRegion="polite" style={styles.listeningText}>
-          {heardVoice
-            ? 'Te aud… Când termini, așteaptă puțin sau apasă „Gata”.'
-            : 'Te ascult… Vorbește acum.'}
-        </Text>
-      ) : null}
-
-      {verdict && phase === 'idle' ? <SpokenWords words={verdict.words} /> : null}
-
-      {message && phase === 'idle' ? (
-        <View
-          accessibilityLiveRegion="polite"
-          style={[
-            styles.message,
-            message.tone === 'good' && styles.messageGood,
-            message.tone === 'retry' && styles.messageRetry,
-          ]}>
-          <Text
-            style={[
-              styles.messageText,
-              message.tone === 'good' && styles.messageTextGood,
-              message.tone === 'retry' && styles.messageTextRetry,
-            ]}>
-            {message.text}
-          </Text>
-        </View>
-      ) : null}
-
-      {canSkipSpeaking(outcome) && phase === 'idle' ? (
-        <View style={styles.skipArea}>
-          <Text style={styles.skipText}>
-            Nu-i nimic. Poți merge mai departe; vei exersa din nou la „Repetă”.
-          </Text>
-          <Pressable accessibilityRole="button" onPress={onSkip}>
-            {({ pressed }) => (
-              <View style={[styles.skipButton, pressed && styles.skipButtonPressed]}>
-                <Text style={styles.skipButtonText}>Sari peste, deocamdată</Text>
-              </View>
-            )}
-          </Pressable>
-        </View>
-      ) : null}
-    </View>
-  );
+  return {
+    text: config?.text ?? '',
+    outcome: config?.outcome,
+    phase,
+    heardVoice,
+    verdict,
+    message,
+    press,
+  };
 }
 
-/** The phrase as written: green words said well, red ones to practise. */
-function SpokenWords({ words }: { words: readonly SpokenWord[] }) {
+/** On the card, under the buttons: the words of her last try, green or red. */
+export function SpokenWords({ check }: { check: SpeakCheck }) {
+  if (!check.verdict || check.phase !== 'idle') {
+    return null;
+  }
   return (
     <View style={styles.words}>
-      {words.map((word, index) => {
+      {check.verdict.words.map((word: SpokenWord, index) => {
         const bad = word.status === 'weak' || word.status === 'missed';
         return (
           <View
@@ -218,7 +153,90 @@ function SpokenWords({ words }: { words: readonly SpokenWord[] }) {
   );
 }
 
-function messageFor(verdict: PronunciationVerdict, alreadyPassed: boolean): Message {
+/** What the app has to say about her try, shown just above the bottom button. */
+export function SpeakStatus({ check }: { check: SpeakCheck }) {
+  if (check.phase === 'listening') {
+    return (
+      <Text accessibilityLiveRegion="polite" style={styles.listeningText}>
+        {check.heardVoice
+          ? 'Te aud… Când termini, așteaptă puțin sau apasă „Gata”.'
+          : 'Te ascult… Spune acum, cu voce tare.'}
+      </Text>
+    );
+  }
+  const { message } = check;
+  if (!message || check.phase !== 'idle') {
+    return null;
+  }
+  return (
+    <View
+      accessibilityLiveRegion="polite"
+      style={[
+        styles.message,
+        message.tone === 'good' && styles.messageGood,
+        message.tone === 'retry' && styles.messageRetry,
+      ]}>
+      <Text
+        style={[
+          styles.messageText,
+          message.tone === 'good' && styles.messageTextGood,
+          message.tone === 'retry' && styles.messageTextRetry,
+        ]}>
+        {message.text}
+      </Text>
+    </View>
+  );
+}
+
+/**
+ * The bottom of a step she has to say: the big microphone button and, after
+ * several tries, "Sari peste".
+ */
+export function SpeakButtons({ check, onSkip }: { check: SpeakCheck; onSkip: () => void }) {
+  const { phase, outcome } = check;
+  const listening = phase === 'listening';
+  const working = phase === 'starting' || phase === 'checking';
+  const title = {
+    idle: outcome?.attempts ? 'Încearcă din nou' : 'Apasă și spune',
+    starting: 'Pornesc microfonul…',
+    listening: 'Gata',
+    checking: 'Verific…',
+  }[phase];
+
+  return (
+    <View style={styles.buttons}>
+      <Pressable
+        accessibilityLabel={listening ? 'Gata, am terminat de vorbit' : `Apasă și spune: ${check.text}`}
+        accessibilityRole="button"
+        accessibilityState={{ disabled: working, busy: working }}
+        disabled={working}
+        onPress={check.press}>
+        {({ pressed }) => (
+          <View
+            style={[
+              styles.micButton,
+              listening && styles.micButtonListening,
+              working && styles.micButtonWorking,
+              pressed && styles.micButtonPressed,
+            ]}>
+            <Text style={styles.micIcon}>{listening ? '⏹' : '🎤'}</Text>
+            <Text style={styles.micText}>{title}</Text>
+          </View>
+        )}
+      </Pressable>
+      {canSkipSpeaking(outcome) && phase === 'idle' ? (
+        <ActionButton
+          accessibilityLabel="Sari peste, deocamdată. Vei exersa din nou la Repetă."
+          onPress={onSkip}
+          title="Sari peste, deocamdată"
+          variant="secondary"
+        />
+      ) : null}
+    </View>
+  );
+}
+
+function messageFor(verdict: PronunciationVerdict): Message {
   if (verdict.status === 'not-heard') {
     return {
       tone: 'retry',
@@ -229,15 +247,13 @@ function messageFor(verdict: PronunciationVerdict, alreadyPassed: boolean): Mess
   if (verdict.status === 'passed') {
     return {
       tone: 'good',
-      text: someRed
-        ? '✓ Bine! Ai trecut. Mai exersează cuvintele cu roșu.'
-        : '✓ Foarte bine! Ai spus corect.',
+      text: someRed ? '✓ Bine! Mai exersează cuvintele cu roșu.' : '✓ Foarte bine!',
     };
   }
   return {
-    tone: alreadyPassed ? 'info' : 'retry',
+    tone: 'retry',
     text: someRed
-      ? 'Încă puțin! Cuvintele cu roșu au nevoie de exercițiu. Ascultă din nou și repetă.'
+      ? 'Încă puțin! Ascultă din nou cuvintele cu roșu și repetă.'
       : 'Încă puțin! Ascultă din nou și repetă, rar și clar.',
   };
 }
@@ -255,24 +271,8 @@ function problemMessage(error: unknown): string {
 }
 
 const styles = StyleSheet.create({
-  section: {
+  buttons: {
     gap: 10,
-    borderRadius: radii.medium,
-    borderWidth: 1.5,
-    borderColor: colors.border,
-    backgroundColor: colors.background,
-    padding: 14,
-  },
-  title: {
-    color: colors.text,
-    fontSize: 20,
-    lineHeight: 26,
-    fontWeight: '800',
-  },
-  hint: {
-    color: colors.textMuted,
-    fontSize: 16,
-    lineHeight: 22,
   },
   micButton: {
     minHeight: 64,
@@ -283,9 +283,6 @@ const styles = StyleSheet.create({
     borderRadius: radii.medium,
     backgroundColor: colors.warm,
     paddingHorizontal: 14,
-  },
-  micButtonSoft: {
-    backgroundColor: colors.warmSoft,
   },
   micButtonListening: {
     backgroundColor: colors.error,
@@ -303,18 +300,15 @@ const styles = StyleSheet.create({
   micText: {
     flexShrink: 1,
     color: colors.onPrimary,
-    fontSize: 20,
-    lineHeight: 26,
+    fontSize: 21,
+    lineHeight: 27,
     fontWeight: '800',
-  },
-  micTextSoft: {
-    color: colors.warm,
   },
   listeningText: {
     color: colors.text,
-    fontSize: 17,
-    lineHeight: 24,
-    fontWeight: '600',
+    fontSize: 18,
+    lineHeight: 25,
+    fontWeight: '700',
     textAlign: 'center',
   },
   words: {
@@ -349,8 +343,9 @@ const styles = StyleSheet.create({
   },
   message: {
     borderRadius: radii.small,
-    padding: 12,
-    backgroundColor: colors.surface,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    backgroundColor: colors.surfaceMuted,
   },
   messageGood: {
     backgroundColor: colors.successSoft,
@@ -362,40 +357,16 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontSize: 17,
     lineHeight: 24,
+    textAlign: 'center',
   },
   messageTextGood: {
     color: colors.success,
-    fontWeight: '700',
+    fontSize: 20,
+    lineHeight: 27,
+    fontWeight: '800',
   },
   messageTextRetry: {
     color: colors.error,
     fontWeight: '600',
-  },
-  skipArea: {
-    gap: 8,
-  },
-  skipText: {
-    color: colors.textMuted,
-    fontSize: 16,
-    lineHeight: 22,
-  },
-  skipButton: {
-    minHeight: 52,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: radii.medium,
-    borderWidth: 1.5,
-    borderColor: colors.borderStrong,
-    backgroundColor: colors.surface,
-    paddingHorizontal: 14,
-  },
-  skipButtonPressed: {
-    backgroundColor: colors.surfaceMuted,
-  },
-  skipButtonText: {
-    color: colors.text,
-    fontSize: 18,
-    lineHeight: 24,
-    fontWeight: '700',
   },
 });

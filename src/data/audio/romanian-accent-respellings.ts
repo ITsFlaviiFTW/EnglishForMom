@@ -298,26 +298,21 @@ export const romanianAccentRespellings: Readonly<Record<string, string>> = {
   'Have a good day!': 'Hev ă gud dei!',
   'Thanks, you too!': 'Tencs, iu tu!',
 
-  // Conversations (what she answers)
-  'Yes, please. Where can I find the milk?': 'Ies, pliz. Uer can ai faind dă milc?',
-  'Sorry, can you repeat that, please?': 'Sorii, can iu ripiit det, pliz?',
+  // Conversations (what she answers; most answers are lesson phrases above)
   'Yes, please.': 'Ies, pliz.',
-  "Good morning! I'm good, thank you. And you?": 'Gud morning! Aim gud, tenc iu. End iu?',
+  'No, thank you.': 'Nou, tenc iu.',
   "Yes, it's very nice.": 'Ies, iț verii nais.',
-  "No, I'm going to the store.": 'Nou, aim gouing tu dă stor.',
-  'Thank you, you too. Bye!': 'Tenc iu, iu tu. Bai!',
+  'No, to the store.': 'Nou, tu dă stor.',
   'Yes, it is.': 'Ies, it iz.',
   'Oh, thank you!': 'Ou, tenc iu!',
   'Yes. Where do I sign?': 'Ies. Uer du ai sain?',
   'Hello?': 'Helou?',
-  "Sorry, he's not home right now.": 'Sorii, hiz not houm rait nau.',
-  'Sorry, I speak a little English. Please call later.':
-    'Sorii, ai spiic ă lităl ingliș. Pliz col leităr.',
+  "Sorry, he's not home.": 'Sorii, hiz not houm.',
   'Thank you. Bye!': 'Tenc iu. Bai!',
-  'I need something for a cold, please.': 'Ai niid samting for ă could, pliz.',
+  'For a cold, please.': 'For ă cold, pliz.',
   "No, I don't.": 'Nou, ai dount.',
   "Yes, at ten o'clock.": 'Ies, et ten ăcloc.',
   'Yes, here you go.': 'Ies, hiăr iu gou.',
   'Okay, thank you.': 'Ochei, tenc iu.',
-  'Excuse me, does this bus go to the mall?': 'Ecschiuz mi, daz dis bas gou tu dă mol?',
+  'To the mall?': 'Tu dă mol?',
 };

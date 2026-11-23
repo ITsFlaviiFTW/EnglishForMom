@@ -1,5 +1,5 @@
 import { Link, useRouter } from 'expo-router';
-import { useState, useSyncExternalStore } from 'react';
+import { useEffect, useEffectEvent, useState, useSyncExternalStore } from 'react';
 import {
   Pressable,
   StyleSheet,
@@ -18,7 +18,13 @@ import { colors, radii } from '@/constants/theme';
 import { AudioControls, ReadAs } from '@/features/audio/listen-button';
 import { useAudioPlayback } from '@/features/audio/use-audio-playback';
 import { isRecordingSupported } from '@/features/speaking/recorder';
-import { SpeakCheck } from '@/features/speaking/speak-check';
+import {
+  SpeakButtons,
+  SpeakStatus,
+  SpokenWords,
+  useSpeakCheck,
+  type SpeakCheck,
+} from '@/features/speaking/speak-check';
 import {
   getSpeakingTarget,
   isSpeakingStepDone,
@@ -88,19 +94,17 @@ type LessonPlayerProps = {
 type AudioProps = {
   audioState: AudioPlaybackState;
   audioError: string | null;
-  onPlayAudio: (source: AudioSource, options?: AudioPlayOptions) => void;
+  /** Resolves when the sound ends (or is stopped). */
+  onPlayAudio: (source: AudioSource, options?: AudioPlayOptions) => Promise<void>;
 };
 
 /** The "Acum spune tu" check on this step, or null when the step has none. */
 type SpeakingProps = {
-  speaking: {
-    text: string;
-    outcome: SpeakingOutcome | undefined;
-    onResult: (result: 'passed' | 'retry' | 'unavailable') => void;
-    onSkip: () => void;
-    onBeforeRecord: () => void;
-  } | null;
+  speaking: SpeakCheck | null;
 };
+
+/** How long "✓ Foarte bine!" stays before the next card opens by itself. */
+const AUTO_ADVANCE_MS = 1800;
 
 export function LessonPlayer({
   lesson,
@@ -110,17 +114,8 @@ export function LessonPlayer({
   nextLesson,
   onActivityCompleted,
 }: LessonPlayerProps) {
-  const {
-    session,
-    currentActivity,
-    canContinue,
-    answerMultipleChoice,
-    toggleSentenceToken,
-    checkSentenceAnswer,
-    selectFillInAnswer,
-    checkFillInAnswer,
-    advance,
-  } = useLessonSession(lesson, initialActivityIndex);
+  const lessonSession = useLessonSession(lesson, initialActivityIndex);
+  const { session, currentActivity } = lessonSession;
   const audioPlayback = useAudioPlayback(audioService, currentActivity?.id);
   const [speaking, setSpeaking] = useState<Readonly<Record<string, SpeakingOutcome>>>({});
   // False while the page is pre-rendered; on the phone, whether it can record.
@@ -134,49 +129,113 @@ export function LessonPlayer({
     return <UnsupportedActivity lesson={lesson} />;
   }
 
+  return (
+    <LessonStep
+      // A new step starts fresh: scrolled to the top, its own microphone check.
+      key={currentActivity.id}
+      activity={currentActivity}
+      audioPlayback={audioPlayback}
+      canRecord={canRecord}
+      lesson={lesson}
+      lessonSession={lessonSession}
+      onActivityCompleted={onActivityCompleted}
+      saveError={saveError}
+      speakingOutcome={speaking[currentActivity.id]}
+      setSpeakingOutcome={(update) =>
+        setSpeaking((current) => ({
+          ...current,
+          [currentActivity.id]: update(current[currentActivity.id]),
+        }))
+      }
+    />
+  );
+}
+
+function LessonStep({
+  lesson,
+  activity,
+  lessonSession,
+  audioPlayback,
+  canRecord,
+  speakingOutcome,
+  setSpeakingOutcome,
+  saveError,
+  onActivityCompleted,
+}: {
+  lesson: Lesson;
+  activity: SupportedActivity;
+  lessonSession: ReturnType<typeof useLessonSession>;
+  audioPlayback: ReturnType<typeof useAudioPlayback>;
+  canRecord: boolean;
+  speakingOutcome: SpeakingOutcome | undefined;
+  setSpeakingOutcome: (
+    update: (outcome: SpeakingOutcome | undefined) => SpeakingOutcome,
+  ) => void;
+  saveError?: string | null;
+  onActivityCompleted: LessonPlayerProps['onActivityCompleted'];
+}) {
+  const {
+    session,
+    canContinue,
+    answerMultipleChoice,
+    toggleSentenceToken,
+    checkSentenceAnswer,
+    selectFillInAnswer,
+    checkFillInAnswer,
+    advance,
+  } = lessonSession;
   const total = lesson.activities.length;
   const position = session.currentActivityIndex + 1;
   const isLastActivity = session.currentActivityIndex === total - 1;
-  const response = session.responses[currentActivity.id];
-  const activityId = currentActivity.id;
+  const response = session.responses[activity.id];
   // Words and sentences must be said right (or skipped after a few tries) before
   // moving on. Without a microphone the step works as before.
-  const speakingTarget = canRecord ? getSpeakingTarget(currentActivity) : null;
-  const speakingOutcome = speaking[activityId];
-  const speakingBlocked = speakingTarget !== null && !isSpeakingStepDone(speakingOutcome);
-  const speakingProps: SpeakingProps['speaking'] = speakingTarget
-    ? {
-        text: speakingTarget.text,
-        outcome: speakingOutcome,
-        onResult: (result) =>
-          setSpeaking((current) => ({
-            ...current,
-            [activityId]: recordSpeakingAttempt(current[activityId], result),
-          })),
-        onSkip: () =>
-          setSpeaking((current) => ({ ...current, [activityId]: skipSpeaking(current[activityId]) })),
-        onBeforeRecord: () => void audioPlayback.stop(),
-      }
-    : null;
+  const speakingTarget = canRecord ? getSpeakingTarget(activity) : null;
+  const speakCheck = useSpeakCheck(
+    speakingTarget
+      ? {
+          text: speakingTarget.text,
+          outcome: speakingOutcome,
+          onResult: (result) =>
+            setSpeakingOutcome((outcome) => recordSpeakingAttempt(outcome, result)),
+          onBeforeRecord: () => void audioPlayback.stop(),
+        }
+      : null,
+  );
 
   const handleAdvance = () => {
     if (speakingTarget) {
-      const spoken = speakingCompletion(speakingOutcome);
-      onActivityCompleted?.({ activity: currentActivity, ...spoken });
+      onActivityCompleted?.({ activity, ...speakingCompletion(speakingOutcome) });
       advance();
       return;
     }
     const completedResponse = response ?? { type: 'acknowledged' as const };
-    const correct = isAnsweredActivity(currentActivity)
-      ? (session.feedback?.isCorrect ?? null)
-      : null;
-    onActivityCompleted?.({ activity: currentActivity, response: completedResponse, correct });
+    const correct = isAnsweredActivity(activity) ? (session.feedback?.isCorrect ?? null) : null;
+    onActivityCompleted?.({ activity, response: completedResponse, correct });
+    advance();
+  };
+  const skipSpeakingStep = () => {
+    onActivityCompleted?.({ activity, ...speakingCompletion(skipSpeaking(speakingOutcome)) });
     advance();
   };
 
+  // Said right: a moment of praise, then the next card opens by itself. The
+  // last turn of a conversation waits, so she hears the other person's goodbye.
+  const autoAdvance =
+    speakingOutcome?.status === 'passed' &&
+    !(activity.type === 'conversation-turn' && activity.closingLines);
+  const advanceByItself = useEffectEvent(handleAdvance);
+  useEffect(() => {
+    if (!autoAdvance) {
+      return;
+    }
+    const timer = setTimeout(advanceByItself, AUTO_ADVANCE_MS);
+    return () => clearTimeout(timer);
+  }, [autoAdvance]);
+
   const continueAction = {
     title: isLastActivity
-      ? currentActivity.type === 'conversation-turn'
+      ? activity.type === 'conversation-turn'
         ? 'Termină conversația'
         : 'Termină lecția'
       : 'Continuă',
@@ -185,19 +244,17 @@ export function LessonPlayer({
   };
 
   let footerAction = continueAction;
-  if (speakingBlocked) {
-    footerAction = { title: 'Mai întâi spune tu', onPress: () => {}, disabled: true };
-  } else if (!session.feedback) {
-    if (currentActivity.type === 'multiple-choice' || currentActivity.type === 'listening') {
+  if (!session.feedback) {
+    if (activity.type === 'multiple-choice' || activity.type === 'listening') {
       footerAction = { title: 'Alege un răspuns', onPress: () => {}, disabled: true };
-    } else if (currentActivity.type === 'sentence-building') {
+    } else if (activity.type === 'sentence-building') {
       const selectedCount = response?.type === 'token-order' ? response.tokenIds.length : 0;
       footerAction = {
         title: 'Verifică',
         onPress: checkSentenceAnswer,
-        disabled: selectedCount !== currentActivity.correctTokenOrder.length,
+        disabled: selectedCount !== activity.correctTokenOrder.length,
       };
-    } else if (currentActivity.type === 'fill-in-the-blank') {
+    } else if (activity.type === 'fill-in-the-blank') {
       footerAction = {
         title: 'Verifică',
         onPress: checkFillInAnswer,
@@ -209,9 +266,7 @@ export function LessonPlayer({
   const audioProps: AudioProps = {
     audioState: audioPlayback.state,
     audioError: audioPlayback.errorMessage,
-    onPlayAudio: (source, options) => {
-      void audioPlayback.play(source, options);
-    },
+    onPlayAudio: (source, options) => audioPlayback.play(source, options),
   };
 
   return (
@@ -246,24 +301,28 @@ export function LessonPlayer({
       footer={
         <View style={styles.footerContent}>
           {saveError ? <Text style={styles.saveError}>{saveError}</Text> : null}
-          <ActionButton
-            disabled={footerAction.disabled}
-            onPress={footerAction.onPress}
-            title={footerAction.title}
-          />
+          {speakingTarget ? <SpeakStatus check={speakCheck} /> : null}
+          {speakingTarget && !isSpeakingStepDone(speakingOutcome) ? (
+            <SpeakButtons check={speakCheck} onSkip={skipSpeakingStep} />
+          ) : (
+            <ActionButton
+              disabled={footerAction.disabled}
+              onPress={footerAction.onPress}
+              title={footerAction.title}
+            />
+          )}
         </View>
       }>
       <Text style={styles.lessonTitle}>{lesson.title.romanian}</Text>
       <View style={styles.activityArea}>
         <ActivityRenderer
-          key={currentActivity.id}
-          activity={currentActivity}
+          activity={activity}
           feedback={session.feedback}
           response={response}
           onAnswer={answerMultipleChoice}
           onToggleSentenceToken={toggleSentenceToken}
           onSelectFillInAnswer={selectFillInAnswer}
-          speaking={speakingProps}
+          speaking={speakingTarget ? speakCheck : null}
           {...audioProps}
         />
       </View>
@@ -348,33 +407,31 @@ function VocabularyActivity({
   onPlayAudio,
 }: { activity: VocabularyIntroductionActivity } & AudioProps & SpeakingProps) {
   return (
-    <AppCard
-      eyebrow={activity.forms?.length ? 'Verb nou' : activity.isPhrase ? 'Expresie nouă' : 'Cuvânt nou'}>
-      <Text style={styles.instruction}>
-        {activity.instructionRomanian ?? 'Ascultă și repetă cu voce tare.'}
-      </Text>
+    <AppCard>
       <Text style={activity.isPhrase ? styles.englishPhrase : styles.englishWord}>
         {activity.content.english}
       </Text>
       <ReadAs source={activity.audio} />
       <Text style={styles.romanianMeaning}>{activity.content.romanian}</Text>
-      {activity.noteRomanian ? (
-        <View style={styles.note}>
-          <Text style={styles.noteText}>💡 {activity.noteRomanian}</Text>
-        </View>
-      ) : null}
 
       {activity.audio ? (
         <View style={styles.audioArea}>
           <AudioControls
+            autoPlay
             errorMessage={audioError}
             label={activity.content.english}
             onPlay={onPlayAudio}
             showReadAs={false}
             source={activity.audio}
             state={audioState}>
-            {speaking ? <SpeakCheck {...speaking} /> : null}
+            {speaking ? <SpokenWords check={speaking} /> : null}
           </AudioControls>
+        </View>
+      ) : null}
+
+      {activity.noteRomanian ? (
+        <View style={styles.note}>
+          <Text style={styles.noteText}>💡 {activity.noteRomanian}</Text>
         </View>
       ) : null}
 
@@ -413,23 +470,21 @@ function ExampleActivity({
   onPlayAudio,
 }: { activity: ExampleSentenceActivity } & AudioProps & SpeakingProps) {
   return (
-    <AppCard eyebrow="Propoziție">
-      <Text style={styles.instruction}>
-        {activity.instructionRomanian ?? 'Ascultă propoziția și repet-o.'}
-      </Text>
+    <AppCard>
       <Text style={styles.englishSentence}>{activity.sentence.english}</Text>
       <ReadAs source={activity.sentence.audio} />
       <Text style={styles.romanianSentence}>{activity.sentence.romanian}</Text>
       {activity.sentence.audio ? (
         <View style={styles.audioArea}>
           <AudioControls
+            autoPlay
             errorMessage={audioError}
             label={activity.sentence.english}
             onPlay={onPlayAudio}
             showReadAs={false}
             source={activity.sentence.audio}
             state={audioState}>
-            {speaking ? <SpeakCheck {...speaking} /> : null}
+            {speaking ? <SpokenWords check={speaking} /> : null}
           </AudioControls>
         </View>
       ) : null}
@@ -827,8 +882,8 @@ function LessonComplete({ lesson, nextLesson }: { lesson: Lesson; nextLesson: Ne
 
       <AppCard style={styles.tipCard}>
         <Text style={styles.tipText}>
-          💡 Data viitoare, începe cu <Text style={styles.tipStrong}>Repetă</Text> ca să nu uiți
-          cuvintele de azi.
+          💡 Mâine, apasă din nou <Text style={styles.tipStrong}>Începe</Text>: întâi repeți ce
+          ți-a fost greu, apoi vine lecția nouă.
         </Text>
         {nextLesson ? (
           <Text style={styles.nextLessonText}>

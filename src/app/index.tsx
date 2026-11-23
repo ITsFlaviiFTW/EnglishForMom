@@ -28,9 +28,16 @@ export default function HomeScreen() {
   const completedLessons = progress.completedLessonIds.length;
   const isFirstVisit = !isLoading && Object.keys(progress.lessons).length === 0;
 
+  // One button decides: a lesson she started goes on; otherwise, words she
+  // found hard come back first ("Repetă"), and the review leads into the lesson.
+  const reviewFirst = !isLoading && !inProgress && dueReviewCount > 0;
   const continueHref = continueLessonId
-    ? ({ pathname: '/lessons/[lessonId]', params: { lessonId: continueLessonId } } as const)
-    : ('/lessons' as const);
+    ? reviewFirst
+      ? ({ pathname: '/review', params: { next: continueLessonId } } as const)
+      : ({ pathname: '/lessons/[lessonId]', params: { lessonId: continueLessonId } } as const)
+    : reviewFirst
+      ? ('/review' as const)
+      : ('/lessons' as const);
   const continueLabel = isLoading
     ? 'Se încarcă…'
     : !continueLesson
@@ -84,6 +91,12 @@ export default function HomeScreen() {
                   ) : null}
                 </View>
               </View>
+              {reviewFirst ? (
+                <Text style={styles.heroReview}>
+                  🔁 Întâi repeți {dueReviewCount === 1 ? 'un cuvânt' : `${dueReviewCount} cuvinte`}
+                  {continueLesson ? ', apoi începe lecția.' : '.'}
+                </Text>
+              ) : null}
               {continueLesson && inProgress && lessonProgress ? (
                 <View style={styles.heroProgress}>
                   <ProgressBar
@@ -111,17 +124,6 @@ export default function HomeScreen() {
 
       <View style={styles.menu}>
         <AppButton
-          href="/review"
-          icon="🔁"
-          title="Repetă"
-          subtitle={
-            dueReviewCount > 0
-              ? 'Cuvintele la care ai greșit'
-              : 'Nimic de repetat acum'
-          }
-          badge={dueReviewCount > 0 ? String(dueReviewCount) : undefined}
-        />
-        <AppButton
           href="/lessons"
           icon="📚"
           title="Toate lecțiile"
@@ -132,9 +134,11 @@ export default function HomeScreen() {
           icon="📈"
           title="Progresul meu"
           subtitle={
-            summary.wordsIntroduced > 0
-              ? `${summary.wordsIntroduced} cuvinte învățate`
-              : 'Vezi cât ai învățat'
+            summary.wordsIntroduced === 1
+              ? '1 cuvânt învățat'
+              : summary.wordsIntroduced > 1
+                ? `${summary.wordsIntroduced} cuvinte învățate`
+                : 'Vezi cât ai învățat'
           }
         />
       </View>
@@ -247,6 +251,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 22,
     fontWeight: '600',
+  },
+  heroReview: {
+    color: colors.onPrimary,
+    fontSize: 18,
+    lineHeight: 25,
+    fontWeight: '700',
+    marginTop: 14,
   },
   heroButton: {
     minHeight: 58,

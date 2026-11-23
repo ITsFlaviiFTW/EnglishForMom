@@ -47,18 +47,18 @@ Romanian voice Alina (`ro-RO-AlinaNeural`).
 
 - `npm run generate-all-audio`: runs the three commands below, in order.
 - `npm run generate-audio`: the English recording of every lesson word and
-  phrase ("Ascultă"; "Mai rar" plays the same file slower), plus the
-  real-speed shop dialogues in the "În oraș" lessons, where store staff speak
-  with a Canadian voice (`en-CA-ClaraNeural` / `en-CA-LiamNeural`).
+  phrase (the small "În engleză" button), plus the real-speed shop dialogues
+  in the "În oraș" lessons, where store staff speak with a Canadian voice
+  (`en-CA-ClaraNeural` / `en-CA-LiamNeural`).
 - `npm run generate-spaced-audio`: the word-by-word ("Cuvânt cu cuvânt") MP3s,
   with the timing of each word for highlighting.
 - `npm run generate-accent-audio`: the Romanian-accent MP3s, the main way the
-  app says each word and sentence ("Ascultă"; "Mai rar" plays it slower). Alina
-  reads each phrase spelled the Romanian way, from
+  app says each word and sentence ("Ascultă", which also plays by itself when
+  a card opens). Alina reads each phrase spelled the Romanian way, from
   `src/data/audio/romanian-accent-respellings.ts`, which is also shown as
   "Se citește". Phrases of three or more words also get her word-by-word
-  reading ("Cuvânt cu cuvânt"), where each word of that spelling lights up as
-  she says it. The normal English is a separate, smaller section below.
+  reading, played by "Mai rar", where each word of that spelling lights up as
+  she says it; for shorter ones "Mai rar" plays the reading slower.
 
 They need `AZURE_SPEECH_KEY` and `AZURE_SPEECH_REGION` in `.env.local`
 (git-ignored; the key never goes into the app). Every reading is cached in
@@ -75,15 +75,27 @@ set up automatically).
   fails (for example in the middle of an update). They are published with the
   site at `/print/<file>.pdf`.
 
+## Home screen
+
+One main button. It continues a lesson she started; otherwise, if anything
+needs review, it opens "Repetă" first (at most one short session), which ends
+with a button into the next lesson. There is no separate "Repetă" button.
+
 ## Conversations ("Conversații")
 
 Talk-back practice with different people: a store worker, a cashier, a
 neighbour, a delivery driver, a phone call, a pharmacist, a clinic receptionist
 and a bus driver (`src/data/lessons/conversations.ts`). Each conversation is a
 lesson with one step per thing she says: the other person speaks at real speed
-(four voices), she gets a task in Romanian, tries to answer from memory (or
-taps "Arată ce să spui"), and the speaking check unlocks the next step.
+(four voices), then her answer is shown and plays by itself in the
+Romanian-accent reading, she repeats it, and the speaking check unlocks the
+next step. Nothing has to be remembered.
 
+- Her answers are short (six words at most) and are phrases from the
+  "În oraș" lessons wherever they fit.
+- They come slowly: the two shop conversations right after "În oraș", then the
+  others one at a time between the "Casa mea" and "Acțiuni de zi cu zi" lessons
+  (`CONVERSATION_AFTER` in `src/data/courses/course-catalog.ts`).
 - Her answers are recorded like lesson phrases, so they have the
   Romanian-accent recording, "Se citește" and word by word. Every answer needs a
   spelling in `romanian-accent-respellings.ts`; each was checked by running
@@ -96,10 +108,16 @@ taps "Arată ce să spui"), and the speaking check unlocks the next step.
 
 ## Speaking check ("Acum spune tu")
 
-On every new word and example sentence she taps the microphone and says it;
-Continue unlocks once she says it right. After 5 tries "Sari peste" lets her
-move on, and the item goes to "Repetă". Without a microphone, internet or the
-check itself, the step works as before.
+On every new word and example sentence the card plays its recording by itself,
+and the big button at the bottom is the microphone ("Apasă și spune"). When
+she says it right, the next card opens by itself after a moment. After 5 tries
+"Sari peste" lets her move on, and the item goes to "Repetă". Without a
+microphone, internet or the check itself, the bottom button is "Continuă".
+
+- On iPhone a page may only start sound by itself after a tap, so on the web
+  every recording plays through one shared audio element
+  (`src/services/web-audio-service.ts`) that the first tap anywhere unlocks.
+  If a card still cannot play by itself, it waits quietly for "Ascultă".
 
 - The phone records a short 16 kHz WAV and posts it to `/api/pronunciation`
   on the same site. Nginx forwards it to Azure's speech recognition with

@@ -2,17 +2,17 @@ import type {
   AudioPlaybackState,
   AudioPlayOptions,
   AudioService,
+  RecordedAudioService,
 } from '@/services/audio-service';
-import type { PrerecordedAudioService } from '@/services/prerecorded-audio-service';
 import type { AudioSource } from '@/types';
 
 export class FallbackAudioService implements AudioService {
-  private readonly prerecorded: PrerecordedAudioService;
+  private readonly prerecorded: RecordedAudioService;
   private readonly fallback: AudioService;
   private active: AudioService | null = null;
   private operationId = 0;
 
-  constructor(prerecorded: PrerecordedAudioService, fallback: AudioService) {
+  constructor(prerecorded: RecordedAudioService, fallback: AudioService) {
     this.prerecorded = prerecorded;
     this.fallback = fallback;
   }
@@ -29,13 +29,22 @@ export class FallbackAudioService implements AudioService {
       return;
     }
 
-    const preferredService = this.prerecorded.has(source) ? this.prerecorded : this.fallback;
+    const hasRecording = this.prerecorded.has(source);
+    // Something that plays by itself is only ever the real recording.
+    if (options?.automatic && !hasRecording) {
+      return;
+    }
+    const preferredService = hasRecording ? this.prerecorded : this.fallback;
     this.active = preferredService;
 
     try {
       await preferredService.play(source, options);
     } catch (error) {
-      if (preferredService !== this.prerecorded || operationId !== this.operationId) {
+      if (
+        preferredService !== this.prerecorded ||
+        operationId !== this.operationId ||
+        options?.automatic
+      ) {
         throw error;
       }
 

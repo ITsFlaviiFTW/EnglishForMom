@@ -2,30 +2,25 @@ import { createConversation } from './create-conversation.ts';
 
 /**
  * Talk-back conversations: the app plays the other person at real speed, and
- * she answers out loud. Her answers reuse phrases from the "În oraș" lessons
- * wherever they fit, so she practises what she has already learned.
+ * she answers out loud. Her answers are short (six words at most) and are
+ * phrases from the "În oraș" lessons wherever they fit, so she practises what
+ * she has already learned.
  */
 const conversations = [
   createConversation({
     id: 'talk-1-store-help',
     slug: 'store',
     title: { english: 'Asking for Help in the Store', romanian: 'Ceri ajutor în magazin' },
-    descriptionRomanian: 'Un angajat te ajută să găsești laptele.',
+    descriptionRomanian: 'Întrebi un angajat unde e laptele.',
     partner: { nameRomanian: 'Angajatul', icon: '🧑‍💼', voice: 'male' },
     situationRomanian:
-      'Ești în magazin și cauți laptele. Un angajat vine să te ajute. Ascultă ce spune și răspunde cu voce tare.',
+      'Ești în magazin și cauți laptele. Vezi un angajat. Tu vorbești prima: întreabă-l.',
     turns: [
       {
-        partner: [
-          {
-            english: 'Hi there! Can I help you find something?',
-            romanian: 'Bună! Vă pot ajuta să găsiți ceva?',
-          },
-        ],
-        task: 'Spune că da și întreabă unde găsești laptele.',
+        task: 'Întreabă-l unde e laptele.',
         say: {
-          english: 'Yes, please. Where can I find the milk?',
-          romanian: 'Da, vă rog. Unde găsesc laptele?',
+          english: 'Excuse me, where is the milk?',
+          romanian: 'Scuzați-mă, unde este laptele?',
         },
       },
       {
@@ -35,11 +30,8 @@ const conversations = [
             romanian: 'Laptele e pe culoarul cinci, în spatele magazinului.',
           },
         ],
-        task: 'A vorbit prea repede. Roagă-l să repete.',
-        say: {
-          english: 'Sorry, can you repeat that, please?',
-          romanian: 'Scuzați, puteți repeta, vă rog?',
-        },
+        task: 'A vorbit repede. Spune „Poftim?”.',
+        say: { english: 'Sorry?', romanian: 'Poftim?' },
       },
       {
         partner: [
@@ -48,11 +40,8 @@ const conversations = [
             romanian: 'Sigur! Culoarul cinci. Mergeți drept înainte, până în spate.',
           },
         ],
-        task: 'Mulțumește-i pentru ajutor.',
-        say: {
-          english: 'Thank you very much for your help.',
-          romanian: 'Vă mulțumesc mult pentru ajutor.',
-        },
+        task: 'Mulțumește-i.',
+        say: { english: 'Thank you very much.', romanian: 'Mulțumesc foarte mult.' },
       },
     ],
     closing: [{ english: "You're welcome. Have a good day!", romanian: 'Cu plăcere. O zi bună!' }],
@@ -86,8 +75,8 @@ const conversations = [
         partner: [
           { english: 'Great. Do you need a bag today?', romanian: 'Super. Aveți nevoie de o pungă azi?' },
         ],
-        task: 'Spune că nu, ai sacoșa ta.',
-        say: { english: 'No, thank you. I have a bag.', romanian: 'Nu, mulțumesc. Am o sacoșă.' },
+        task: 'Spune că nu, mulțumești.',
+        say: { english: 'No, thank you.', romanian: 'Nu, mulțumesc.' },
       },
       {
         partner: [
@@ -128,11 +117,8 @@ const conversations = [
     turns: [
       {
         partner: [{ english: 'Good morning! How are you?', romanian: 'Bună dimineața! Ce mai faceți?' }],
-        task: 'Salut-o, spune că ești bine și întreab-o și pe ea.',
-        say: {
-          english: "Good morning! I'm good, thank you. And you?",
-          romanian: 'Bună dimineața! Bine, mulțumesc. Dumneavoastră?',
-        },
+        task: 'Spune că ești bine și întreab-o și pe ea.',
+        say: { english: 'Good, thanks. And you?', romanian: 'Bine, mulțumesc. Dumneavoastră?' },
       },
       {
         partner: [
@@ -147,14 +133,14 @@ const conversations = [
       {
         partner: [{ english: 'Are you going for a walk?', romanian: 'Mergeți la plimbare?' }],
         task: 'Spune că nu, mergi la magazin.',
-        say: { english: "No, I'm going to the store.", romanian: 'Nu, merg la magazin.' },
+        say: { english: 'No, to the store.', romanian: 'Nu, la magazin.' },
       },
       {
         partner: [
           { english: 'Oh, nice! Well, have a good day!', romanian: 'A, ce bine! Atunci, o zi bună!' },
         ],
-        task: 'Mulțumește-i și spune-i la revedere.',
-        say: { english: 'Thank you, you too. Bye!', romanian: 'Mulțumesc, la fel. La revedere!' },
+        task: 'Mulțumește-i și urează-i și tu o zi bună.',
+        say: { english: 'Thanks, you too!', romanian: 'Mulțumesc, la fel!' },
       },
     ],
   }),
@@ -223,19 +209,13 @@ const conversations = [
             romanian: 'Bună ziua! Pot să vorbesc cu Daniel, vă rog?',
           },
         ],
-        task: 'Spune că nu e acasă acum.',
-        say: {
-          english: "Sorry, he's not home right now.",
-          romanian: 'Îmi pare rău, nu e acasă acum.',
-        },
+        task: 'Spune că nu e acasă.',
+        say: { english: "Sorry, he's not home.", romanian: 'Îmi pare rău, nu e acasă.' },
       },
       {
         partner: [{ english: 'Oh, okay. Can I leave a message?', romanian: 'A, bine. Pot să las un mesaj?' }],
-        task: 'Spune că vorbești puțin engleză și roag-o să sune mai târziu.',
-        say: {
-          english: 'Sorry, I speak a little English. Please call later.',
-          romanian: 'Îmi pare rău, vorbesc puțin engleză. Vă rog să sunați mai târziu.',
-        },
+        task: 'Spune că vorbești puțină engleză.',
+        say: { english: 'I speak a little English.', romanian: 'Vorbesc puțină engleză.' },
       },
       {
         partner: [
@@ -261,11 +241,8 @@ const conversations = [
     turns: [
       {
         partner: [{ english: 'Hi! How can I help you?', romanian: 'Bună ziua! Cu ce vă pot ajuta?' }],
-        task: 'Spune că ai nevoie de ceva pentru răceală.',
-        say: {
-          english: 'I need something for a cold, please.',
-          romanian: 'Am nevoie de ceva pentru răceală, vă rog.',
-        },
+        task: 'Spune că vrei ceva pentru răceală.',
+        say: { english: 'For a cold, please.', romanian: 'Pentru răceală, vă rog.' },
       },
       {
         partner: [{ english: 'Sure. Do you have a fever?', romanian: 'Sigur. Aveți febră?' }],
@@ -280,7 +257,7 @@ const conversations = [
           },
         ],
         task: 'A vorbit repede. Roagă-l să vorbească mai rar.',
-        say: { english: 'Can you speak slowly, please?', romanian: 'Puteți vorbi mai rar, vă rog?' },
+        say: { english: 'Slowly, please.', romanian: 'Mai rar, vă rog.' },
       },
       {
         partner: [
@@ -329,11 +306,8 @@ const conversations = [
             romanian: 'Mulțumesc. Luați loc, vă rog. Doctorul vă va striga pe nume.',
           },
         ],
-        task: 'N-ai înțeles tot. Spune că nu înțelegi și roag-o să repete.',
-        say: {
-          english: "I don't understand. Can you repeat that, please?",
-          romanian: 'Nu înțeleg. Puteți repeta, vă rog?',
-        },
+        task: 'N-ai înțeles tot. Spune că nu înțelegi.',
+        say: { english: "Sorry, I don't understand.", romanian: 'Îmi pare rău, nu înțeleg.' },
       },
       {
         partner: [
@@ -358,11 +332,8 @@ const conversations = [
       'Urci în autobuz și vrei să mergi la mall. Tu vorbești prima cu șoferul, apoi ascultă și răspunde.',
     turns: [
       {
-        task: 'Întreabă-l dacă autobuzul merge la mall.',
-        say: {
-          english: 'Excuse me, does this bus go to the mall?',
-          romanian: 'Scuzați-mă, autobuzul acesta merge la mall?',
-        },
+        task: 'Întreabă-l dacă merge la mall.',
+        say: { english: 'To the mall?', romanian: 'La mall?' },
       },
       {
         partner: [{ english: 'Yes, it does.', romanian: 'Da, merge.' }],
@@ -376,8 +347,8 @@ const conversations = [
             romanian: 'Costă 3,50 de dolari. Puteți apropia cardul chiar aici.',
           },
         ],
-        task: 'N-ai auzit bine. Spune că nu l-ai auzit.',
-        say: { english: "Sorry? I didn't hear you.", romanian: 'Poftim? Nu v-am auzit.' },
+        task: 'N-ai auzit bine. Spune „Poftim?”.',
+        say: { english: 'Sorry?', romanian: 'Poftim?' },
       },
       {
         partner: [
