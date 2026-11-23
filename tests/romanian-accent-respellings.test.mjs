@@ -44,7 +44,7 @@ test('sentences keep their capital letter and closing punctuation', () => {
   }
 });
 
-test('accent phrases of three or more words can be played word by word, each word timed', async () => {
+test('accent phrases of two or more words can be played word by word, each word timed', async () => {
   // The asset map loads MP3s with require(), so it is read as text here.
   const assetMapPath = new URL('../src/data/audio/accent-audio-assets.ts', import.meta.url);
   // Windows checkouts may have CRLF line endings.
@@ -58,7 +58,7 @@ test('accent phrases of three or more words can be played word by word, each wor
     const spaced = body.match(
       /spaced: \{\n {6}asset: require\('(.+)'\),\n {6}words: (.+),\n {6}starts: (.+),\n {4}\},/,
     );
-    if (respelling.split(' ').length < 3) {
+    if (respelling.split(' ').length < 2) {
       assert.equal(spaced, null, `${key} is too short for word by word`);
       continue;
     }
@@ -75,5 +75,5 @@ test('accent phrases of three or more words can be played word by word, each wor
     });
     assert.ok(existsSync(new URL(assetPath, assetMapPath)), `${key}: ${assetPath} exists`);
   }
-  assert.ok(wordByWord > 150);
+  assert.ok(wordByWord > 200);
 });

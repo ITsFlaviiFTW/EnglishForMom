@@ -186,6 +186,7 @@ function ReviewQuestion({
             errorMessage={audioPlayback.errorMessage}
             label={item.content.english}
             onPlay={(source, options) => void audioPlayback.play(source, options)}
+            onStop={() => void audioPlayback.stop()}
             size="compact"
             source={audio}
             state={audioPlayback.state}
@@ -203,6 +204,7 @@ function ReviewQuestion({
                 errorMessage={audioPlayback.errorMessage}
                 label={item.content.english}
                 onPlay={(source, options) => void audioPlayback.play(source, options)}
+                onStop={() => void audioPlayback.stop()}
                 size="compact"
                 source={audio}
                 state={audioPlayback.state}

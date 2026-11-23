@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 
 import { colors, radii } from '@/constants/theme';
 import type { AudioPlaybackState, AudioPlayOptions } from '@/services/audio-service';
@@ -14,7 +14,7 @@ import type { AudioSource, SpacedAudio } from '@/types';
 
 export const SLOW_PLAYBACK_RATE = 0.7;
 
-type Speed = 'accent' | 'accent-slow' | 'accent-words' | 'normal' | 'slow' | 'words';
+type Speed = 'listen' | 'words' | 'slow' | 'english';
 
 type AudioControlsProps = {
   /** What is being spoken, used for screen-reader labels. */
@@ -23,22 +23,24 @@ type AudioControlsProps = {
   state: AudioPlaybackState;
   errorMessage: string | null;
   onPlay: (source: AudioSource, options?: AudioPlayOptions) => void;
+  /** Stops the sound: the button that is playing shows "Oprește". */
+  onStop: () => void;
   size?: 'large' | 'compact';
-  /** Shows "Se citește: …" above the buttons. Off when the card already shows it. */
+  /** Shows the Romanian-style spelling above the buttons. Off when the card already shows it. */
   showReadAs?: boolean;
   /** Plays "Ascultă" once by itself when the controls appear (a new card). */
   autoPlay?: boolean;
-  /** Placed under the main buttons, above "În engleză" (the speaking feedback). */
+  /** Placed under the main buttons, above "Ascultă în engleză" (the speaking feedback). */
   children?: ReactNode;
 };
 
 /**
- * Two big buttons and one small one. With a Romanian-accent recording:
- * "Ascultă" plays Alina reading the phrase the Romanian way; "Mai rar" plays
- * her saying one word at a time with each word lit up (or, for a single word,
- * the same reading slower); a small "În engleză" plays the normal English.
- * Without one (the shop dialogues), "Ascultă" and "Mai rar" play the English.
- * Every button stays enabled while audio plays, so a second tap starts again.
+ * Two big buttons and a text link. "Ascultă" plays Alina reading the phrase
+ * the Romanian way (the English voice when there is no such reading).
+ * "Cuvânt cu cuvânt" plays one word at a time and lights up each word; for a
+ * single word it is "Mai rar", the same reading slower. "Ascultă în engleză"
+ * plays the normal English. While a sound plays, its button turns into
+ * "Oprește", so she can stop it in the middle of a sentence.
  */
 export function AudioControls({
   label,
@@ -46,6 +48,7 @@ export function AudioControls({
   state,
   errorMessage,
   onPlay,
+  onStop,
   size = 'large',
   showReadAs = true,
   autoPlay = false,
@@ -54,34 +57,38 @@ export function AudioControls({
   const [lastSpeed, setLastSpeed] = useState<Speed | null>(null);
   const [wordIndex, setWordIndex] = useState(0);
   const autoPlayed = useRef(false);
-  const spaced = getSpacedAudio(source);
   const accent = getAccentAudio(source);
-  const accentWords = accent?.spaced;
+  const englishWords = getSpacedAudio(source);
+  // Word by word in Alina's Romanian-accent reading when there is one, else in English.
+  const wordByWord = accent?.spaced
+    ? { spaced: accent.spaced, source: toAccentSpacedSource(source) }
+    : englishWords
+      ? { spaced: englishWords, source: toSpacedSource(source) }
+      : null;
   const isBusy = state === 'loading' || state === 'playing';
   const compact = size === 'compact';
-  const busy = (speed: Speed) => isBusy && lastSpeed === speed;
+  const playing = (speed: Speed) => isBusy && lastSpeed === speed;
 
   const play = (speed: Speed, playSource: AudioSource, options?: AudioPlayOptions) => {
     setLastSpeed(speed);
     onPlay(playSource, options);
   };
-  const playWords = (speed: 'words' | 'accent-words', words: SpacedAudio, playSource: AudioSource) => {
+  /** A tap on the button that is playing stops it; otherwise it starts. */
+  const toggle = (speed: Speed, start: () => void) => () => (playing(speed) ? onStop() : start());
+
+  const listen = (options?: AudioPlayOptions) =>
+    play('listen', accent ? toAccentSource(source) : source, options);
+  const playWordByWord = () => {
+    if (!wordByWord) {
+      return;
+    }
     setWordIndex(0);
-    play(speed, playSource, {
-      onProgress: (seconds) => setWordIndex(findWordIndex(words, seconds)),
+    play('words', wordByWord.source, {
+      onProgress: (seconds) => setWordIndex(findWordIndex(wordByWord.spaced, seconds)),
     });
   };
-  const listen = (options?: AudioPlayOptions) =>
-    accent ? play('accent', toAccentSource(source), options) : play('normal', source, options);
-  const listenSlower = () => {
-    if (accentWords) {
-      playWords('accent-words', accentWords, toAccentSpacedSource(source));
-    } else if (accent) {
-      play('accent-slow', toAccentSource(source), { playbackRate: SLOW_PLAYBACK_RATE });
-    } else {
-      play('slow', source, { playbackRate: SLOW_PLAYBACK_RATE });
-    }
-  };
+  const playSlower = () =>
+    play('slow', accent ? toAccentSource(source) : source, { playbackRate: SLOW_PLAYBACK_RATE });
 
   useEffect(() => {
     if (autoPlay && !autoPlayed.current) {
@@ -89,14 +96,6 @@ export function AudioControls({
       listen({ automatic: true });
     }
   });
-
-  const slowerSpeed: Speed = accentWords ? 'accent-words' : accent ? 'accent-slow' : 'slow';
-  const strip =
-    lastSpeed === 'accent-words' && accentWords ? (
-      <WordStrip spaced={accentWords} activeIndex={isBusy ? wordIndex : null} />
-    ) : lastSpeed === 'words' && spaced ? (
-      <WordStrip spaced={spaced} activeIndex={isBusy ? wordIndex : null} />
-    ) : null;
 
   return (
     <View style={styles.container}>
@@ -106,57 +105,56 @@ export function AudioControls({
           accessibilityLabel={
             accent ? `Ascultă cu accent românesc: ${label}` : `Ascultă în engleză: ${label}`
           }
-          busy={busy(accent ? 'accent' : 'normal')}
           compact={compact}
           icon={accent ? '🇷🇴' : '🔊'}
-          onPress={() => listen()}
+          onPress={toggle('listen', () => listen())}
+          playing={playing('listen')}
           title="Ascultă"
           variant="primary"
         />
-        <PlayButton
-          accessibilityLabel={
-            accentWords
-              ? `Ascultă mai rar, cuvânt cu cuvânt, cu accent românesc: ${label}`
-              : `Ascultă mai rar: ${label}`
-          }
-          busy={busy(slowerSpeed)}
-          compact={compact}
-          icon="🐢"
-          onPress={listenSlower}
-          title="Mai rar"
-          variant="soft"
-        />
-      </View>
-      {!accent && spaced ? (
-        <View style={styles.row}>
+        {wordByWord ? (
           <PlayButton
-            accessibilityLabel={`Ascultă în engleză, cuvânt cu cuvânt: ${label}`}
-            busy={busy('words')}
+            accessibilityLabel={`Ascultă cuvânt cu cuvânt: ${label}`}
             compact={compact}
             icon="🐌"
-            onPress={() => playWords('words', spaced, toSpacedSource(source))}
+            onPress={toggle('words', playWordByWord)}
+            playing={playing('words')}
             title="Cuvânt cu cuvânt"
             variant="soft"
           />
-        </View>
+        ) : (
+          <PlayButton
+            accessibilityLabel={`Ascultă mai rar: ${label}`}
+            compact={compact}
+            icon="🐢"
+            onPress={toggle('slow', playSlower)}
+            playing={playing('slow')}
+            title="Mai rar"
+            variant="soft"
+          />
+        )}
+      </View>
+      {lastSpeed === 'words' && wordByWord ? (
+        <WordStrip activeIndex={playing('words') ? wordIndex : null} spaced={wordByWord.spaced} />
       ) : null}
-      {strip}
 
       {children}
 
       {accent ? (
-        <View style={styles.smallRow}>
-          <PlayButton
-            accessibilityLabel={`Ascultă în engleză, normal: ${label}`}
-            busy={busy('normal')}
-            compact
-            fill={false}
-            icon="🔊"
-            onPress={() => play('normal', source)}
-            title="În engleză"
-            variant="quiet"
-          />
-        </View>
+        <Pressable
+          accessibilityLabel={
+            playing('english') ? 'Oprește' : `Ascultă în engleză, normal: ${label}`
+          }
+          accessibilityRole="button"
+          hitSlop={8}
+          onPress={toggle('english', () => play('english', source))}
+          style={styles.linkPressable}>
+          {({ pressed }) => (
+            <Text style={[styles.link, pressed && styles.linkPressed]}>
+              {playing('english') ? '⏹ Oprește' : '🔊 Ascultă în engleză'}
+            </Text>
+          )}
+        </Pressable>
       ) : null}
       {errorMessage ? (
         <Text accessibilityLiveRegion="polite" style={styles.error}>
@@ -167,16 +165,25 @@ export function AudioControls({
   );
 }
 
-/** "Se citește: frigi" — how to say it, written the Romanian way. */
-export function ReadAs({ source }: { source: AudioSource | undefined }) {
+/** How to say it, written the Romanian way ("Dă bred iz in di ovăn."). */
+export function ReadAs({
+  source,
+  style,
+}: {
+  source: AudioSource | undefined;
+  style?: StyleProp<ViewStyle>;
+}) {
   const accent = source ? getAccentAudio(source) : null;
   if (!accent) {
     return null;
   }
 
   return (
-    <View style={styles.readAs}>
-      <Text style={styles.readAsLabel}>🇷🇴 Se citește:</Text>
+    <View
+      accessibilityLabel={`Se citește: ${accent.respelling}`}
+      accessible
+      style={[styles.readAs, style]}>
+      <Text style={styles.readAsFlag}>🇷🇴</Text>
       <Text style={styles.readAsText}>{accent.respelling}</Text>
     </View>
   );
@@ -184,46 +191,46 @@ export function ReadAs({ source }: { source: AudioSource | undefined }) {
 
 function PlayButton({
   accessibilityLabel,
-  busy,
+  playing,
   compact,
   icon,
   onPress,
   title,
   variant,
-  fill = true,
 }: {
   accessibilityLabel: string;
-  busy: boolean;
+  playing: boolean;
   compact: boolean;
   icon: string;
   onPress: () => void;
   title: string;
-  variant: 'primary' | 'soft' | 'quiet';
-  /** Shares the row's width with the other buttons; false keeps it as small as its text. */
-  fill?: boolean;
+  variant: 'primary' | 'soft';
 }) {
-  const box = {
-    primary: [styles.primary, styles.primaryPressed],
-    soft: [styles.soft, styles.softPressed],
-    quiet: [styles.quiet, styles.quietPressed],
-  }[variant];
-  const text = { primary: styles.primaryText, soft: styles.softText, quiet: styles.quietText }[
-    variant
-  ];
+  const primary = variant === 'primary';
 
   return (
     <Pressable
-      accessibilityLabel={accessibilityLabel}
+      accessibilityLabel={playing ? 'Oprește' : accessibilityLabel}
       accessibilityRole="button"
       onPress={onPress}
-      style={fill ? styles.flexPressable : null}>
+      // "Ascultă" keeps its size; the other button takes the rest, so "Cuvânt cu cuvânt" fits on two lines.
+      style={primary ? styles.primaryPressable : styles.flexPressable}>
       {({ pressed }) => (
-        <View style={[styles.button, box[0], compact && styles.compact, pressed && box[1]]}>
-          <Text style={[styles.icon, compact && styles.iconCompact]}>{icon}</Text>
+        <View
+          style={[
+            styles.button,
+            primary ? styles.primary : styles.soft,
+            compact && styles.compact,
+            pressed && (primary ? styles.primaryPressed : styles.softPressed),
+          ]}>
+          <Text style={[styles.icon, compact && styles.iconCompact]}>{playing ? '⏹' : icon}</Text>
           <Text
-            numberOfLines={1}
-            style={[text, compact && variant !== 'quiet' && styles.textCompact]}>
-            {busy ? (compact ? 'Se aude' : 'Se aude…') : title}
+            numberOfLines={2}
+            style={[
+              primary ? styles.primaryText : styles.softText,
+              compact && styles.textCompact,
+            ]}>
+            {playing ? 'Oprește' : title}
           </Text>
         </View>
       )}
@@ -274,9 +281,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 10,
   },
-  smallRow: {
-    flexDirection: 'row',
-    marginTop: 4,
+  primaryPressable: {
+    flexShrink: 0,
+    minWidth: '45%',
   },
   flexPressable: {
     flex: 1,
@@ -288,7 +295,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 8,
     borderRadius: radii.medium,
-    paddingHorizontal: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
   },
   primary: {
     backgroundColor: colors.primary,
@@ -302,40 +310,24 @@ const styles = StyleSheet.create({
   softPressed: {
     backgroundColor: colors.border,
   },
-  quiet: {
-    minHeight: 48,
-    gap: 6,
-    borderWidth: 1.5,
-    borderColor: colors.border,
-    backgroundColor: colors.surface,
-    paddingHorizontal: 8,
-  },
-  quietPressed: {
-    backgroundColor: colors.surfaceMuted,
-  },
   primaryText: {
     flexShrink: 1,
     color: colors.onPrimary,
     fontSize: 20,
-    lineHeight: 26,
+    lineHeight: 25,
     fontWeight: '700',
+    textAlign: 'center',
   },
   softText: {
     flexShrink: 1,
     color: colors.primary,
     fontSize: 18,
-    lineHeight: 24,
+    lineHeight: 22,
     fontWeight: '700',
-  },
-  quietText: {
-    flexShrink: 1,
-    color: colors.textMuted,
-    fontSize: 16,
-    lineHeight: 20,
-    fontWeight: '700',
+    textAlign: 'center',
   },
   compact: {
-    minHeight: 52,
+    minHeight: 56,
     gap: 6,
     paddingHorizontal: 8,
   },
@@ -349,22 +341,36 @@ const styles = StyleSheet.create({
   },
   textCompact: {
     fontSize: 17,
-    lineHeight: 22,
+    lineHeight: 21,
+  },
+  linkPressable: {
+    alignSelf: 'center',
+    marginTop: 2,
+  },
+  link: {
+    color: colors.textMuted,
+    fontSize: 17,
+    lineHeight: 24,
+    fontWeight: '700',
+    textDecorationLine: 'underline',
+    textDecorationColor: colors.borderStrong,
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+  },
+  linkPressed: {
+    color: colors.text,
   },
   readAs: {
-    gap: 2,
-    backgroundColor: colors.warmSoft,
-    borderRadius: radii.medium,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 8,
   },
-  readAsLabel: {
-    color: colors.textMuted,
-    fontSize: 15,
-    lineHeight: 20,
-    fontWeight: '600',
+  readAsFlag: {
+    fontSize: 20,
+    lineHeight: 33,
   },
   readAsText: {
+    flexShrink: 1,
     color: colors.warm,
     fontSize: 26,
     lineHeight: 33,

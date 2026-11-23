@@ -118,10 +118,20 @@ export const spacedAudioAssets: Readonly<Record<string, SpacedAudio>> = {
     words: ["The","comb","is","next","to","the","mirror."],
     starts: [0.15,1.176,2.5,3.69,4.911,6.088,7.114],
   },
+  'bathroom-word-hair-dryer': {
+    asset: require('../../../assets/audio/en-US/spaced/bathroom-word-hair-dryer.mp3'),
+    words: ["hair","dryer"],
+    starts: [0.15,1.208],
+  },
   'bathroom-example-hair-dryer': {
     asset: require('../../../assets/audio/en-US/spaced/bathroom-example-hair-dryer.mp3'),
     words: ["The","hair","dryer","is","under","the","sink."],
     starts: [0.15,1.176,2.235,3.522,4.712,5.894,6.92],
+  },
+  'bathroom-word-toilet-paper': {
+    asset: require('../../../assets/audio/en-US/spaced/bathroom-word-toilet-paper.mp3'),
+    words: ["toilet","paper"],
+    starts: [0.15,1.438],
   },
   'bathroom-example-toilet-paper': {
     asset: require('../../../assets/audio/en-US/spaced/bathroom-example-toilet-paper.mp3'),
@@ -228,6 +238,11 @@ export const spacedAudioAssets: Readonly<Record<string, SpacedAudio>> = {
     words: ["The","armchair","is","next","to","the","sofa."],
     starts: [0.15,1.176,2.585,3.776,4.996,6.173,7.2],
   },
+  'living-room-word-coffee-table': {
+    asset: require('../../../assets/audio/en-US/spaced/living-room-word-coffee-table.mp3'),
+    words: ["coffee","table"],
+    starts: [0.15,1.451],
+  },
   'living-room-example-coffee-table': {
     asset: require('../../../assets/audio/en-US/spaced/living-room-example-coffee-table.mp3'),
     words: ["The","cup","is","on","the","coffee","table."],
@@ -237,6 +252,11 @@ export const spacedAudioAssets: Readonly<Record<string, SpacedAudio>> = {
     asset: require('../../../assets/audio/en-US/spaced/living-room-example-tv.mp3'),
     words: ["The","TV","is","in","front","of","the","sofa."],
     starts: [0.15,1.176,2.476,3.667,4.758,5.938,7.128,8.154],
+  },
+  'living-room-word-remote-control': {
+    asset: require('../../../assets/audio/en-US/spaced/living-room-word-remote-control.mp3'),
+    words: ["remote","control"],
+    starts: [0.15,1.463],
   },
   'living-room-example-remote-control': {
     asset: require('../../../assets/audio/en-US/spaced/living-room-example-remote-control.mp3'),
@@ -288,6 +308,11 @@ export const spacedAudioAssets: Readonly<Record<string, SpacedAudio>> = {
     words: ["The","clock","is","on","the","wall."],
     starts: [0.15,1.176,2.381,3.572,4.724,5.751],
   },
+  'laundry-word-washing-machine': {
+    asset: require('../../../assets/audio/en-US/spaced/laundry-word-washing-machine.mp3'),
+    words: ["washing","machine"],
+    starts: [0.15,1.568],
+  },
   'laundry-example-washing-machine': {
     asset: require('../../../assets/audio/en-US/spaced/laundry-example-washing-machine.mp3'),
     words: ["The","clothes","are","in","the","washing","machine."],
@@ -297,6 +322,11 @@ export const spacedAudioAssets: Readonly<Record<string, SpacedAudio>> = {
     asset: require('../../../assets/audio/en-US/spaced/laundry-example-clothes-dryer.mp3'),
     words: ["The","towels","are","in","the","dryer."],
     starts: [0.15,1.176,2.573,3.704,4.795,5.821],
+  },
+  'laundry-word-laundry-basket': {
+    asset: require('../../../assets/audio/en-US/spaced/laundry-word-laundry-basket.mp3'),
+    words: ["laundry","basket"],
+    starts: [0.15,1.528],
   },
   'laundry-example-laundry-basket': {
     asset: require('../../../assets/audio/en-US/spaced/laundry-example-laundry-basket.mp3'),
@@ -308,15 +338,30 @@ export const spacedAudioAssets: Readonly<Record<string, SpacedAudio>> = {
     words: ["Put","the","detergent","in","the","washing","machine."],
     starts: [0.15,1.204,2.23,3.726,4.816,5.842,7.26],
   },
+  'laundry-word-fabric-softener': {
+    asset: require('../../../assets/audio/en-US/spaced/laundry-word-fabric-softener.mp3'),
+    words: ["fabric","softener"],
+    starts: [0.15,1.561],
+  },
   'laundry-example-fabric-softener': {
     asset: require('../../../assets/audio/en-US/spaced/laundry-example-fabric-softener.mp3'),
     words: ["The","fabric","softener","is","next","to","the","detergent."],
     starts: [0.15,1.176,2.587,3.985,5.176,6.396,7.573,8.6],
   },
+  'laundry-word-dirty-clothes': {
+    asset: require('../../../assets/audio/en-US/spaced/laundry-word-dirty-clothes.mp3'),
+    words: ["dirty","clothes"],
+    starts: [0.15,1.379],
+  },
   'laundry-example-dirty-clothes': {
     asset: require('../../../assets/audio/en-US/spaced/laundry-example-dirty-clothes.mp3'),
     words: ["The","dirty","clothes","are","in","the","basket."],
     starts: [0.15,1.176,2.406,3.815,4.946,6.037,7.063],
+  },
+  'laundry-word-clean-clothes': {
+    asset: require('../../../assets/audio/en-US/spaced/laundry-word-clean-clothes.mp3'),
+    words: ["clean","clothes"],
+    starts: [0.15,1.424],
   },
   'laundry-example-clean-clothes': {
     asset: require('../../../assets/audio/en-US/spaced/laundry-example-clean-clothes.mp3'),
@@ -353,6 +398,11 @@ export const spacedAudioAssets: Readonly<Record<string, SpacedAudio>> = {
     words: ["Dry","the","clothes."],
     starts: [0.15,1.426,2.452],
   },
+  'cleaning-word-vacuum-cleaner': {
+    asset: require('../../../assets/audio/en-US/spaced/cleaning-word-vacuum-cleaner.mp3'),
+    words: ["vacuum","cleaner"],
+    starts: [0.15,1.597],
+  },
   'cleaning-example-vacuum-cleaner': {
     asset: require('../../../assets/audio/en-US/spaced/cleaning-example-vacuum-cleaner.mp3'),
     words: ["The","vacuum","cleaner","is","in","the","closet."],
@@ -383,6 +433,11 @@ export const spacedAudioAssets: Readonly<Record<string, SpacedAudio>> = {
     words: ["Wipe","the","table","with","the","cloth."],
     starts: [0.15,1.426,2.453,3.684,4.715,5.741],
   },
+  'cleaning-word-cleaning-spray': {
+    asset: require('../../../assets/audio/en-US/spaced/cleaning-word-cleaning-spray.mp3'),
+    words: ["cleaning","spray"],
+    starts: [0.15,1.487],
+  },
   'cleaning-example-cleaning-spray': {
     asset: require('../../../assets/audio/en-US/spaced/cleaning-example-cleaning-spray.mp3'),
     words: ["Use","the","cleaning","spray","on","the","mirror."],
@@ -393,10 +448,20 @@ export const spacedAudioAssets: Readonly<Record<string, SpacedAudio>> = {
     words: ["Put","on","the","gloves."],
     starts: [0.15,1.204,2.357,3.383],
   },
+  'cleaning-word-trash-can': {
+    asset: require('../../../assets/audio/en-US/spaced/cleaning-word-trash-can.mp3'),
+    words: ["trash","can"],
+    starts: [0.15,1.411],
+  },
   'cleaning-example-trash-can': {
     asset: require('../../../assets/audio/en-US/spaced/cleaning-example-trash-can.mp3'),
     words: ["The","trash","can","is","under","the","sink."],
     starts: [0.15,1.176,2.437,3.635,4.826,6.007,7.034],
+  },
+  'cleaning-word-trash-bag': {
+    asset: require('../../../assets/audio/en-US/spaced/cleaning-word-trash-bag.mp3'),
+    words: ["trash","bag"],
+    starts: [0.15,1.411],
   },
   'cleaning-example-trash-bag': {
     asset: require('../../../assets/audio/en-US/spaced/cleaning-example-trash-bag.mp3'),
@@ -423,6 +488,11 @@ export const spacedAudioAssets: Readonly<Record<string, SpacedAudio>> = {
     words: ["The","kitchen","floor","is","dirty."],
     starts: [0.15,1.176,2.466,3.643,4.834],
   },
+  'essential-verbs-1-word-be': {
+    asset: require('../../../assets/audio/en-US/spaced/essential-verbs-1-word-be.mp3'),
+    words: ["to","be"],
+    starts: [0.15,1.327],
+  },
   'essential-verbs-1-example-be-1': {
     asset: require('../../../assets/audio/en-US/spaced/essential-verbs-1-example-be-1.mp3'),
     words: ["I","am","in","the","kitchen."],
@@ -442,6 +512,11 @@ export const spacedAudioAssets: Readonly<Record<string, SpacedAudio>> = {
     asset: require('../../../assets/audio/en-US/spaced/essential-verbs-1-example-be-4.mp3'),
     words: ["The","plates","are","on","the","table."],
     starts: [0.15,1.176,2.449,3.58,4.732,5.759],
+  },
+  'essential-verbs-1-word-have': {
+    asset: require('../../../assets/audio/en-US/spaced/essential-verbs-1-word-have.mp3'),
+    words: ["to","have"],
+    starts: [0.15,1.327],
   },
   'essential-verbs-1-example-have-1': {
     asset: require('../../../assets/audio/en-US/spaced/essential-verbs-1-example-have-1.mp3'),
@@ -463,6 +538,11 @@ export const spacedAudioAssets: Readonly<Record<string, SpacedAudio>> = {
     words: ["We","have","clean","sheets."],
     starts: [0.15,1.326,2.47,3.744],
   },
+  'essential-verbs-1-word-want': {
+    asset: require('../../../assets/audio/en-US/spaced/essential-verbs-1-word-want.mp3'),
+    words: ["to","want"],
+    starts: [0.15,1.327],
+  },
   'essential-verbs-1-example-want-1': {
     asset: require('../../../assets/audio/en-US/spaced/essential-verbs-1-example-want-1.mp3'),
     words: ["I","want","some","water."],
@@ -483,6 +563,11 @@ export const spacedAudioAssets: Readonly<Record<string, SpacedAudio>> = {
     words: ["We","want","coffee."],
     starts: [0.15,1.326,2.565],
   },
+  'essential-verbs-1-word-need': {
+    asset: require('../../../assets/audio/en-US/spaced/essential-verbs-1-word-need.mp3'),
+    words: ["to","need"],
+    starts: [0.15,1.327],
+  },
   'essential-verbs-1-example-need-1': {
     asset: require('../../../assets/audio/en-US/spaced/essential-verbs-1-example-need-1.mp3'),
     words: ["I","need","a","towel."],
@@ -497,6 +582,11 @@ export const spacedAudioAssets: Readonly<Record<string, SpacedAudio>> = {
     asset: require('../../../assets/audio/en-US/spaced/essential-verbs-1-example-need-3.mp3'),
     words: ["He","needs","clean","socks."],
     starts: [0.15,1.173,2.566,3.84],
+  },
+  'essential-verbs-1-word-go': {
+    asset: require('../../../assets/audio/en-US/spaced/essential-verbs-1-word-go.mp3'),
+    words: ["to","go"],
+    starts: [0.15,1.327],
   },
   'essential-verbs-1-example-go-1': {
     asset: require('../../../assets/audio/en-US/spaced/essential-verbs-1-example-go-1.mp3'),
@@ -518,6 +608,11 @@ export const spacedAudioAssets: Readonly<Record<string, SpacedAudio>> = {
     words: ["I","am","going","upstairs."],
     starts: [0.15,1.189,2.368,3.554],
   },
+  'essential-verbs-1-word-come': {
+    asset: require('../../../assets/audio/en-US/spaced/essential-verbs-1-word-come.mp3'),
+    words: ["to","come"],
+    starts: [0.15,1.327],
+  },
   'essential-verbs-1-example-come-1': {
     asset: require('../../../assets/audio/en-US/spaced/essential-verbs-1-example-come-1.mp3'),
     words: ["Come","here,","please."],
@@ -537,6 +632,11 @@ export const spacedAudioAssets: Readonly<Record<string, SpacedAudio>> = {
     asset: require('../../../assets/audio/en-US/spaced/essential-verbs-1-example-come-4.mp3'),
     words: ["We","come","home","after","work."],
     starts: [0.15,1.326,2.532,3.847,5.122],
+  },
+  'essential-verbs-1-word-take': {
+    asset: require('../../../assets/audio/en-US/spaced/essential-verbs-1-word-take.mp3'),
+    words: ["to","take"],
+    starts: [0.15,1.327],
   },
   'essential-verbs-1-example-take-1': {
     asset: require('../../../assets/audio/en-US/spaced/essential-verbs-1-example-take-1.mp3'),
@@ -558,6 +658,11 @@ export const spacedAudioAssets: Readonly<Record<string, SpacedAudio>> = {
     words: ["She","takes","a","plate","from","the","table."],
     starts: [0.15,1.364,2.632,3.674,4.706,5.852,6.878],
   },
+  'essential-verbs-1-word-put': {
+    asset: require('../../../assets/audio/en-US/spaced/essential-verbs-1-word-put.mp3'),
+    words: ["to","put"],
+    starts: [0.15,1.327],
+  },
   'essential-verbs-1-example-put-2': {
     asset: require('../../../assets/audio/en-US/spaced/essential-verbs-1-example-put-2.mp3'),
     words: ["Put","the","milk","in","the","fridge."],
@@ -572,6 +677,11 @@ export const spacedAudioAssets: Readonly<Record<string, SpacedAudio>> = {
     asset: require('../../../assets/audio/en-US/spaced/essential-verbs-1-example-put-4.mp3'),
     words: ["She","puts","the","towels","in","the","closet."],
     starts: [0.15,1.364,2.565,3.592,4.989,6.079,7.106],
+  },
+  'help-word-excuse-me': {
+    asset: require('../../../assets/audio/en-US/spaced/help-word-excuse-me.mp3'),
+    words: ["Excuse","me."],
+    starts: [0.15,1.795],
   },
   'help-example-excuse-me': {
     asset: require('../../../assets/audio/en-US/spaced/help-example-excuse-me.mp3'),
@@ -597,6 +707,16 @@ export const spacedAudioAssets: Readonly<Record<string, SpacedAudio>> = {
     asset: require('../../../assets/audio/en-US/spaced/help-example-repeat.mp3'),
     words: ["I","don't","understand.","Can","you","repeat","that,","please?"],
     starts: [0.15,1.189,2.361,3.938,5.136,6.378,7.714,8.756],
+  },
+  'help-word-slowly': {
+    asset: require('../../../assets/audio/en-US/spaced/help-word-slowly.mp3'),
+    words: ["Slowly,","please."],
+    starts: [0.15,1.605],
+  },
+  'talk-pharmacy-say-3': {
+    asset: require('../../../assets/audio/en-US/spaced/help-word-slowly.mp3'),
+    words: ["Slowly,","please."],
+    starts: [0.15,1.605],
   },
   'help-example-slowly': {
     asset: require('../../../assets/audio/en-US/spaced/help-example-slowly.mp3'),
@@ -688,6 +808,11 @@ export const spacedAudioAssets: Readonly<Record<string, SpacedAudio>> = {
     words: ["It's","fifty","cents."],
     starts: [0.15,1.347,2.591],
   },
+  'money-word-price': {
+    asset: require('../../../assets/audio/en-US/spaced/money-word-price.mp3'),
+    words: ["two","ninety-nine"],
+    starts: [0.15,1.328],
+  },
   'money-example-price': {
     asset: require('../../../assets/audio/en-US/spaced/money-example-price.mp3'),
     words: ["The","milk","is","four","forty-nine."],
@@ -703,10 +828,20 @@ export const spacedAudioAssets: Readonly<Record<string, SpacedAudio>> = {
     words: ["It's","thirty","dollars."],
     starts: [0.15,1.347,2.541],
   },
+  'money-word-plus-tax': {
+    asset: require('../../../assets/audio/en-US/spaced/money-word-plus-tax.mp3'),
+    words: ["plus","tax"],
+    starts: [0.15,1.338],
+  },
   'money-example-plus-tax': {
     asset: require('../../../assets/audio/en-US/spaced/money-example-plus-tax.mp3'),
     words: ["It's","ten","dollars","plus","tax."],
     starts: [0.15,1.347,2.531,3.877,5.065],
+  },
+  'money-word-on-sale': {
+    asset: require('../../../assets/audio/en-US/spaced/money-word-on-sale.mp3'),
+    words: ["on","sale"],
+    starts: [0.15,1.303],
   },
   'money-example-on-sale': {
     asset: require('../../../assets/audio/en-US/spaced/money-example-on-sale.mp3'),
@@ -767,6 +902,11 @@ export const spacedAudioAssets: Readonly<Record<string, SpacedAudio>> = {
     asset: require('../../../assets/audio/en-US/spaced/store-example-out-of.mp3'),
     words: ["Sorry,","we're","out","of","eggs","today."],
     starts: [0.15,1.459,2.706,3.838,5.028,6.323],
+  },
+  'store-word-shopping-cart': {
+    asset: require('../../../assets/audio/en-US/spaced/store-word-shopping-cart.mp3'),
+    words: ["shopping","cart"],
+    starts: [0.15,1.543],
   },
   'store-example-shopping-cart': {
     asset: require('../../../assets/audio/en-US/spaced/store-example-shopping-cart.mp3'),
@@ -853,6 +993,16 @@ export const spacedAudioAssets: Readonly<Record<string, SpacedAudio>> = {
     words: ["Debit","or","credit?"],
     starts: [0.15,1.35,2.479],
   },
+  'checkout-example-debit-credit': {
+    asset: require('../../../assets/audio/en-US/spaced/checkout-example-debit-credit.mp3'),
+    words: ["Debit,","please."],
+    starts: [0.15,1.35],
+  },
+  'talk-checkout-say-4': {
+    asset: require('../../../assets/audio/en-US/spaced/checkout-example-debit-credit.mp3'),
+    words: ["Debit,","please."],
+    starts: [0.15,1.35],
+  },
   'checkout-word-tap': {
     asset: require('../../../assets/audio/en-US/spaced/checkout-word-tap.mp3'),
     words: ["You","can","tap","your","card."],
@@ -902,6 +1052,11 @@ export const spacedAudioAssets: Readonly<Record<string, SpacedAudio>> = {
     asset: require('../../../assets/audio/en-US/spaced/talk-checkout-say-3.mp3'),
     words: ["No,","thank","you."],
     starts: [0.15,1.412,2.598],
+  },
+  'talk-checkout-say-5': {
+    asset: require('../../../assets/audio/en-US/spaced/talk-checkout-say-5.mp3'),
+    words: ["Yes,","please."],
+    starts: [0.15,1.443],
   },
   'talk-neighbour-say-2': {
     asset: require('../../../assets/audio/en-US/spaced/talk-neighbour-say-2.mp3'),

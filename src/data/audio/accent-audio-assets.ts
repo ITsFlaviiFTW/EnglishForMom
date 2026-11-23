@@ -305,6 +305,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'bathroom-word-hair-dryer': {
     asset: require('../../../assets/audio/en-US/accent/bathroom-word-hair-dryer.mp3'),
     respelling: "her draiăr",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/bathroom-word-hair-dryer.mp3'),
+      words: ["her","draiăr"],
+      starts: [0.15,1.275],
+    },
   },
   'bathroom-example-hair-dryer': {
     asset: require('../../../assets/audio/en-US/accent/bathroom-example-hair-dryer.mp3'),
@@ -318,6 +323,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'bathroom-word-toilet-paper': {
     asset: require('../../../assets/audio/en-US/accent/bathroom-word-toilet-paper.mp3'),
     respelling: "toilet peipăr",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/bathroom-word-toilet-paper.mp3'),
+      words: ["toilet","peipăr"],
+      starts: [0.15,1.521],
+    },
   },
   'bathroom-example-toilet-paper': {
     asset: require('../../../assets/audio/en-US/accent/bathroom-example-toilet-paper.mp3'),
@@ -611,6 +621,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'living-room-word-coffee-table': {
     asset: require('../../../assets/audio/en-US/accent/living-room-word-coffee-table.mp3'),
     respelling: "cofii teibăl",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/living-room-word-coffee-table.mp3'),
+      words: ["cofii","teibăl"],
+      starts: [0.15,1.338],
+    },
   },
   'living-room-example-coffee-table': {
     asset: require('../../../assets/audio/en-US/accent/living-room-example-coffee-table.mp3'),
@@ -624,6 +639,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'living-room-word-tv': {
     asset: require('../../../assets/audio/en-US/accent/living-room-word-tv.mp3'),
     respelling: "ti vi",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/living-room-word-tv.mp3'),
+      words: ["ti","vi"],
+      starts: [0.15,1.106],
+    },
   },
   'living-room-example-tv': {
     asset: require('../../../assets/audio/en-US/accent/living-room-example-tv.mp3'),
@@ -637,6 +657,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'living-room-word-remote-control': {
     asset: require('../../../assets/audio/en-US/accent/living-room-word-remote-control.mp3'),
     respelling: "rimout căntroul",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/living-room-word-remote-control.mp3'),
+      words: ["rimout","căntroul"],
+      starts: [0.15,1.506],
+    },
   },
   'living-room-example-remote-control': {
     asset: require('../../../assets/audio/en-US/accent/living-room-example-remote-control.mp3'),
@@ -755,6 +780,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'laundry-word-washing-machine': {
     asset: require('../../../assets/audio/en-US/accent/laundry-word-washing-machine.mp3'),
     respelling: "uoșing mășin",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/laundry-word-washing-machine.mp3'),
+      words: ["uoșing","mășin"],
+      starts: [0.15,1.478],
+    },
   },
   'laundry-example-washing-machine': {
     asset: require('../../../assets/audio/en-US/accent/laundry-example-washing-machine.mp3'),
@@ -781,6 +811,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'laundry-word-laundry-basket': {
     asset: require('../../../assets/audio/en-US/accent/laundry-word-laundry-basket.mp3'),
     respelling: "londri beschet",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/laundry-word-laundry-basket.mp3'),
+      words: ["londri","beschet"],
+      starts: [0.15,1.439],
+    },
   },
   'laundry-example-laundry-basket': {
     asset: require('../../../assets/audio/en-US/accent/laundry-example-laundry-basket.mp3'),
@@ -807,6 +842,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'laundry-word-fabric-softener': {
     asset: require('../../../assets/audio/en-US/accent/laundry-word-fabric-softener.mp3'),
     respelling: "febric sofănăr",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/laundry-word-fabric-softener.mp3'),
+      words: ["febric","sofănăr"],
+      starts: [0.15,1.538],
+    },
   },
   'laundry-example-fabric-softener': {
     asset: require('../../../assets/audio/en-US/accent/laundry-example-fabric-softener.mp3'),
@@ -820,6 +860,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'laundry-word-dirty-clothes': {
     asset: require('../../../assets/audio/en-US/accent/laundry-word-dirty-clothes.mp3'),
     respelling: "dărti clouz",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/laundry-word-dirty-clothes.mp3'),
+      words: ["dărti","clouz"],
+      starts: [0.15,1.43],
+    },
   },
   'laundry-example-dirty-clothes': {
     asset: require('../../../assets/audio/en-US/accent/laundry-example-dirty-clothes.mp3'),
@@ -833,6 +878,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'laundry-word-clean-clothes': {
     asset: require('../../../assets/audio/en-US/accent/laundry-word-clean-clothes.mp3'),
     respelling: "clin clouz",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/laundry-word-clean-clothes.mp3'),
+      words: ["clin","clouz"],
+      starts: [0.15,1.297],
+    },
   },
   'laundry-example-clean-clothes': {
     asset: require('../../../assets/audio/en-US/accent/laundry-example-clean-clothes.mp3'),
@@ -908,6 +958,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'cleaning-word-vacuum-cleaner': {
     asset: require('../../../assets/audio/en-US/accent/cleaning-word-vacuum-cleaner.mp3'),
     respelling: "vechium clinăr",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/cleaning-word-vacuum-cleaner.mp3'),
+      words: ["vechium","clinăr"],
+      starts: [0.15,1.654],
+    },
   },
   'cleaning-example-vacuum-cleaner': {
     asset: require('../../../assets/audio/en-US/accent/cleaning-example-vacuum-cleaner.mp3'),
@@ -986,6 +1041,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'cleaning-word-cleaning-spray': {
     asset: require('../../../assets/audio/en-US/accent/cleaning-word-cleaning-spray.mp3'),
     respelling: "clining sprei",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/cleaning-word-cleaning-spray.mp3'),
+      words: ["clining","sprei"],
+      starts: [0.15,1.39],
+    },
   },
   'cleaning-example-cleaning-spray': {
     asset: require('../../../assets/audio/en-US/accent/cleaning-example-cleaning-spray.mp3'),
@@ -1012,6 +1072,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'cleaning-word-trash-can': {
     asset: require('../../../assets/audio/en-US/accent/cleaning-word-trash-can.mp3'),
     respelling: "traș can",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/cleaning-word-trash-can.mp3'),
+      words: ["traș","can"],
+      starts: [0.15,1.362],
+    },
   },
   'cleaning-example-trash-can': {
     asset: require('../../../assets/audio/en-US/accent/cleaning-example-trash-can.mp3'),
@@ -1025,6 +1090,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'cleaning-word-trash-bag': {
     asset: require('../../../assets/audio/en-US/accent/cleaning-word-trash-bag.mp3'),
     respelling: "traș bag",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/cleaning-word-trash-bag.mp3'),
+      words: ["traș","bag"],
+      starts: [0.15,1.362],
+    },
   },
   'cleaning-example-trash-bag': {
     asset: require('../../../assets/audio/en-US/accent/cleaning-example-trash-bag.mp3'),
@@ -1090,6 +1160,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'essential-verbs-1-word-be': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-word-be.mp3'),
     respelling: "tu bi",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/essential-verbs-1-word-be.mp3'),
+      words: ["tu","bi"],
+      starts: [0.15,1.115],
+    },
   },
   'essential-verbs-1-example-be-1': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-example-be-1.mp3'),
@@ -1130,6 +1205,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'essential-verbs-1-word-have': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-word-have.mp3'),
     respelling: "tu hev",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/essential-verbs-1-word-have.mp3'),
+      words: ["tu","hev"],
+      starts: [0.15,1.115],
+    },
   },
   'essential-verbs-1-example-have-1': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-example-have-1.mp3'),
@@ -1170,6 +1250,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'essential-verbs-1-word-want': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-word-want.mp3'),
     respelling: "tu uant",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/essential-verbs-1-word-want.mp3'),
+      words: ["tu","uant"],
+      starts: [0.15,1.115],
+    },
   },
   'essential-verbs-1-example-want-1': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-example-want-1.mp3'),
@@ -1210,6 +1295,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'essential-verbs-1-word-need': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-word-need.mp3'),
     respelling: "tu nid",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/essential-verbs-1-word-need.mp3'),
+      words: ["tu","nid"],
+      starts: [0.15,1.115],
+    },
   },
   'essential-verbs-1-example-need-1': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-example-need-1.mp3'),
@@ -1241,6 +1331,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'essential-verbs-1-word-go': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-word-go.mp3'),
     respelling: "tu gou",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/essential-verbs-1-word-go.mp3'),
+      words: ["tu","gou"],
+      starts: [0.15,1.115],
+    },
   },
   'essential-verbs-1-example-go-1': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-example-go-1.mp3'),
@@ -1281,6 +1376,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'essential-verbs-1-word-come': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-word-come.mp3'),
     respelling: "tu cam",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/essential-verbs-1-word-come.mp3'),
+      words: ["tu","cam"],
+      starts: [0.15,1.115],
+    },
   },
   'essential-verbs-1-example-come-1': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-example-come-1.mp3'),
@@ -1321,6 +1421,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'essential-verbs-1-word-take': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-word-take.mp3'),
     respelling: "tu teic",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/essential-verbs-1-word-take.mp3'),
+      words: ["tu","teic"],
+      starts: [0.15,1.115],
+    },
   },
   'essential-verbs-1-example-take-1': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-example-take-1.mp3'),
@@ -1361,6 +1466,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'essential-verbs-1-word-put': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-word-put.mp3'),
     respelling: "tu put",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/essential-verbs-1-word-put.mp3'),
+      words: ["tu","put"],
+      starts: [0.15,1.115],
+    },
   },
   'essential-verbs-1-example-put-2': {
     asset: require('../../../assets/audio/en-US/accent/essential-verbs-1-example-put-2.mp3'),
@@ -1392,6 +1502,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'help-word-excuse-me': {
     asset: require('../../../assets/audio/en-US/accent/help-word-excuse-me.mp3'),
     respelling: "Ecschiuz mi.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/help-word-excuse-me.mp3'),
+      words: ["Ecschiuz","mi."],
+      starts: [0.15,1.714],
+    },
   },
   'help-example-excuse-me': {
     asset: require('../../../assets/audio/en-US/accent/help-example-excuse-me.mp3'),
@@ -1453,10 +1568,20 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'help-word-slowly': {
     asset: require('../../../assets/audio/en-US/accent/help-word-slowly.mp3'),
     respelling: "Sloulii, pliz.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/help-word-slowly.mp3'),
+      words: ["Sloulii,","pliz."],
+      starts: [0.15,1.488],
+    },
   },
   'talk-pharmacy-say-3': {
     asset: require('../../../assets/audio/en-US/accent/help-word-slowly.mp3'),
     respelling: "Sloulii, pliz.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/help-word-slowly.mp3'),
+      words: ["Sloulii,","pliz."],
+      starts: [0.15,1.488],
+    },
   },
   'help-example-slowly': {
     asset: require('../../../assets/audio/en-US/accent/help-example-slowly.mp3'),
@@ -1675,6 +1800,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'money-word-plus-tax': {
     asset: require('../../../assets/audio/en-US/accent/money-word-plus-tax.mp3'),
     respelling: "plas teacs",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/money-word-plus-tax.mp3'),
+      words: ["plas","teacs"],
+      starts: [0.15,1.399],
+    },
   },
   'money-example-plus-tax': {
     asset: require('../../../assets/audio/en-US/accent/money-example-plus-tax.mp3'),
@@ -1688,6 +1818,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'money-word-on-sale': {
     asset: require('../../../assets/audio/en-US/accent/money-word-on-sale.mp3'),
     respelling: "on seil",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/money-word-on-sale.mp3'),
+      words: ["on","seil"],
+      starts: [0.15,1.143],
+    },
   },
   'money-example-on-sale': {
     asset: require('../../../assets/audio/en-US/accent/money-example-on-sale.mp3'),
@@ -1804,6 +1939,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'store-word-shopping-cart': {
     asset: require('../../../assets/audio/en-US/accent/store-word-shopping-cart.mp3'),
     respelling: "șoping cart",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/store-word-shopping-cart.mp3'),
+      words: ["șoping","cart"],
+      starts: [0.15,1.483],
+    },
   },
   'store-example-shopping-cart': {
     asset: require('../../../assets/audio/en-US/accent/store-example-shopping-cart.mp3'),
@@ -1961,10 +2101,20 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'checkout-example-debit-credit': {
     asset: require('../../../assets/audio/en-US/accent/checkout-example-debit-credit.mp3'),
     respelling: "Debit, pliz.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/checkout-example-debit-credit.mp3'),
+      words: ["Debit,","pliz."],
+      starts: [0.15,1.525],
+    },
   },
   'talk-checkout-say-4': {
     asset: require('../../../assets/audio/en-US/accent/checkout-example-debit-credit.mp3'),
     respelling: "Debit, pliz.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/checkout-example-debit-credit.mp3'),
+      words: ["Debit,","pliz."],
+      starts: [0.15,1.525],
+    },
   },
   'checkout-word-tap': {
     asset: require('../../../assets/audio/en-US/accent/checkout-word-tap.mp3'),
@@ -2059,6 +2209,11 @@ export const accentAudioAssets: Readonly<Record<string, AccentAudio>> = {
   'talk-checkout-say-5': {
     asset: require('../../../assets/audio/en-US/accent/talk-checkout-say-5.mp3'),
     respelling: "Ies, pliz.",
+    spaced: {
+      asset: require('../../../assets/audio/en-US/accent-spaced/talk-checkout-say-5.mp3'),
+      words: ["Ies,","pliz."],
+      starts: [0.15,1.34],
+    },
   },
   'talk-neighbour-say-2': {
     asset: require('../../../assets/audio/en-US/accent/talk-neighbour-say-2.mp3'),

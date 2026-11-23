@@ -47,7 +47,7 @@ Romanian voice Alina (`ro-RO-AlinaNeural`).
 
 - `npm run generate-all-audio`: runs the three commands below, in order.
 - `npm run generate-audio`: the English recording of every lesson word and
-  phrase (the small "În engleză" button), plus the real-speed shop dialogues
+  phrase (the "Ascultă în engleză" link), plus the real-speed shop dialogues
   in the "În oraș" lessons, where store staff speak with a Canadian voice
   (`en-CA-ClaraNeural` / `en-CA-LiamNeural`).
 - `npm run generate-spaced-audio`: the word-by-word ("Cuvânt cu cuvânt") MP3s,
@@ -56,9 +56,11 @@ Romanian voice Alina (`ro-RO-AlinaNeural`).
   app says each word and sentence ("Ascultă", which also plays by itself when
   a card opens). Alina reads each phrase spelled the Romanian way, from
   `src/data/audio/romanian-accent-respellings.ts`, which is also shown as
-  "Se citește". Phrases of three or more words also get her word-by-word
-  reading, played by "Mai rar", where each word of that spelling lights up as
-  she says it; for shorter ones "Mai rar" plays the reading slower.
+  "Se citește" (the brown line under the English, with a Romanian flag).
+  Phrases of two or more words also get her word-by-word reading, played by
+  "Cuvânt cu cuvânt", where each word of that spelling lights up as she says
+  it; for a single word that button is "Mai rar" and plays the reading slower.
+  While a sound plays, its button reads "Oprește" and stops it.
 
 They need `AZURE_SPEECH_KEY` and `AZURE_SPEECH_REGION` in `.env.local`
 (git-ignored; the key never goes into the app). Every reading is cached in

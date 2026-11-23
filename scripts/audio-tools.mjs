@@ -77,7 +77,7 @@ export async function ensureSpeech(requests) {
 }
 
 /** Phrases this long or longer also get a word-by-word ("Cuvânt cu cuvânt") recording. */
-export const WORD_BY_WORD_MINIMUM_WORDS = 3;
+export const WORD_BY_WORD_MINIMUM_WORDS = 2;
 
 /**
  * Splits a phrase on spaces for word-by-word playback: `tokens` keep their

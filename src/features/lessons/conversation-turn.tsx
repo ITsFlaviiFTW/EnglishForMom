@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { AppCard } from '@/components/app-card';
+import { Meaning } from '@/components/meaning';
 import { colors, radii } from '@/constants/theme';
 import { AudioControls, ReadAs } from '@/features/audio/listen-button';
 import { SpokenWords, type SpeakCheck } from '@/features/speaking/speak-check';
@@ -24,6 +25,7 @@ type ConversationTurnProps = {
   audioState: AudioPlaybackState;
   audioError: string | null;
   onPlayAudio: (source: AudioSource, options?: AudioPlayOptions) => Promise<void>;
+  onStopAudio: () => void;
 };
 
 /**
@@ -39,6 +41,7 @@ export function ConversationTurn({
   audioState,
   audioError,
   onPlayAudio,
+  onStopAudio,
 }: ConversationTurnProps) {
   const partnerSpeaks = activity.partnerLines.length > 0 && Boolean(activity.partnerAudio);
   const [activeAudio, setActiveAudio] = useState<AudioGroup | null>(null);
@@ -59,6 +62,11 @@ export function ConversationTurn({
           setPartnerHeard(true);
         }
       });
+    },
+    // Stopping the other person does not start her answer by itself.
+    onStop: () => {
+      plays.current += 1;
+      onStopAudio();
     },
   });
 
@@ -89,7 +97,7 @@ export function ConversationTurn({
         <View style={styles.answer}>
           <Text style={styles.answerEnglish}>{activity.response.english}</Text>
           <ReadAs source={activity.responseAudio} />
-          <Text style={styles.answerRomanian}>{activity.response.romanian}</Text>
+          <Meaning size="compact" text={activity.response.romanian} />
           <AudioControls
             autoPlay={partnerHeard}
             label={activity.response.english}
@@ -123,6 +131,7 @@ function PartnerSays({
   state,
   errorMessage,
   onPlay,
+  onStop,
 }: {
   partner: ConversationPartner;
   lines: readonly LearningText[];
@@ -131,6 +140,7 @@ function PartnerSays({
   state: AudioPlaybackState;
   errorMessage: string | null;
   onPlay: (source: AudioSource, options?: AudioPlayOptions) => void;
+  onStop: () => void;
 }) {
   return (
     <View style={styles.partnerBubble}>
@@ -148,6 +158,7 @@ function PartnerSays({
         errorMessage={errorMessage}
         label={`ce spune ${partner.nameRomanian}`}
         onPlay={onPlay}
+        onStop={onStop}
         size="compact"
         source={audio}
         state={state}
@@ -267,10 +278,5 @@ const styles = StyleSheet.create({
     fontSize: 26,
     lineHeight: 34,
     fontWeight: '800',
-  },
-  answerRomanian: {
-    color: colors.textMuted,
-    fontSize: 17,
-    lineHeight: 24,
   },
 });

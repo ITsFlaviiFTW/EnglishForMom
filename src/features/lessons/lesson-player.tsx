@@ -12,6 +12,7 @@ import {
 
 import { ActionButton } from '@/components/action-button';
 import { AppCard } from '@/components/app-card';
+import { Meaning } from '@/components/meaning';
 import { ProgressBar } from '@/components/progress-bar';
 import { ScreenContainer } from '@/components/screen-container';
 import { colors, radii } from '@/constants/theme';
@@ -96,6 +97,7 @@ type AudioProps = {
   audioError: string | null;
   /** Resolves when the sound ends (or is stopped). */
   onPlayAudio: (source: AudioSource, options?: AudioPlayOptions) => Promise<void>;
+  onStopAudio: () => void;
 };
 
 /** The "Acum spune tu" check on this step, or null when the step has none. */
@@ -267,6 +269,7 @@ function LessonStep({
     audioState: audioPlayback.state,
     audioError: audioPlayback.errorMessage,
     onPlayAudio: (source, options) => audioPlayback.play(source, options),
+    onStopAudio: () => void audioPlayback.stop(),
   };
 
   return (
@@ -405,14 +408,15 @@ function VocabularyActivity({
   audioState,
   audioError,
   onPlayAudio,
+  onStopAudio,
 }: { activity: VocabularyIntroductionActivity } & AudioProps & SpeakingProps) {
   return (
     <AppCard>
       <Text style={activity.isPhrase ? styles.englishPhrase : styles.englishWord}>
         {activity.content.english}
       </Text>
-      <ReadAs source={activity.audio} />
-      <Text style={styles.romanianMeaning}>{activity.content.romanian}</Text>
+      <ReadAs source={activity.audio} style={styles.readAs} />
+      <Meaning style={styles.meaning} text={activity.content.romanian} />
 
       {activity.audio ? (
         <View style={styles.audioArea}>
@@ -421,6 +425,7 @@ function VocabularyActivity({
             errorMessage={audioError}
             label={activity.content.english}
             onPlay={onPlayAudio}
+            onStop={onStopAudio}
             showReadAs={false}
             source={activity.audio}
             state={audioState}>
@@ -468,12 +473,13 @@ function ExampleActivity({
   audioState,
   audioError,
   onPlayAudio,
+  onStopAudio,
 }: { activity: ExampleSentenceActivity } & AudioProps & SpeakingProps) {
   return (
     <AppCard>
       <Text style={styles.englishSentence}>{activity.sentence.english}</Text>
-      <ReadAs source={activity.sentence.audio} />
-      <Text style={styles.romanianSentence}>{activity.sentence.romanian}</Text>
+      <ReadAs source={activity.sentence.audio} style={styles.readAs} />
+      <Meaning style={styles.meaning} text={activity.sentence.romanian} />
       {activity.sentence.audio ? (
         <View style={styles.audioArea}>
           <AudioControls
@@ -481,6 +487,7 @@ function ExampleActivity({
             errorMessage={audioError}
             label={activity.sentence.english}
             onPlay={onPlayAudio}
+            onStop={onStopAudio}
             showReadAs={false}
             source={activity.sentence.audio}
             state={audioState}>
@@ -550,6 +557,7 @@ function Listening({
   audioState,
   audioError,
   onPlayAudio,
+  onStopAudio,
 }: {
   activity: ListeningActivity;
   feedback: MultipleChoiceAnswerFeedback | null;
@@ -567,6 +575,7 @@ function Listening({
           errorMessage={audioError}
           label="conversația"
           onPlay={onPlayAudio}
+          onStop={onStopAudio}
           source={activity.audio}
           state={audioState}
         />
@@ -704,6 +713,7 @@ function FillInTheBlank({
   audioState,
   audioError,
   onPlayAudio,
+  onStopAudio,
 }: {
   activity: FillInTheBlankActivity;
   feedback: FillInTheBlankAnswerFeedback | null;
@@ -755,6 +765,7 @@ function FillInTheBlank({
                 errorMessage={audioError}
                 label={feedback.correctSentence}
                 onPlay={onPlayAudio}
+                onStop={onStopAudio}
                 size="compact"
                 source={activity.audio}
                 state={audioState}
@@ -1026,12 +1037,11 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     marginTop: 14,
   },
-  romanianMeaning: {
-    color: colors.primary,
-    fontSize: 26,
-    lineHeight: 34,
-    fontWeight: '600',
-    marginTop: 4,
+  readAs: {
+    marginTop: 8,
+  },
+  meaning: {
+    marginTop: 16,
   },
   note: {
     backgroundColor: colors.warmSoft,
