@@ -30,6 +30,14 @@ type AudioControlsProps = {
   showReadAs?: boolean;
   /** Plays "Ascultă" once by itself when the controls appear (a new card). */
   autoPlay?: boolean;
+  /**
+   * "accent" (the default) plays Alina's Romanian-style reading where there is
+   * one; "english" plays only the English voice (the dictation, where she writes
+   * down the English).
+   */
+  voice?: 'accent' | 'english';
+  /** Lights up the words during "Cuvânt cu cuvânt". Off when the text is hidden. */
+  showWords?: boolean;
   /** Placed under the main buttons, above "Ascultă în engleză" (the speaking feedback). */
   children?: ReactNode;
 };
@@ -52,12 +60,14 @@ export function AudioControls({
   size = 'large',
   showReadAs = true,
   autoPlay = false,
+  voice = 'accent',
+  showWords = true,
   children,
 }: AudioControlsProps) {
   const [lastSpeed, setLastSpeed] = useState<Speed | null>(null);
   const [wordIndex, setWordIndex] = useState(0);
   const autoPlayed = useRef(false);
-  const accent = getAccentAudio(source);
+  const accent = voice === 'accent' ? getAccentAudio(source) : undefined;
   const englishWords = getSpacedAudio(source);
   // Word by word in Alina's Romanian-accent reading when there is one, else in English.
   const wordByWord = accent?.spaced
@@ -134,7 +144,7 @@ export function AudioControls({
           />
         )}
       </View>
-      {lastSpeed === 'words' && wordByWord ? (
+      {showWords && lastSpeed === 'words' && wordByWord ? (
         <WordStrip activeIndex={playing('words') ? wordIndex : null} spaced={wordByWord.spaced} />
       ) : null}
 

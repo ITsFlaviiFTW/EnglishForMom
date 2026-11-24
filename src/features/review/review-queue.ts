@@ -27,16 +27,19 @@ export type ReviewAnswer = {
   answeredAt: string;
 };
 
+/** The lesson steps whose mistakes can go to "Repetă". */
+export type ReviewableActivity =
+  | VocabularyIntroductionActivity
+  | ExampleSentenceActivity
+  | ConversationTurnActivity
+  | MultipleChoiceActivity
+  | ListeningActivity
+  | SentenceBuildingActivity
+  | FillInTheBlankActivity;
+
 export function createReviewSeeds(
   lesson: Lesson,
-  activity:
-    | VocabularyIntroductionActivity
-    | ExampleSentenceActivity
-    | ConversationTurnActivity
-    | MultipleChoiceActivity
-    | ListeningActivity
-    | SentenceBuildingActivity
-    | FillInTheBlankActivity,
+  activity: ReviewableActivity,
 ): readonly ReviewItemSeed[] {
   // A word she skipped saying is reviewed as itself.
   if (activity.type === 'vocabulary-introduction') {

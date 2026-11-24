@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useLocalSearchParams } from 'expo-router';
 import { StyleSheet } from 'react-native';
 
@@ -11,15 +11,29 @@ import {
   getCourseUnitProgression,
   getUnlockedCourseLessonIds,
 } from '@/features/lessons/course-progression';
+import { DictationPlayer } from '@/features/lessons/dictation-player';
+import { canChooseRedo, getRedoWords, parseRedoMode } from '@/features/lessons/lesson-redo';
 import { LessonPlayer, type NextLessonLink } from '@/features/lessons/lesson-player';
+import { RedoChooser } from '@/features/lessons/redo-chooser';
 import { getLessonResumeIndex } from '@/features/progress/progress-state';
 import { useLearningProgress } from '@/hooks/use-learning-progress';
 import { lessonAudioService } from '@/services/lesson-audio-service';
 
 export default function LessonScreen() {
-  const { lessonId } = useLocalSearchParams<{ lessonId: string }>();
+  const { lessonId, mode: modeParam } = useLocalSearchParams<{ lessonId: string; mode?: string }>();
   const lesson = getLessonById(lessonId);
-  const { progress, isLoading, saveError, startLesson, completeActivity } = useLearningProgress();
+  const { progress, isLoading, saveError, startLesson, completeActivity, addToReview } =
+    useLearningProgress();
+  // Whether the lesson was already finished when she opened it. Finishing it
+  // now, on its last step, must not turn the screen into the redo choices.
+  const [finishedAtOpen, setFinishedAtOpen] = useState<boolean | null>(null);
+  if (lesson && !isLoading && finishedAtOpen === null) {
+    setFinishedAtOpen(Boolean(progress.lessons[lesson.id]?.completed));
+  }
+  const wordsLesson = useMemo(
+    () => (lesson ? { ...lesson, activities: getRedoWords(lesson) } : undefined),
+    [lesson],
+  );
   const courseUnit = lesson ? getCourseUnitByLessonId(lesson.id) : undefined;
   const access = courseUnit
     ? getCourseUnitProgression(courseUnit, progress.completedLessonIds)
@@ -85,20 +99,49 @@ export default function LessonScreen() {
       }
     : null;
 
+  // A finished lesson is redone: she picks the word cards, the dictation or all
+  // of it (`mode`). Nothing she does in a redo changes the lesson's progress;
+  // what she gets wrong goes to "Repetă".
+  const finished = finishedAtOpen ?? Boolean(progress.lessons[lesson.id]?.completed);
+  const mode = finished ? parseRedoMode(modeParam) : null;
+
+  if (finished && !mode && canChooseRedo(lesson)) {
+    return <RedoChooser icon={courseUnit?.icon} lesson={lesson} />;
+  }
+
+  if (mode === 'dictation') {
+    return (
+      <DictationPlayer
+        key={`${lesson.id}:dictation`}
+        audioService={lessonAudioService}
+        lesson={lesson}
+        onMissed={(sentence) => addToReview(lesson, sentence.activity)}
+      />
+    );
+  }
+
   return (
     <LessonPlayer
-      key={lesson.id}
-      lesson={lesson}
+      key={`${lesson.id}:${mode ?? 'lesson'}`}
+      lesson={mode === 'words' && wordsLesson ? wordsLesson : lesson}
       audioService={lessonAudioService}
-      initialActivityIndex={
-        // A finished lesson opens from the start so it can be practised again.
-        progress.lessons[lesson.id]?.completed ? 0 : getLessonResumeIndex(progress, lesson)
-      }
+      initialActivityIndex={finished ? 0 : getLessonResumeIndex(progress, lesson)}
       nextLesson={nextLesson}
+      redo={mode === 'words' ? 'words' : finished ? 'all' : undefined}
       saveError={saveError}
-      onActivityCompleted={({ activity, response, correct }) => {
-        completeActivity({ lesson, activity, response, correct });
-      }}
+      onActivityCompleted={
+        mode === 'words'
+          ? undefined
+          : finished
+            ? ({ activity, correct }) => {
+                if (correct === false) {
+                  addToReview(lesson, activity);
+                }
+              }
+            : ({ activity, response, correct }) => {
+                completeActivity({ lesson, activity, response, correct });
+              }
+      }
     />
   );
 }

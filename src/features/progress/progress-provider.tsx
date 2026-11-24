@@ -4,12 +4,17 @@ import {
   createDefaultProgress,
   recordActivityCompletion,
   recordLessonStarted,
+  recordReviewMistake,
   type ActivityCompletion,
 } from '@/features/progress/progress-state';
-import { backfillReviewItems, recordReviewAnswer } from '@/features/review/review-queue';
+import {
+  backfillReviewItems,
+  recordReviewAnswer,
+  type ReviewableActivity,
+} from '@/features/review/review-queue';
 import { getLessons } from '@/data/lessons/lesson-catalog';
 import { progressRepository } from '@/services/progress-service';
-import type { LearnerProgress, LessonId } from '@/types';
+import type { LearnerProgress, Lesson, LessonId } from '@/types';
 
 type ProgressContextValue = {
   progress: LearnerProgress;
@@ -18,6 +23,8 @@ type ProgressContextValue = {
   startLesson: (lessonId: LessonId) => void;
   completeActivity: (completion: Omit<ActivityCompletion, 'completedAt'>) => void;
   answerReview: (itemId: string, correct: boolean) => void;
+  /** Sends something she got wrong while redoing a lesson to "Repetă". */
+  addToReview: (lesson: Lesson, activity: ReviewableActivity) => void;
 };
 
 export const ProgressContext = createContext<ProgressContextValue | null>(null);
@@ -96,9 +103,26 @@ export function ProgressProvider({ children }: PropsWithChildren) {
     [commit],
   );
 
+  const addToReview = useCallback(
+    (lesson: Lesson, activity: ReviewableActivity) => {
+      commit((current) =>
+        recordReviewMistake(current, lesson, activity, new Date().toISOString()),
+      );
+    },
+    [commit],
+  );
+
   const value = useMemo(
-    () => ({ progress, isLoading, saveError, startLesson, completeActivity, answerReview }),
-    [answerReview, completeActivity, isLoading, progress, saveError, startLesson],
+    () => ({
+      progress,
+      isLoading,
+      saveError,
+      startLesson,
+      completeActivity,
+      answerReview,
+      addToReview,
+    }),
+    [addToReview, answerReview, completeActivity, isLoading, progress, saveError, startLesson],
   );
 
   return <ProgressContext.Provider value={value}>{children}</ProgressContext.Provider>;

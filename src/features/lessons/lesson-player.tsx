@@ -1,4 +1,4 @@
-import { Link, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { useEffect, useEffectEvent, useState, useSyncExternalStore } from 'react';
 import {
   Pressable,
@@ -13,7 +13,6 @@ import {
 import { ActionButton } from '@/components/action-button';
 import { AppCard } from '@/components/app-card';
 import { Meaning } from '@/components/meaning';
-import { ProgressBar } from '@/components/progress-bar';
 import { ScreenContainer } from '@/components/screen-container';
 import { colors, radii } from '@/constants/theme';
 import { AudioControls, ReadAs } from '@/features/audio/listen-button';
@@ -35,6 +34,8 @@ import {
   type SpeakingOutcome,
 } from '@/features/speaking/speaking-gate';
 import { ConversationTurn } from '@/features/lessons/conversation-turn';
+import { LessonTopBar } from '@/features/lessons/lesson-top-bar';
+import { RedoDone } from '@/features/lessons/redo-done';
 import { isFillInAnswerCorrect } from '@/features/lessons/fill-in-the-blank';
 import {
   getCorrectOption,
@@ -85,6 +86,12 @@ type LessonPlayerProps = {
   saveError?: string | null;
   /** The lesson to suggest once this one is finished. */
   nextLesson?: NextLessonLink | null;
+  /**
+   * Redoing a finished lesson: "words" is only the word cards, and saying them is
+   * optional ("Mai departe"); "all" is the whole lesson as the first time. Both
+   * end on a short "Gata" screen instead of suggesting the next lesson.
+   */
+  redo?: 'words' | 'all';
   onActivityCompleted?: (completion: {
     activity: SupportedActivity;
     response: ActivityResponse;
@@ -114,6 +121,7 @@ export function LessonPlayer({
   initialActivityIndex = 0,
   saveError,
   nextLesson,
+  redo,
   onActivityCompleted,
 }: LessonPlayerProps) {
   const lessonSession = useLessonSession(lesson, initialActivityIndex);
@@ -124,7 +132,20 @@ export function LessonPlayer({
   const canRecord = useSyncExternalStore(subscribeToNothing, isRecordingSupported, () => false);
 
   if (session.status === 'completed') {
-    return <LessonComplete lesson={lesson} nextLesson={nextLesson ?? null} />;
+    return redo ? (
+      <RedoDone
+        lessonId={lesson.id}
+        message={
+          redo === 'words'
+            ? `Ai repetat cuvintele din „${lesson.title.romanian}”.`
+            : lesson.activities.every((activity) => activity.type === 'conversation-turn')
+              ? `Ai repetat conversația „${lesson.title.romanian}”.`
+              : `Ai repetat lecția „${lesson.title.romanian}”.`
+        }
+      />
+    ) : (
+      <LessonComplete lesson={lesson} nextLesson={nextLesson ?? null} />
+    );
   }
 
   if (!currentActivity || !isSupportedActivity(currentActivity)) {
@@ -141,6 +162,7 @@ export function LessonPlayer({
       lesson={lesson}
       lessonSession={lessonSession}
       onActivityCompleted={onActivityCompleted}
+      redo={redo}
       saveError={saveError}
       speakingOutcome={speaking[currentActivity.id]}
       setSpeakingOutcome={(update) =>
@@ -162,6 +184,7 @@ function LessonStep({
   speakingOutcome,
   setSpeakingOutcome,
   saveError,
+  redo,
   onActivityCompleted,
 }: {
   lesson: Lesson;
@@ -174,6 +197,7 @@ function LessonStep({
     update: (outcome: SpeakingOutcome | undefined) => SpeakingOutcome,
   ) => void;
   saveError?: string | null;
+  redo: LessonPlayerProps['redo'];
   onActivityCompleted: LessonPlayerProps['onActivityCompleted'];
 }) {
   const {
@@ -237,9 +261,11 @@ function LessonStep({
 
   const continueAction = {
     title: isLastActivity
-      ? activity.type === 'conversation-turn'
-        ? 'Termină conversația'
-        : 'Termină lecția'
+      ? redo
+        ? 'Gata'
+        : activity.type === 'conversation-turn'
+          ? 'Termină conversația'
+          : 'Termină lecția'
       : 'Continuă',
     onPress: handleAdvance,
     disabled: !canContinue,
@@ -274,39 +300,17 @@ function LessonStep({
 
   return (
     <ScreenContainer
-      header={
-        <View style={styles.topBar}>
-          <Link href="/lessons" asChild>
-            <Pressable
-              accessibilityLabel="Ieși din lecție. Progresul rămâne salvat."
-              accessibilityRole="button"
-              hitSlop={8}
-              style={styles.exitPressable}>
-              {({ pressed }) => (
-                <View style={[styles.exitButton, pressed && styles.exitButtonPressed]}>
-                  <Text style={styles.exitIcon}>✕</Text>
-                  <Text style={styles.exitText}>Ieși</Text>
-                </View>
-              )}
-            </Pressable>
-          </Link>
-          <ProgressBar
-            accessibilityLabel={`Pasul ${position} din ${total}`}
-            max={total}
-            style={styles.topProgress}
-            value={position}
-          />
-          <Text style={styles.stepCount}>
-            {position}/{total}
-          </Text>
-        </View>
-      }
+      header={<LessonTopBar position={position} total={total} />}
       footer={
         <View style={styles.footerContent}>
           {saveError ? <Text style={styles.saveError}>{saveError}</Text> : null}
           {speakingTarget ? <SpeakStatus check={speakCheck} /> : null}
           {speakingTarget && !isSpeakingStepDone(speakingOutcome) ? (
-            <SpeakButtons check={speakCheck} onSkip={skipSpeakingStep} />
+            <SpeakButtons
+              check={speakCheck}
+              onNext={redo === 'words' ? handleAdvance : undefined}
+              onSkip={skipSpeakingStep}
+            />
           ) : (
             <ActionButton
               disabled={footerAction.disabled}
@@ -316,7 +320,13 @@ function LessonStep({
           )}
         </View>
       }>
-      <Text style={styles.lessonTitle}>{lesson.title.romanian}</Text>
+      <Text style={styles.lessonTitle}>
+        {redo === 'words'
+          ? `Repeți cuvintele · ${lesson.title.romanian}`
+          : redo
+            ? `${activity.type === 'conversation-turn' ? 'Repeți conversația' : 'Repeți lecția'} · ${lesson.title.romanian}`
+            : lesson.title.romanian}
+      </Text>
       <View style={styles.activityArea}>
         <ActivityRenderer
           activity={activity}
@@ -957,52 +967,6 @@ function PressableShell({
 }
 
 const styles = StyleSheet.create({
-  topBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  exitPressable: {
-    borderRadius: radii.pill,
-  },
-  exitButton: {
-    minHeight: 48,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderWidth: 1,
-    borderRadius: radii.pill,
-    paddingHorizontal: 14,
-  },
-  exitButtonPressed: {
-    backgroundColor: colors.primarySoft,
-  },
-  exitIcon: {
-    color: colors.text,
-    fontSize: 16,
-    lineHeight: 20,
-    fontWeight: '700',
-  },
-  exitText: {
-    color: colors.text,
-    fontSize: 17,
-    lineHeight: 22,
-    fontWeight: '700',
-  },
-  topProgress: {
-    flex: 1,
-  },
-  stepCount: {
-    minWidth: 48,
-    color: colors.textMuted,
-    fontSize: 16,
-    lineHeight: 22,
-    fontWeight: '700',
-    textAlign: 'right',
-    fontVariant: ['tabular-nums'],
-  },
   lessonTitle: {
     color: colors.textMuted,
     fontSize: 16,

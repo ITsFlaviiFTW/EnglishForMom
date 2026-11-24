@@ -6,7 +6,11 @@ import type {
   LessonId,
   LessonProgress,
 } from '@/types';
-import { addReviewMistakes, createReviewSeeds } from '../review/review-queue.ts';
+import {
+  addReviewMistakes,
+  createReviewSeeds,
+  type ReviewableActivity,
+} from '../review/review-queue.ts';
 import { updateVocabularyMastery } from './vocabulary-mastery.ts';
 
 export const CURRENT_PROGRESS_SCHEMA_VERSION = 3 as const;
@@ -138,6 +142,25 @@ export function recordActivityCompletion(
     questionMistakes,
     reviewItems,
   };
+}
+
+/**
+ * Something she got wrong while redoing a finished lesson (a dictation
+ * sentence, a skipped word) goes to "Repetă". Nothing else changes: a redo
+ * never touches the lesson's progress.
+ */
+export function recordReviewMistake(
+  progress: LearnerProgress,
+  lesson: Lesson,
+  activity: ReviewableActivity,
+  missedAt: string,
+): LearnerProgress {
+  const reviewItems = addReviewMistakes(
+    progress.reviewItems,
+    createReviewSeeds(lesson, activity),
+    missedAt,
+  );
+  return reviewItems === progress.reviewItems ? progress : { ...progress, reviewItems };
 }
 
 export function getLessonResumeIndex(progress: LearnerProgress, lesson: Lesson): number {

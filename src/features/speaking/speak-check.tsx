@@ -190,9 +190,18 @@ export function SpeakStatus({ check }: { check: SpeakCheck }) {
 
 /**
  * The bottom of a step she has to say: the big microphone button and, after
- * several tries, "Sari peste".
+ * several tries, "Sari peste". With `onNext` (redoing a lesson) saying it is
+ * optional: "Mai departe" is under the microphone from the start.
  */
-export function SpeakButtons({ check, onSkip }: { check: SpeakCheck; onSkip: () => void }) {
+export function SpeakButtons({
+  check,
+  onSkip,
+  onNext,
+}: {
+  check: SpeakCheck;
+  onSkip: () => void;
+  onNext?: () => void;
+}) {
   const { phase, outcome } = check;
   const listening = phase === 'listening';
   const working = phase === 'starting' || phase === 'checking';
@@ -224,7 +233,15 @@ export function SpeakButtons({ check, onSkip }: { check: SpeakCheck; onSkip: () 
           </View>
         )}
       </Pressable>
-      {canSkipSpeaking(outcome) && phase === 'idle' ? (
+      {onNext ? (
+        <ActionButton
+          accessibilityLabel="Mai departe, fără să spui"
+          disabled={working || listening}
+          onPress={onNext}
+          title="Mai departe ›"
+          variant="secondary"
+        />
+      ) : canSkipSpeaking(outcome) && phase === 'idle' ? (
         <ActionButton
           accessibilityLabel="Sari peste, deocamdată. Vei exersa din nou la Repetă."
           onPress={onSkip}

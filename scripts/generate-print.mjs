@@ -20,6 +20,7 @@ import { romanianAccentRespellings } from '../src/data/audio/romanian-accent-res
 import { getCourses } from '../src/data/courses/course-catalog.ts';
 import { getLessonById } from '../src/data/lessons/lesson-catalog.ts';
 import { getUnlockedCourseLessonIds } from '../src/features/lessons/course-progression.ts';
+import { getDictationSentences } from '../src/features/lessons/lesson-redo.ts';
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const htmlDirectory = join(projectRoot, '.tools', 'print-html');
@@ -92,7 +93,14 @@ function toPrintLesson(lesson, icon) {
   const dialogues = lesson.activities
     .filter((activity) => activity.type === 'listening')
     .map((activity) => activity.transcript);
-  return { id: lesson.id, icon, title: lesson.title, items, dialogues };
+  return {
+    id: lesson.id,
+    icon,
+    title: lesson.title,
+    items,
+    dialogues,
+    dictation: getDictationSentences(lesson),
+  };
 }
 
 /** Same order every time for the same lesson (so the answers never change). */
@@ -142,10 +150,8 @@ function exercisesFor(lesson) {
   const rest = lesson.items.filter((item) => !matchItems.includes(item));
   const translateItems = [...rest, ...[...matchItems].reverse()].slice(0, hasFill ? 4 : 5);
 
-  const dictation = lesson.items
-    .map((item) => item.examples[0])
-    .filter(Boolean)
-    .slice(0, 8);
+  // The same sentences, in the same order, as "Dictare" in the app.
+  const dictation = lesson.dictation;
 
   return {
     match: matchItems.map((item, index) => ({ number: index + 1, english: item.english })),
@@ -193,7 +199,7 @@ function workbookHtml(course, lessons) {
         <li>Citește cu voce tare lista de cuvinte. Coloana „Se citește” te ajută la pronunție.</li>
         <li>Scrie de mână fiecare cuvânt sau expresie.</li>
         <li>Fă exercițiile. Răspunsurile sunt la sfârșitul caietului: verifică abia după ce termini.</li>
-        <li>Dictare: în aplicație, ascultă fiecare propoziție și scrie ce auzi.</li>
+        <li>Dictare: în aplicație, deschide lecția terminată și alege „Dictare”. Ascultă fiecare propoziție și scrie ce auzi.</li>
         <li>La final, „Verifică-te”: scrii din memorie. După 3 zile și după o săptămână le spui din nou și bifezi.</li>
       </ol>
       <p class="tip">Mergi după „Programul meu”: o lecție în trei zile. Nu e nicio grabă.</p>
@@ -302,7 +308,7 @@ function lessonHtml(lesson, number) {
   const dictation = `
     <section class="page">
       ${heading('4. Dictare')}
-      <p class="instruction">Deschide lecția în aplicație. Ascultă fiecare propoziție (poți apăsa „Cuvânt cu cuvânt”) și scrie în engleză ce auzi. Sensul în română te ajută să o găsești.</p>
+      <p class="instruction">În aplicație: „Toate lecțiile” → lecția → „Dictare”. Ascultă fiecare propoziție (poți apăsa „Cuvânt cu cuvânt”) și scrie în engleză ce auzi. Sensul în română te ajută să o găsești. Apoi apasă „Arată propoziția” și verifică.</p>
       <ol class="dictation">${ex.dictation
         .map((d) => `<li><span class="hint">${esc(d.romanian)}</span><span class="line"></span></li>`)
         .join('')}</ol>
@@ -684,7 +690,7 @@ function scheduleHtml(courses) {
     );
     days.push('📱 Dacă butonul scrie „Continuă”, termină lecția. 📖 „2. Scrie de mână” și „3. Exerciții”.');
     days.push(
-      `📖 „4. Dictare”: în aplicație, „Toate lecțiile” → „${title}”.${
+      `📖 „4. Dictare”: în aplicație, „Toate lecțiile” → „${title}” → „Dictare”.${
         place.lesson.dialogues.length ? ' Apoi „5. Citește cu cineva”.' : ''
       } La final, „Verifică-te”. ✂️ Decupează cartonașele lecției.${
         id === lastShopLesson ? ' 👛 Decupează și cardul de buzunar.' : ''
@@ -734,6 +740,7 @@ function scheduleHtml(courses) {
         <li>Dacă o zi a fost grea, nu treci mai departe: o faci din nou a doua zi. Nu e nicio grabă.</li>
         <li>Pe foile „Verifică-te” din caiet: după 3 zile și după o săptămână spui din nou cuvintele și bifezi.</li>
         <li>Sâmbăta și duminica: pauză. Dacă ai chef, amestecă cartonașele și ghicește.</li>
+        <li>O lecție terminată o poți repeta oricând: „Toate lecțiile” → lecția → „Cuvintele”. Progresul tău rămâne la fel.</li>
       </ul>
       <p class="tip">În total: ${days.length} zile de lucru, cam ${weeks.length} săptămâni.</p>
     </section>

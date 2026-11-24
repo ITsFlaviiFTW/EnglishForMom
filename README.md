@@ -87,6 +87,25 @@ One main button. It continues a lesson she started; otherwise, if anything
 needs review, it opens "Repetă" first (at most one short session), which ends
 with a button into the next lesson. There is no separate "Repetă" button.
 
+## Redoing a finished lesson
+
+Opening a finished lesson ("Toate lecțiile" → a lesson with ✓) asks what to
+redo (`src/features/lessons/redo-chooser.tsx`):
+
+- **Cuvintele**: only the word cards. The microphone is there, but
+  "Mai departe" moves on without saying it.
+- **Dictare**: the dictation for the workbook's "4. Dictare" page
+  (`dictation-player.tsx`). Each sentence plays in English with the text
+  hidden and only the Romanian meaning shown; she writes it, taps
+  "Arată propoziția", and answers "Ai scris la fel?". "Nu chiar" sends the
+  sentence to "Repetă". The sentences come from `getDictationSentences` in
+  `lesson-redo.ts`, which the workbook also uses, so the numbers match its lines.
+- **Toată lecția**: the whole lesson, as the first time.
+
+A redo never changes the lesson's progress; anything she gets wrong goes to
+"Repetă". It ends on a short "Gata!" screen, not the next lesson. A
+conversation has no choice and simply starts again.
+
 ## Conversations ("Conversații")
 
 Talk-back practice with different people: a store worker, a cashier, a
