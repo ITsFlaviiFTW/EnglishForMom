@@ -70,9 +70,13 @@ Joining and MP3 encoding use Python 3 (a small venv in `.tools/audio-venv` is
 set up automatically).
 
 - `npm run generate-print`: makes the printable PDFs in `public/print/` from the
-  lesson data (one workbook per course with word list, handwriting, exercises,
-  dictation, dialogue role-play and answers; the conversation scripts to act
-  out with family; a pocket card; house labels for Avery 5160 sheets). Uses
+  lesson data: one workbook per course (word list, handwriting, exercises,
+  dictation, dialogue role-play, a "Verifică-te" self-test per lesson, answers);
+  fold-over flashcards per course (print single-sided); the conversation
+  scripts to act out with family; the alphabet (letter names for spelling her
+  name and postal code); "Programul meu", a day-by-day plan in the order
+  "Începe" opens the lessons (three days per lesson, one per conversation);
+  a pocket card; house labels for Avery 5160 sheets. Uses
   Microsoft Edge or Google Chrome to print, trying the next one if a browser
   fails (for example in the middle of an update). They are published with the
   site at `/print/<file>.pdf`.

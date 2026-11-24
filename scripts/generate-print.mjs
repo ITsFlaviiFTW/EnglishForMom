@@ -1,6 +1,10 @@
 // Makes the printable material, from the same lesson data as the app:
 // - one workbook per course: word list, handwriting, exercises, dictation,
-//   dialogue role-play, and the answers at the end;
+//   dialogue role-play, "Verifică-te" (test yourself), and the answers at the end;
+// - fold-over flashcards for each course;
+// - the conversation scripts to act out with family;
+// - the alphabet (spelling her name, street, postal code);
+// - "Programul meu": a day-by-day plan in the order the app opens the lessons;
 // - a pocket card with the phrases she needs at the store;
 // - sticky labels for things around the house.
 // Pages are written as HTML and printed to PDF with Microsoft Edge (or Chrome).
@@ -15,6 +19,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { romanianAccentRespellings } from '../src/data/audio/romanian-accent-respellings.ts';
 import { getCourses } from '../src/data/courses/course-catalog.ts';
 import { getLessonById } from '../src/data/lessons/lesson-catalog.ts';
+import { getUnlockedCourseLessonIds } from '../src/features/lessons/course-progression.ts';
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const htmlDirectory = join(projectRoot, '.tools', 'print-html');
@@ -27,6 +32,15 @@ const WORKBOOK_FILES = {
 };
 // Home words that are not things you can stick a label on.
 const NOT_LABELS = new Set(['wash', 'dry', 'clean', 'dirty', 'dust', 'dirty clothes', 'clean clothes']);
+// Canadian English letter names, spelled the Romanian way; true = said differently from Romanian.
+const LETTERS = [
+  ['A', 'ei', true], ['B', 'bii'], ['C', 'sii'], ['D', 'dii'], ['E', 'ii', true], ['F', 'ef'],
+  ['G', 'gii', true], ['H', 'eici', true], ['I', 'ai', true], ['J', 'gei', true], ['K', 'chei'],
+  ['L', 'el'], ['M', 'em'], ['N', 'en'], ['O', 'ou'], ['P', 'pii'], ['Q', 'chiu'], ['R', 'ar', true],
+  ['S', 'es'], ['T', 'tii'], ['U', 'iu'], ['V', 'vii'], ['W', 'dabăliu', true], ['X', 'ecs'],
+  ['Y', 'uai', true], ['Z', 'zed', true],
+];
+const DIGITS = ['zirou', 'uan', 'tu', 'tri', 'for', 'faiv', 'sics', 'sevăn', 'eit', 'nain'];
 
 const browsers = findBrowsers();
 await rm(htmlDirectory, { recursive: true, force: true });
@@ -45,12 +59,15 @@ for (const { course, lessons } of courses) {
   const fileName = WORKBOOK_FILES[course.id];
   if (fileName && lessons.length > 0) {
     await printPdf(fileName, workbookHtml(course, lessons));
+    await printPdf(fileName.replace('prava-workbook-', 'prava-cartonase-'), flashcardsHtml(lessons));
   }
 }
 const conversationCourse = getCourses().find((course) => course.id === 'conversations');
 if (conversationCourse) {
   await printPdf('prava-conversations.pdf', conversationsHtml(conversationCourse));
 }
+await printPdf('prava-alfabet.pdf', alphabetHtml());
+await printPdf('prava-program.pdf', scheduleHtml(courses));
 await printPdf('prava-pocket-card.pdf', pocketCardHtml());
 await printPdf(
   'prava-house-labels.pdf',
@@ -177,8 +194,9 @@ function workbookHtml(course, lessons) {
         <li>Scrie de mână fiecare cuvânt sau expresie.</li>
         <li>Fă exercițiile. Răspunsurile sunt la sfârșitul caietului: verifică abia după ce termini.</li>
         <li>Dictare: în aplicație, ascultă fiecare propoziție și scrie ce auzi.</li>
+        <li>La final, „Verifică-te”: scrii din memorie. După 3 zile și după o săptămână le spui din nou și bifezi.</li>
       </ol>
-      <p class="tip">O lecție pe zi este destul. A doua zi, începe cu ce ai greșit.</p>
+      <p class="tip">Mergi după „Programul meu”: o lecție în trei zile. Nu e nicio grabă.</p>
       <table class="tracker">
         <thead><tr><th>Lecția</th><th>Data</th><th>Am terminat</th></tr></thead>
         <tbody>${lessons
@@ -284,7 +302,7 @@ function lessonHtml(lesson, number) {
   const dictation = `
     <section class="page">
       ${heading('4. Dictare')}
-      <p class="instruction">Deschide lecția în aplicație. Ascultă fiecare propoziție (poți apăsa „Mai rar”) și scrie în engleză ce auzi. Sensul în română te ajută să o găsești.</p>
+      <p class="instruction">Deschide lecția în aplicație. Ascultă fiecare propoziție (poți apăsa „Cuvânt cu cuvânt”) și scrie în engleză ce auzi. Sensul în română te ajută să o găsești.</p>
       <ol class="dictation">${ex.dictation
         .map((d) => `<li><span class="hint">${esc(d.romanian)}</span><span class="line"></span></li>`)
         .join('')}</ol>
@@ -314,7 +332,21 @@ function lessonHtml(lesson, number) {
     </section>`
     : '';
 
-  return wordList + handwriting + exercises + dictation + roleplay;
+  const selfTest = `
+    <section class="page">
+      ${heading(`${lesson.dialogues.length ? 6 : 5}. Verifică-te`)}
+      <p class="instruction">Nu te uita la lista de cuvinte. Citește româna și scrie în engleză, din memorie. Apoi verifică în listă.
+      După 3 zile și după o săptămână, spune-le doar cu voce tare și bifează ce ai știut.</p>
+      <table class="selftest${lesson.items.length > 10 ? ' many' : ''}">
+        <thead><tr><th>Română</th><th>Scrie în engleză</th><th>După 3 zile</th><th>După o săptămână</th></tr></thead>
+        <tbody>${lesson.items
+          .map((item) => `<tr><td>${esc(item.romanian)}</td><td></td><td class="t">☐</td><td class="t">☐</td></tr>`)
+          .join('')}</tbody>
+      </table>
+      <p class="note">💡 Ce n-ai știut, încercuiește. Data viitoare începi cu acelea.</p>
+    </section>`;
+
+  return wordList + handwriting + exercises + dictation + roleplay + selfTest;
 }
 
 /**
@@ -496,6 +528,218 @@ function houseLabelsHtml(homeLessons) {
   );
 }
 
+/**
+ * Fold-over flashcards, five to a page and each lesson on its own pages: the
+ * English and its Romanian-style spelling on one half, the Romanian on the
+ * other. Cut on the dashed lines, fold on the dotted one.
+ */
+function flashcardsHtml(lessons) {
+  const perPage = 5;
+  const pages = lessons.flatMap((lesson, index) => {
+    const lessonPages = [];
+    for (let start = 0; start < lesson.items.length; start += perPage) {
+      const cards = lesson.items.slice(start, start + perPage);
+      lessonPages.push(`
+      <section class="page">
+        <header class="lesson-head">
+          <span>Lecția ${index + 1} · ${esc(lesson.icon ?? '')} ${esc(lesson.title.romanian)}</span>
+          <span class="en">Cartonașe</span>
+        </header>
+        ${
+          start === 0
+            ? '<p class="instruction">Taie pe linia punctată și îndoaie fiecare cartonaș la mijloc: pe o parte engleza, pe cealaltă româna. Amestecă-le și ghicește.</p>'
+            : ''
+        }
+        <div class="cards">${cards
+          .map(
+            (item) => `
+          <div class="fcard">
+            <div class="side"><span class="fc-en">${esc(item.english)}</span><span class="say">${esc(item.respelling)}</span></div>
+            <div class="side back"><span class="fc-ro">${esc(item.romanian)}</span><span class="fc-tag">Lecția ${index + 1}</span></div>
+          </div>`,
+          )
+          .join('')}</div>
+      </section>`);
+    }
+    return lessonPages;
+  });
+  return page(pages.join(''));
+}
+
+/**
+ * The alphabet, for spelling things out loud (her name, street, postal code):
+ * a sheet for the fridge, then spelling practice. Letter names are not how
+ * letters sound inside words, and the sheet says so.
+ */
+function alphabetHtml() {
+  const letterBoxes = (count, gapAfter = -1) =>
+    Array.from(
+      { length: count },
+      (_, index) => `<span class="lbox${index === gapAfter ? ' gap' : ''}"><span></span><i></i></span>`,
+    ).join('');
+  const quiz = [
+    ['ii', 'E'], ['ai', 'I'], ['ei', 'A'], ['gei', 'J'], ['gii', 'G'],
+    ['uai', 'Y'], ['ar', 'R'], ['zed', 'Z'], ['eici', 'H'], ['dabăliu', 'W'],
+  ];
+  const phrases = [
+    ['How do you spell your name?', 'Hau du iu spel iur neim?', 'Cum se scrie numele dumneavoastră?'],
+    ['Can you spell that, please?', 'Can iu spel det, pliz?', 'Puteți să-l spuneți pe litere, vă rog?'],
+    ["It's A-N-A.", 'Iț ei – en – ei.', 'Este A-N-A.'],
+  ];
+
+  return page(`
+    <section class="page">
+      <p class="brand">Prava</p>
+      <h1>Alfabetul în engleză</h1>
+      <p class="lead">Așa se spun literele când spui ceva <b>pe litere</b>: numele, strada, codul poștal, adresa de e-mail.
+      Citește cu voce tare rândul maro.</p>
+      <div class="letters">${LETTERS.map(
+        ([letter, say, different]) => `
+        <div class="tile${different ? ' different' : ''}">
+          <span class="big">${letter}<small>${letter.toLowerCase()}</small></span>
+          <span class="tile-say">${esc(say)}</span>
+        </div>`,
+      ).join('')}</div>
+      <div class="warn">
+        <p><b>Atenție</b> la căsuțele colorate, se spun altfel decât în română:</p>
+        <p><b>A</b> = <span class="say">ei</span> · <b>E</b> = <span class="say">ii</span> · <b>I</b> = <span class="say">ai</span> ·
+          <b>G</b> = <span class="say">gii</span> · <b>J</b> = <span class="say">gei</span> · <b>Y</b> = <span class="say">uai</span> ·
+          <b>Z</b> = <span class="say">zed</span> (în Canada)</p>
+      </div>
+      <h3>Cifrele</h3>
+      <div class="digits">${DIGITS.map(
+        (say, digit) => `<div class="tile"><span class="big">${digit}</span><span class="tile-say">${say}</span></div>`,
+      ).join('')}</div>
+      <p class="note">💡 Numai când spui pe litere. În cuvinte, literele sună altfel: în <b>apple</b>, „a” nu se citește „ei”.</p>
+    </section>
+    <section class="page">
+      <header class="lesson-head"><span>Alfabetul · pe litere</span><span class="en">Spelling</span></header>
+      <h2>Spune pe litere</h2>
+      <table class="phrases">${phrases
+        .map(
+          ([english, say, romanian]) =>
+            `<tr><td class="en">${esc(english)}</td><td class="say">${esc(say)}</td><td class="ro">${esc(romanian)}</td></tr>`,
+        )
+        .join('')}</table>
+      <h3>1. Numele tău</h3>
+      <p class="instruction">Scrie câte o literă în fiecare căsuță. Sub ea, scrie cum se spune (M → em). Apoi spune-l cu voce tare.</p>
+      <div class="lboxes">${letterBoxes(12)}</div>
+      <h3>2. Codul tău poștal</h3>
+      <p class="instruction">În Canada, codul poștal are litere și cifre. De exemplu, <b>M5V 2T6</b> se spune
+      <span class="say">em · faiv · vii — tu · tii · sics</span>.</p>
+      <div class="lboxes">${letterBoxes(6, 2)}</div>
+      <h3>3. Strada ta</h3>
+      <div class="lboxes">${letterBoxes(12)}</div>
+      <h3>4. Ce literă este?</h3>
+      <p class="instruction">Scrie litera. Răspunsurile sunt jos, întoarse.</p>
+      <div class="which">${quiz
+        .map(([say], index) => `<span><b>${index + 1}.</b> <span class="say">${esc(say)}</span> → <span class="slot"></span></span>`)
+        .join('')}</div>
+      <p class="upside">Răspunsuri: ${quiz.map(([, letter], index) => `${index + 1} ${letter}`).join(' · ')}</p>
+    </section>`);
+}
+
+/**
+ * The plan to hand her: one row per day, in the order "Începe" opens the
+ * lessons. Each lesson takes three days (app and word list; handwriting and
+ * exercises; dictation, "Verifică-te" and flashcards), each conversation one.
+ */
+function scheduleHtml(courses) {
+  const order = [];
+  for (;;) {
+    const next = getUnlockedCourseLessonIds(getCourses(), order).find((id) => !order.includes(id));
+    if (!next) {
+      break;
+    }
+    order.push(next);
+  }
+  const places = new Map();
+  for (const { course, lessons } of courses) {
+    const workbook = Object.keys(WORKBOOK_FILES).indexOf(course.id) + 1;
+    lessons.forEach((lesson, index) =>
+      places.set(lesson.id, { course: course.id, workbook, number: index + 1, lesson }),
+    );
+  }
+  const lastShopLesson = order.findLast((id) => places.get(id)?.course === 'out-and-about');
+  const firstHomeLesson = order.find((id) => places.get(id)?.course === 'my-home');
+
+  const days = [
+    '🔤 <b>Alfabetul</b>: citește literele cu voce tare (foaia de pe frigider).',
+    '🔤 <b>Spune pe litere</b> (a doua foaie a alfabetului): numele tău, codul poștal, strada.',
+  ];
+  for (const id of order) {
+    const place = places.get(id);
+    if (!place) {
+      continue;
+    }
+    const title = esc(place.lesson.title.romanian);
+    if (place.course === 'conversations') {
+      days.push(
+        `⭐ 📱 <b>Conversația „${title}”</b> (apasă „Începe”). 💬 Apoi citiți-o cu cineva din familie: foaia „Conversația ${place.number}”.`,
+      );
+      continue;
+    }
+    days.push(
+      `⭐ 📱 <b>Lecție nouă: „${title}”</b> (apasă „Începe”). Dacă e lungă, te oprești când vrei. 📖 Caietul ${place.workbook}, lecția ${place.number}: „1. Cuvinte”, citește cu voce tare.`,
+    );
+    days.push('📱 Dacă butonul scrie „Continuă”, termină lecția. 📖 „2. Scrie de mână” și „3. Exerciții”.');
+    days.push(
+      `📖 „4. Dictare”: în aplicație, „Toate lecțiile” → „${title}”.${
+        place.lesson.dialogues.length ? ' Apoi „5. Citește cu cineva”.' : ''
+      } La final, „Verifică-te”. ✂️ Decupează cartonașele lecției.${
+        id === lastShopLesson ? ' 👛 Decupează și cardul de buzunar.' : ''
+      }${id === firstHomeLesson ? ' 🏷️ Lipește etichetele pe lucrurile din casă.' : ''}`,
+    );
+  }
+
+  const weeks = [];
+  for (let start = 0; start < days.length; start += 5) {
+    weeks.push(days.slice(start, start + 5));
+  }
+  const weekTables = weeks
+    .map(
+      (week, weekIndex) => `
+      <div class="week">
+        <h3>Săptămâna ${weekIndex + 1}</h3>
+        <table class="plan"><tbody>${week
+          .map(
+            (task, dayIndex) => `
+          <tr>
+            <td class="day">Ziua ${weekIndex * 5 + dayIndex + 1}<span class="date">Data:</span></td>
+            <td class="task">${task}</td>
+            <td class="tick">☐</td>
+          </tr>`,
+          )
+          .join('')}</tbody></table>
+        <p class="weekend">🌿 Sâmbătă și duminică: pauză. Dacă ai chef, cartonașele.</p>
+      </div>`,
+    )
+    .join('');
+
+  return page(`
+    <section class="page cover">
+      <p class="brand">Prava</p>
+      <h1>Programul meu de engleză</h1>
+      <p class="course">Cam 20 de minute pe zi, 5 zile pe săptămână. Încet și sigur.</p>
+      <p class="name">Am început pe: <span class="line inline"></span></p>
+      <h2>În fiecare zi</h2>
+      <ol class="how big-steps">
+        <li>Caută în tabel ziua de azi.</li>
+        <li>Fă ce scrie acolo. 📱 = în aplicația Prava, 📖 = în caiet.</li>
+        <li>Scrie data și bifează ☐.</li>
+      </ol>
+      <h2>Bine de știut</h2>
+      <ul class="rules">
+        <li>⭐ = zi cu lecție nouă. Butonul mare din aplicație: dacă scrie „Continuă”, îl poți apăsa oricând. Dacă scrie „Începe”, apasă-l doar în zilele cu ⭐.</li>
+        <li>Dacă o zi a fost grea, nu treci mai departe: o faci din nou a doua zi. Nu e nicio grabă.</li>
+        <li>Pe foile „Verifică-te” din caiet: după 3 zile și după o săptămână spui din nou cuvintele și bifezi.</li>
+        <li>Sâmbăta și duminica: pauză. Dacă ai chef, amestecă cartonașele și ghicește.</li>
+      </ul>
+      <p class="tip">În total: ${days.length} zile de lucru, cam ${weeks.length} săptămâni.</p>
+    </section>
+    ${weekTables}`);
+}
+
 // ---------------------------------------------------------------- output
 
 function page(body, kind = 'workbook') {
@@ -601,7 +845,57 @@ function css(kind) {
     .write-answers .heard { font-weight: 700; }
     .write-answers .hint { font-size: 11pt; }
     .answers h3 { margin-top: 12px; }
-    .answers p { margin: 0 0 4px; font-size: 11pt; }`;
+    .answers p { margin: 0 0 4px; font-size: 11pt; }
+    .note { font-size: 11.5pt; margin-top: 12px; }
+    .lead { margin: 0 0 12px; }
+    /* Verifică-te */
+    .selftest { width: 100%; border-collapse: collapse; }
+    .selftest th { text-align: left; font-size: 10pt; text-transform: uppercase; color: #56625C; border-bottom: 1px solid #B9AE9C; padding: 4px 6px; }
+    .selftest td { border-bottom: 1px solid #B9AE9C; padding: 0 6px; height: 0.6in; vertical-align: middle; }
+    .selftest.many td { height: 0.5in; }
+    .selftest td:first-child { width: 34%; font-weight: 700; }
+    .selftest td.t { width: 0.95in; text-align: center; font-size: 18pt; color: #56625C; }
+    /* Flashcards */
+    .fcard { display: flex; border: 1.5px dashed #888; margin-top: -1.5px; height: 1.65in; break-inside: avoid; }
+    .side { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 0.2in; gap: 4px; position: relative; }
+    .side.back { border-left: 1px dotted #999; }
+    .fc-en { font-size: 19pt; font-weight: 800; line-height: 1.2; }
+    .fc-ro { font-size: 18pt; font-weight: 700; color: #1E5A45; line-height: 1.2; }
+    .fc-tag { position: absolute; right: 0.12in; bottom: 0.08in; font-size: 8pt; color: #8A8F8C; }
+    /* Alphabet */
+    .letters { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+    .digits { display: grid; grid-template-columns: repeat(10, 1fr); gap: 5px; }
+    .tile { border: 1.5px solid #B9AE9C; border-radius: 8px; padding: 6px 4px 7px; display: flex; flex-direction: column; align-items: center; break-inside: avoid; }
+    .tile.different { background: #F8E9DC; border-color: #9C5226; }
+    .big { font-size: 26pt; font-weight: 800; line-height: 1.05; }
+    .big small { font-size: 17pt; font-weight: 700; color: #56625C; margin-left: 3px; }
+    .tile-say { font-size: 16pt; font-weight: 800; color: #9C5226; line-height: 1.2; }
+    .digits .big { font-size: 20pt; }
+    .digits .tile-say { font-size: 11.5pt; }
+    .warn { margin-top: 10px; border-left: 5px solid #9C5226; padding: 4px 0 4px 12px; }
+    .warn p { margin: 0 0 3px; }
+    .phrases { width: 100%; border-collapse: collapse; margin-bottom: 4px; }
+    .phrases td { border-bottom: 1px solid #E3DACB; padding: 6px; vertical-align: top; }
+    .phrases td.en { font-weight: 800; width: 36%; }
+    .lboxes { display: flex; flex-wrap: wrap; gap: 5px; margin: 4px 0 6px; }
+    .lbox { display: inline-flex; flex-direction: column; gap: 3px; }
+    .lbox span { width: 0.45in; height: 0.5in; border: 1.5px solid #8A8F8C; border-radius: 4px; }
+    .lbox i { width: 0.45in; border-bottom: 1px solid #8A8F8C; height: 0.3in; }
+    .lbox.gap { margin-right: 0.3in; }
+    .which { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px 14px; }
+    .slot { display: inline-block; width: 0.4in; border-bottom: 1px solid #8A8F8C; height: 1em; }
+    .upside { transform: rotate(180deg); font-size: 9.5pt; color: #56625C; margin-top: 16px; text-align: right; }
+    /* Programul meu */
+    .big-steps li { font-size: 14pt; }
+    .rules li { margin-bottom: 6px; }
+    .week { break-inside: avoid; margin-bottom: 14px; }
+    .week h3 { margin: 0 0 4px; color: #1E5A45; }
+    .plan { width: 100%; border-collapse: collapse; }
+    .plan td { border: 1px solid #B9AE9C; padding: 6px 8px; vertical-align: top; font-size: 12pt; }
+    .plan td.day { width: 1.15in; font-weight: 800; white-space: nowrap; }
+    .plan .date { display: block; font-weight: 400; font-size: 9.5pt; color: #56625C; margin-top: 6px; }
+    .plan td.tick { width: 0.5in; text-align: center; font-size: 18pt; color: #56625C; vertical-align: middle; }
+    .weekend { margin: 4px 0 0; font-size: 10.5pt; color: #56625C; }`;
 }
 
 async function printPdf(fileName, html) {
